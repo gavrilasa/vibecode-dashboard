@@ -18,6 +18,7 @@ import { useRegistration } from "@/hooks/useRegistration"; // Impor hook untuk d
 import { FileText, Upload, Info, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { EmptyState } from "@/components/common/EmptyState";
+import { COMPETITION_KEYS } from "@/lib/constants";
 
 export default function UploadPage() {
 	const { isAuthenticated } = useAuth();
@@ -36,15 +37,11 @@ export default function UploadPage() {
 	const competitionName = currentRegistration?.competition.name || "";
 	const uploadedDocuments = currentRegistration?.documents || [];
 
-	// PERBAIKAN: Logika "Gatekeeper"
 	useEffect(() => {
-		// Jangan lakukan apa-apa saat masih loading
 		if (loading) return;
-
-		// Setelah loading selesai, jika user sudah punya data registrasi
 		if (registrations) {
-			// Jika nama kompetisi tidak mengandung 'ui/ux', redirect ke dashboard
-			if (!competitionName.toLowerCase().includes("ui/ux")) {
+			if (!competitionName.toLowerCase().includes(COMPETITION_KEYS.UI_UX)) {
+				// <-- Gunakan konstanta
 				router.push("/dashboard");
 			}
 		}

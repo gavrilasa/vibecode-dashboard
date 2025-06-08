@@ -2,7 +2,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
-import { DecodedToken } from "@/types/auth"; // Menggunakan tipe dari types/auth.ts
+import { DecodedToken } from "@/types/auth";
+import { ROLES, APP_ROUTES } from "@/lib/constants";
 
 /**
  * Memeriksa apakah token JWT sudah kedaluwarsa.
@@ -25,7 +26,7 @@ export function middleware(request: NextRequest) {
 	const token = request.cookies.get("auth-token")?.value;
 
 	// Definisikan rute publik yang tidak memerlukan otentikasi.
-	const publicRoutes = ["/auth/login", "/auth/register"];
+	const publicRoutes = [APP_ROUTES.LOGIN, APP_ROUTES.REGISTER];
 
 	// Izinkan akses ke rute publik.
 	if (publicRoutes.includes(pathname)) {
@@ -34,7 +35,7 @@ export function middleware(request: NextRequest) {
 
 	// Jika tidak ada token atau token sudah kedaluwarsa, redirect ke halaman login.
 	if (!token || isTokenExpired(token)) {
-		const loginUrl = new URL("/auth/login", request.url);
+		const loginUrl = new URL(APP_ROUTES.LOGIN, request.url);
 		const response = NextResponse.redirect(loginUrl);
 
 		// Pastikan cookie yang tidak valid dihapus.
@@ -45,16 +46,18 @@ export function middleware(request: NextRequest) {
 	// Jika token ada dan valid, periksa role untuk otorisasi.
 	try {
 		const decoded: DecodedToken = jwtDecode(token);
-		const isAdmin = decoded.role === "admin";
+		const isAdmin = decoded.role === ROLES.ADMIN;
 
 		// Jika admin mencoba mengakses dashboard user, arahkan ke dashboard admin.
 		if (isAdmin && pathname.startsWith("/dashboard")) {
-			return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+			return NextResponse.redirect(
+				new URL(APP_ROUTES.ADMIN_DASHBOARD, request.url)
+			);
 		}
 
 		// Jika user biasa mencoba mengakses rute admin, arahkan ke dashboard user.
 		if (!isAdmin && pathname.startsWith("/admin")) {
-			return NextResponse.redirect(new URL("/dashboard", request.url));
+			return NextResponse.redirect(new URL(APP_ROUTES.DASHBOARD, request.url));
 		}
 	} catch (error) {
 		// Jika terjadi error saat decode (seharusnya sudah ditangani isTokenExpired),

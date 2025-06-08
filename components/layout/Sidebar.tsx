@@ -22,6 +22,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import { useState, useEffect, useMemo } from "react";
+import { COMPETITION_KEYS, ROLES } from "@/lib/constants";
 
 interface SidebarProps {
 	className?: string;
@@ -46,7 +47,7 @@ export function Sidebar({ className }: SidebarProps) {
 	const { registrations, fetchMyRegistrations } = useRegistration();
 	const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-	const isAdmin = user?.role === "admin";
+	const isAdmin = user?.role === ROLES.ADMIN;
 
 	useEffect(() => {
 		// Hanya fetch jika bukan admin dan ada user
@@ -66,8 +67,7 @@ export function Sidebar({ className }: SidebarProps) {
 
 		if (userRegistration) {
 			const competitionName = userRegistration.competition.name.toLowerCase();
-			// Hanya tampilkan menu upload jika nama kompetisi mengandung "ui/ux"
-			if (competitionName.includes("ui/ux")) {
+			if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
 				// Sisipkan menu "Upload Berkas" setelah "Biodata"
 				const biodataIndex = dynamicUserMenuItems.findIndex(
 					(item) => item.href === "/dashboard/biodata"

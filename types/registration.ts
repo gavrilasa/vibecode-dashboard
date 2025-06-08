@@ -1,6 +1,7 @@
 // types/registration.ts
 import { Competition } from "./competition";
 import { Team } from "./team";
+import { REGISTRATION_STATUS, DOCUMENT_TYPE } from "@/lib/constants";
 
 /**
  * Tipe data untuk detail anggota tim dalam pendaftaran.
@@ -32,7 +33,7 @@ export interface DocumentUpload {
 	filename: string;
 	filepath: string;
 	filetype: string;
-	type: "VALIDATION" | "PENYISIHAN" | "FINAL";
+	type: (typeof DOCUMENT_TYPE)[keyof typeof DOCUMENT_TYPE];
 }
 
 /**
@@ -43,7 +44,7 @@ export interface Registration {
 	userId: string;
 	teamId: string;
 	competitionId: number;
-	status: "PENDING" | "APPROVED" | "REJECTED";
+	status: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS];
 	reviewedBy: string | null;
 	reviewedAt: string | null;
 	competition: Omit<Competition, "batches">; // Kompetisi tidak menyertakan batches di sini

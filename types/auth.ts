@@ -3,11 +3,13 @@
 /**
  * Tipe data untuk user yang login, didapat dari response login.
  */
+import { ROLES } from "@/lib/constants";
+
 export interface User {
-	id: string; // UUID dari backend
+	id: string;
 	username: string;
 	email: string;
-	role: "user" | "admin";
+	role: (typeof ROLES)[keyof typeof ROLES];
 }
 
 export interface LoginRequest {
