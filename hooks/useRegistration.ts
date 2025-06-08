@@ -1,93 +1,75 @@
 // hooks/useRegistration.ts
-
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import {
 	getMyRegistrations,
 	registerForCompetition,
 	uploadDocument,
 } from "@/lib/registration";
 import {
-	Registration,
 	CreateRegistrationRequest,
 	UploadDocumentResponse,
 } from "@/types/registration";
-import { ApiError } from "@/lib/api"; // Impor ApiError
+import { useApi } from "./useApi"; // Menggunakan hook generik kita
+
+// Tipe untuk parameter fungsi upload, agar lebih jelas
+type UploadParams = {
+	file: File;
+	documentType: "VALIDATION" | "PENYISIHAN" | "FINAL";
+};
+
+// Wrapper untuk fungsi upload agar sesuai dengan ekspektasi useApi
+const uploadApiWrapper = (params: UploadParams) => {
+	return uploadDocument(params.file, params.documentType);
+};
 
 export function useRegistration() {
-	const [registrations, setRegistrations] = useState<Registration[] | null>(
-		null
-	);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-
-	const fetchMyRegistrations = useCallback(async () => {
-		setLoading(true);
-		setError(null);
-		try {
-			const data = await getMyRegistrations();
-			setRegistrations(data);
-		} catch (err: any) {
-			// PERBAIKAN DI SINI
-			// Jika error adalah ApiError dengan status 404, itu artinya user belum terdaftar.
-			// Ini adalah kondisi valid, jadi kita set `registrations` ke array kosong.
-			if (err instanceof ApiError && err.status === 404) {
+	// Hook untuk mengambil data registrasi
+	const {
+		data: registrations,
+		loading: fetchLoading,
+		error: fetchError,
+		execute: fetchMyRegistrations,
+		setData: setRegistrations,
+	} = useApi(getMyRegistrations, {
+		onError: (errorMessage) => {
+			// Jika error 404, itu bukan error aplikasi, tapi user belum terdaftar.
+			// Kita anggap datanya array kosong, sama seperti logika di kode lama.
+			if (errorMessage.includes("404")) {
 				setRegistrations([]);
-			} else {
-				// Untuk error lainnya (500, masalah jaringan, dll), tampilkan pesan error.
-				setError(err.message || "Failed to fetch registrations");
-			}
-		} finally {
-			setLoading(false);
-		}
-	}, []);
-
-	const register = useCallback(
-		async (
-			data: CreateRegistrationRequest
-		): Promise<{ message: string } | null> => {
-			setLoading(true);
-			setError(null);
-			try {
-				const response = await registerForCompetition(data);
-				await fetchMyRegistrations();
-				return response;
-			} catch (err: any) {
-				setError(err.message || "Failed to create registration");
-				return null;
-			} finally {
-				setLoading(false);
 			}
 		},
-		[fetchMyRegistrations]
-	);
+	});
 
-	const upload = useCallback(
-		async (
-			file: File,
-			documentType: "VALIDATION" | "PENYISIHAN" | "FINAL"
-		): Promise<UploadDocumentResponse | null> => {
-			setLoading(true);
-			setError(null);
-			try {
-				const result = await uploadDocument(file, documentType);
-				await fetchMyRegistrations();
-				return result;
-			} catch (err: any) {
-				setError(err.message || "Failed to upload document");
-				return null;
-			} finally {
-				setLoading(false);
-			}
-		},
-		[fetchMyRegistrations]
-	);
+	// Callback untuk memanggil refetch, dibuat stabil dengan useCallback
+	const refetch = useCallback(() => {
+		fetchMyRegistrations();
+	}, [fetchMyRegistrations]);
 
+	// Hook untuk aksi 'register', akan memanggil refetch setelah sukses
+	const {
+		loading: registerLoading,
+		error: registerError,
+		execute: register,
+	} = useApi(registerForCompetition, {
+		onSuccess: refetch,
+	});
+
+	// Hook untuk aksi 'upload', juga akan memanggil refetch setelah sukses
+	const {
+		loading: uploadLoading,
+		error: uploadError,
+		execute: upload,
+	} = useApi<UploadDocumentResponse, UploadParams>(uploadApiWrapper, {
+		onSuccess: refetch,
+	});
+
+	// Kembalikan objek yang sama persis seperti hook aslinya
 	return {
 		registrations,
-		loading,
-		error,
+		loading: fetchLoading || registerLoading || uploadLoading,
+		error: fetchError || registerError || uploadError,
 		fetchMyRegistrations,
 		register,
 		upload,
