@@ -4,8 +4,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardCard } from "@/components/dashboard/DashboardCard";
-import { CountdownCard } from "@/components/dashboard/CountdownCard";
+import { DashboardCard } from "@/components/features/dashboard/DashboardCard";
+import { CountdownCard } from "@/components/features/dashboard/CountdownCard";
 import {
 	Card,
 	CardContent,
@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { StatusBadge } from "@/components/common/StatusBadge";
 
 export default function DashboardPage() {
 	const { isAuthenticated, user } = useAuth();
@@ -151,7 +152,7 @@ export default function DashboardPage() {
 											Your current registration status and information.
 										</CardDescription>
 									</div>
-									{getStatusBadge(currentRegistration.status)}
+									<StatusBadge status={currentRegistration.status} />
 								</div>
 							</CardHeader>
 							<CardContent className="space-y-6">

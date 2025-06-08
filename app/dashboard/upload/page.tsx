@@ -5,7 +5,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { UploadForm } from "@/components/upload/UploadForm";
+import { UploadForm } from "@/components/features/upload/UploadForm";
 import {
 	Card,
 	CardContent,
@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration"; // Impor hook untuk data dinamis
 import { FileText, Upload, Info, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { EmptyState } from "@/components/common/EmptyState";
 
 export default function UploadPage() {
 	const { isAuthenticated } = useAuth();
@@ -177,7 +178,10 @@ export default function UploadPage() {
 							</div>
 						) : (
 							<div className="text-center text-muted-foreground py-8">
-								<p>You haven&apos;t uploaded any documents yet.</p>
+								<EmptyState
+									title="No Documents Found"
+									description="You haven't uploaded any documents yet."
+								/>
 							</div>
 						)}
 					</CardContent>

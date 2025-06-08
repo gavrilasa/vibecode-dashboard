@@ -24,6 +24,7 @@ import Link from "next/link";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Team } from "@/types/team";
 import { getAllTeams } from "@/lib/team";
+import { EmptyState } from "@/components/common/EmptyState";
 
 export default function AdminTeamsPage() {
 	const [allTeams, setAllTeams] = useState<Team[]>([]);
@@ -147,7 +148,10 @@ export default function AdminTeamsPage() {
 								) : (
 									<TableRow>
 										<TableCell colSpan={4} className="text-center py-10">
-											No teams found.
+											<EmptyState
+												title="No Teams Found"
+												description="There are no teams matching your search criteria."
+											/>
 										</TableCell>
 									</TableRow>
 								)}

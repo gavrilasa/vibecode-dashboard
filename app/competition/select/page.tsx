@@ -13,6 +13,7 @@ import { useRegistration } from "@/hooks/useRegistration"; // Impor hook registr
 import { useRegistrationFlowStore } from "@/store/registration-flow-store";
 import { Competition } from "@/types/competition";
 import { Loader2, ArrowRight } from "lucide-react";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function CompetitionSelectPage() {
 	const { isAuthenticated } = useAuth();
@@ -63,11 +64,7 @@ export default function CompetitionSelectPage() {
 
 	// Tampilkan loading jika sedang memeriksa status registrasi
 	if (registrationLoading || (registrations && registrations.length > 0)) {
-		return (
-			<div className="flex h-screen w-full items-center justify-center bg-background">
-				<Loader2 className="h-8 w-8 animate-spin text-primary" />
-			</div>
-		);
+		return <PageLoader />;
 	}
 
 	return (

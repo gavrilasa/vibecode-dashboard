@@ -42,6 +42,7 @@ import {
 import Link from "next/link";
 import { getAllRegistrations } from "@/lib/registration";
 import { PaginatedRegistrations } from "@/types/registration";
+import { StatusBadge } from "@/components/common/StatusBadge";
 
 export default function AdminRegistrationsPage() {
 	const [data, setData] = useState<PaginatedRegistrations | null>(null);
@@ -75,19 +76,6 @@ export default function AdminRegistrationsPage() {
 	useEffect(() => {
 		fetchRegistrations();
 	}, [fetchRegistrations]);
-
-	const getStatusBadge = (status: string) => {
-		switch (status) {
-			case "APPROVED":
-				return <Badge className="bg-green-100 text-green-800">Approved</Badge>;
-			case "PENDING":
-				return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
-			case "REJECTED":
-				return <Badge className="bg-red-100 text-red-800">Rejected</Badge>;
-			default:
-				return <Badge variant="secondary">Unknown</Badge>;
-		}
-	};
 
 	return (
 		<div className="space-y-6">
@@ -183,7 +171,9 @@ export default function AdminRegistrationsPage() {
 											<TableCell>{reg.competition.name}</TableCell>
 											<TableCell>{reg.details.institutionName}</TableCell>
 											<TableCell>{reg.details.members.length}</TableCell>
-											<TableCell>{getStatusBadge(reg.status)}</TableCell>
+											<TableCell>
+												<StatusBadge status={reg.status} />
+											</TableCell>
 											<TableCell>
 												<Button asChild variant="outline" size="sm" disabled>
 													<Link href="#">

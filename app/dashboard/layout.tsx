@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Loader2 } from "lucide-react";
+import { PageLoader } from "@/components/common/PageLoader";
 
 /**
  * Layout ini berfungsi sebagai "gatekeeper" untuk semua halaman di bawah /dashboard.
@@ -47,11 +47,7 @@ export default function DashboardLayout({
 	// 3. Tampilkan layar loading selama pengecekan berlangsung
 	// Ini mencegah "flash" konten dashboard sebelum redirect.
 	if (loading || !registrations) {
-		return (
-			<div className="flex h-screen w-full items-center justify-center bg-background">
-				<Loader2 className="h-8 w-8 animate-spin text-primary" />
-			</div>
-		);
+		return <PageLoader />;
 	}
 
 	// 4. Jika user memiliki registrasi (array tidak kosong), tampilkan layout dan konten halaman
@@ -61,9 +57,5 @@ export default function DashboardLayout({
 
 	// Fallback, seharusnya tidak pernah tercapai jika logika di atas benar.
 	// Ini juga akan menampilkan loading screen selama proses redirect.
-	return (
-		<div className="flex h-screen w-full items-center justify-center bg-background">
-			<Loader2 className="h-8 w-8 animate-spin text-primary" />
-		</div>
-	);
+	return <PageLoader />;
 }

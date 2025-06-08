@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Loader2 } from "lucide-react";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function AdminLayout({
 	children,
@@ -29,11 +29,7 @@ export default function AdminLayout({
 	// Tampilkan loading spinner selama status auth belum terkonfirmasi
 	// atau jika user bukan admin.
 	if (!user || !isAdmin) {
-		return (
-			<div className="flex h-screen w-full items-center justify-center bg-background">
-				<Loader2 className="h-8 w-8 animate-spin text-primary" />
-			</div>
-		);
+		return <PageLoader />;
 	}
 
 	// Jika sudah terkonfirmasi sebagai admin, tampilkan layout dan kontennya.

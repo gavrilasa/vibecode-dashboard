@@ -3,7 +3,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DashboardCard } from "@/components/dashboard/DashboardCard";
+import { DashboardCard } from "@/components/features/dashboard/DashboardCard";
 import {
 	Card,
 	CardContent,
