@@ -25,11 +25,12 @@ import {
 	AlertCircle,
 	Calendar,
 	ArrowRight,
-	FileText, // Icon tambahan
+	FileText,
 } from "lucide-react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { PageHeader } from "@/components/common/PageHeader";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function DashboardPage() {
 	const { isAuthenticated, user } = useAuth();
@@ -45,9 +46,7 @@ export default function DashboardPage() {
 	if (loading || !registrations) {
 		return (
 			<div>
-				<div className="flex h-full w-full items-center justify-center">
-					<Loader2 className="h-8 w-8 animate-spin" />
-				</div>
+				<PageLoader />
 			</div>
 		);
 	}
@@ -68,44 +67,15 @@ export default function DashboardPage() {
 		competition?.endDate || "2025-07-30T23:59:59.000Z"
 	);
 
-	const getStatusBadge = (status: string) => {
-		switch (status) {
-			case "APPROVED":
-				return (
-					<Badge variant="default" className="bg-green-600 hover:bg-green-700">
-						Approved
-					</Badge>
-				);
-			case "PENDING":
-				return (
-					<Badge
-						variant="secondary"
-						className="bg-yellow-500 hover:bg-yellow-600 text-white"
-					>
-						Pending
-					</Badge>
-				);
-			case "REJECTED":
-				return <Badge variant="destructive">Rejected</Badge>;
-			default:
-				return <Badge variant="outline">Unknown</Badge>;
-		}
-	};
-
 	return (
 		<div>
 			<div className="space-y-8">
 				{" "}
-				{/* Memberi jarak lebih antar seksi */}
 				{/* Header */}
-				<header>
-					<h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-						Welcome back, {user?.username}!
-					</h1>
-					<p className="mt-1 text-base text-gray-500 dark:text-gray-400">
-						Here is an overview of your competition status.
-					</p>
-				</header>
+				<PageHeader
+					title={`Welcome back, ${user?.username}!`}
+					description="Here is an overview of your competition status."
+				/>
 				{/* Stats Cards */}
 				<section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 					<DashboardCard

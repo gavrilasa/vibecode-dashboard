@@ -4,7 +4,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CompetitionCard } from "@/components/competition/CompetitionCard";
+import { CompetitionCard } from "@/components/features/competition/CompetitionCard";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,7 +12,7 @@ import { useCompetition } from "@/hooks/useCompetition";
 import { useRegistration } from "@/hooks/useRegistration"; // Impor hook registrasi
 import { useRegistrationFlowStore } from "@/store/registration-flow-store";
 import { Competition } from "@/types/competition";
-import { Loader2, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PageLoader } from "@/components/common/PageLoader";
 
 export default function CompetitionSelectPage() {
@@ -87,7 +87,7 @@ export default function CompetitionSelectPage() {
 
 				{competitionsLoading ? (
 					<div className="flex justify-center py-12">
-						<Loader2 className="h-8 w-8 animate-spin" />
+						<PageLoader />
 					</div>
 				) : (
 					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -18,13 +18,14 @@ import {
 	FileText,
 	CheckCircle,
 	Clock,
-	Loader2,
 	Calendar,
 } from "lucide-react";
 import Link from "next/link";
 import { getAllRegistrations } from "@/lib/registration";
 import { getAllTeams } from "@/lib/team";
 import { Registration } from "@/types/registration";
+import { PageHeader } from "@/components/common/PageHeader";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function AdminDashboardPage() {
 	const [stats, setStats] = useState({
@@ -69,24 +70,15 @@ export default function AdminDashboardPage() {
 	}, []);
 
 	if (loading) {
-		return (
-			<div className="flex h-full w-full items-center justify-center">
-				<Loader2 className="h-8 w-8 animate-spin" />
-			</div>
-		);
+		return <PageLoader />;
 	}
 
 	return (
 		<div className="space-y-8">
-			{/* Header */}
-			<div>
-				<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-					Admin Dashboard
-				</h1>
-				<p className="mt-2 text-gray-600 dark:text-gray-400">
-					Overview of competition management and statistics.
-				</p>
-			</div>
+			<PageHeader
+				title="Admin Dashboard"
+				description="Overview of competition management and statistics."
+			/>
 
 			{/* Stats Cards - Disesuaikan dengan data yang efisien untuk diambil */}
 			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

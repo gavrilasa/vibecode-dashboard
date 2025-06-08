@@ -12,9 +12,10 @@ import { useRegistrationFlowStore } from "@/store/registration-flow-store";
 import {
 	RegistrationForm,
 	FullRegistrationFormData,
-} from "@/components/registration/RegistrationForm";
+} from "@/components/features/registration/RegistrationForm";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export default function RegistrationFormPage() {
 	const { isAuthenticated } = useAuth();
@@ -118,15 +119,10 @@ export default function RegistrationFormPage() {
 	return (
 		<AppLayout>
 			<div className="max-w-4xl mx-auto space-y-6">
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-						Complete Your Registration
-					</h1>
-					<p className="mt-2 text-gray-600 dark:text-gray-400">
-						Fill in the details for your team to finalize your registration
-						(Step 2 of 2).
-					</p>
-				</div>
+				<PageHeader
+					title="Complete Your Registration"
+					description="Fill in the details for your team to finalize your registration (Step 2 of 2)."
+				/>
 
 				{success && (
 					<Alert variant="default" className="bg-green-50 border-green-200">

@@ -9,6 +9,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -63,18 +64,15 @@ export default function AdminTeamsPage() {
 	return (
 		<div className="space-y-6">
 			{/* Header */}
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="text-3xl font-bold">Teams Management</h1>
-					<p className="mt-2 text-muted-foreground">
-						Manage and monitor all competition teams.
-					</p>
-				</div>
+			<PageHeader
+				title="Teams Management"
+				description="Manage and monitor all competition teams."
+			>
 				<Button variant="outline" disabled>
 					<Download className="mr-2 h-4 w-4" />
 					Export Data (Coming Soon)
 				</Button>
-			</div>
+			</PageHeader>
 
 			{/* Filters */}
 			<Card>

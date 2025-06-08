@@ -19,18 +19,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
-import {
-	Loader2,
-	ArrowLeft,
-	User,
-	Users,
-	GraduationCap,
-	Mail,
-	Phone,
-	Shield,
-	Info,
-} from "lucide-react";
+import { ArrowLeft, User, Info } from "lucide-react";
 import Link from "next/link";
+import { PageHeader } from "@/components/common/PageHeader";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function EditBiodataPage() {
 	const { isAuthenticated } = useAuth();
@@ -46,9 +38,7 @@ export default function EditBiodataPage() {
 	if (loading || !registrations) {
 		return (
 			<div>
-				<div className="flex h-full w-full items-center justify-center">
-					<Loader2 className="h-8 w-8 animate-spin" />
-				</div>
+				<PageLoader />
 			</div>
 		);
 	}
@@ -74,14 +64,10 @@ export default function EditBiodataPage() {
 							<span className="sr-only">Back to Biodata</span>
 						</Link>
 					</Button>
-					<div>
-						<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-							View Registration Details
-						</h1>
-						<p className="mt-1 text-gray-600 dark:text-gray-400">
-							This is a read-only view of your team and member information.
-						</p>
-					</div>
+					<PageHeader
+						title="View Registration Details"
+						description="This is a read-only view of your team and member information."
+					/>
 				</div>
 
 				<Alert>

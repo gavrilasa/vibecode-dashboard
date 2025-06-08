@@ -4,7 +4,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { UploadForm } from "@/components/features/upload/UploadForm";
 import {
 	Card,
@@ -19,6 +18,8 @@ import { FileText, Upload, Info, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { EmptyState } from "@/components/common/EmptyState";
 import { COMPETITION_KEYS } from "@/lib/constants";
+import { PageLoader } from "@/components/common/PageLoader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export default function UploadPage() {
 	const { isAuthenticated } = useAuth();
@@ -51,9 +52,7 @@ export default function UploadPage() {
 	if (loading || !registrations) {
 		return (
 			<div>
-				<div className="flex h-full w-full items-center justify-center">
-					<Loader2 className="h-8 w-8 animate-spin" />
-				</div>
+				<PageLoader />
 			</div>
 		);
 	}
@@ -82,15 +81,10 @@ export default function UploadPage() {
 	return (
 		<div>
 			<div className="space-y-8">
-				{/* Header */}
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-						Upload Documents
-					</h1>
-					<p className="mt-2 text-gray-600 dark:text-gray-400">
-						Upload required documents for **{competitionName}**
-					</p>
-				</div>
+				<PageHeader
+					title="Upload Documents"
+					description={`Upload required documents for ${competitionName}`}
+				/>
 
 				<div className="grid gap-6 lg:grid-cols-2">
 					{/* Upload Form */}

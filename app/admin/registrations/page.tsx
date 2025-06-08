@@ -43,6 +43,7 @@ import Link from "next/link";
 import { getAllRegistrations } from "@/lib/registration";
 import { PaginatedRegistrations } from "@/types/registration";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export default function AdminRegistrationsPage() {
 	const [data, setData] = useState<PaginatedRegistrations | null>(null);
@@ -80,18 +81,16 @@ export default function AdminRegistrationsPage() {
 	return (
 		<div className="space-y-6">
 			{/* Header */}
-			<div className="flex flex-wrap items-center justify-between gap-4">
-				<div>
-					<h1 className="text-3xl font-bold">Registrations Management</h1>
-					<p className="mt-2 text-muted-foreground">
-						Manage and review all competition registrations.
-					</p>
-				</div>
+			<div className="flex flex-wrap items-center justify-between gap-4"></div>
+			<PageHeader
+				title="Registrations Management"
+				description="Manage and review all competition registrations."
+			>
 				<Button variant="outline" disabled>
 					<Download className="mr-2 h-4 w-4" />
 					Export Data (Coming Soon)
 				</Button>
-			</div>
+			</PageHeader>
 
 			{/* Filters */}
 			<Card>

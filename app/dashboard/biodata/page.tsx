@@ -3,7 +3,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
 	Card,
 	CardContent,
@@ -19,22 +18,21 @@ import {
 	User,
 	Mail,
 	Phone,
-	Home,
 	GraduationCap,
 	Edit,
 	FileText,
 	Users,
 	Info,
 	Shield,
-	Loader2,
-	Trophy, // PERBAIKAN: Impor ikon Trophy yang hilang
+	Trophy,
 } from "lucide-react";
 import Link from "next/link";
+import { PageLoader } from "@/components/common/PageLoader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 export default function BiodataPage() {
 	const { isAuthenticated } = useAuth();
 	const { registrations, loading, fetchMyRegistrations } = useRegistration();
-	const router = useRouter();
 
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -45,9 +43,7 @@ export default function BiodataPage() {
 	if (loading || !registrations) {
 		return (
 			<div>
-				<div className="flex h-full w-full items-center justify-center">
-					<Loader2 className="h-8 w-8 animate-spin" />
-				</div>
+				<PageLoader />
 			</div>
 		);
 	}
@@ -78,14 +74,11 @@ export default function BiodataPage() {
 			<div className="space-y-8">
 				{/* Header */}
 				<div className="flex flex-wrap items-center justify-between gap-4">
-					<div>
-						<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-							Team & Biodata
-						</h1>
-						<p className="mt-2 text-gray-600 dark:text-gray-400">
-							View your team information, member details, and documents.
-						</p>
-					</div>
+					<PageHeader
+						title="Team & Biodata"
+						description="View your team information, member details, and documents."
+					/>
+
 					<Button disabled>
 						<Edit className="mr-2 h-4 w-4" />
 						Edit Biodata (Coming Soon)
