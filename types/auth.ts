@@ -10,6 +10,11 @@ export interface User {
 	role: "user" | "admin";
 }
 
+export interface LoginRequest {
+	email: string;
+	password: string;
+}
+
 /**
  * Tipe data untuk response body setelah login berhasil.
  */

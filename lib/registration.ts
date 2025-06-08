@@ -1,28 +1,73 @@
-import { apiRequest, apiRequestWithFormData } from './api';
-import { Registration, CreateRegistrationRequest, UploadDocumentResponse } from '@/types/registration';
+// lib/registration.ts
 
-export async function getUserRegistration(): Promise<Registration> {
-  return apiRequest<Registration>('/registration');
+import { apiRequest, apiRequestWithFormData } from "./api";
+import {
+	Registration,
+	PaginatedRegistrations,
+	CreateRegistrationRequest,
+	UploadDocumentResponse,
+} from "@/types/registration";
+
+/**
+ * Mengambil data pendaftaran milik user yang sedang login.
+ * Mengembalikan array karena user bisa mendaftar di lebih dari satu kompetisi.
+ * Endpoint: GET /registration/me
+ */
+export async function getMyRegistrations(): Promise<Registration[]> {
+	return apiRequest<Registration[]>("/registration/me");
 }
 
-export async function getAllRegistrations(): Promise<Registration[]> {
-  return apiRequest<Registration[]>('/registration');
+/**
+ * Mengambil semua data pendaftaran dengan paginasi dan filter (HANYA UNTUK ADMIN).
+ * Endpoint: GET /registration
+ */
+export async function getAllRegistrations(params: {
+	page?: number;
+	limit?: number;
+	status?: string;
+	competitionName?: string;
+	teamName?: string;
+}): Promise<PaginatedRegistrations> {
+	const query = new URLSearchParams();
+	if (params.page) query.append("page", params.page.toString());
+	if (params.limit) query.append("limit", params.limit.toString());
+	if (params.status && params.status !== "ALL")
+		query.append("status", params.status);
+	if (params.competitionName)
+		query.append("competitionName", params.competitionName);
+	if (params.teamName) query.append("teamName", params.teamName);
+
+	const queryString = query.toString();
+	return apiRequest<PaginatedRegistrations>(`/registration?${queryString}`);
 }
 
-export async function createRegistration(data: CreateRegistrationRequest): Promise<Registration> {
-  return apiRequest<Registration>('/registration', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
+/**
+ * Mendaftarkan tim ke sebuah kompetisi dengan data lengkap.
+ * Endpoint: POST /registration/register
+ */
+export async function registerForCompetition(
+	data: CreateRegistrationRequest
+): Promise<{ message: string }> {
+	return apiRequest<{ message: string }>("/registration/register", {
+		method: "POST",
+		body: JSON.stringify(data),
+	});
 }
 
+/**
+ * Mengunggah dokumen untuk pendaftaran.
+ * Endpoint: POST /registration/upload
+ */
 export async function uploadDocument(
-  file: File,
-  documentType: 'VALIDATION' | 'PENYISIHAN' | 'FINAL'
+	file: File,
+	documentType: "VALIDATION" | "PENYISIHAN" | "FINAL"
 ): Promise<UploadDocumentResponse> {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('documentType', documentType);
+	const formData = new FormData();
+	formData.append("file", file);
+	formData.append("documentType", documentType);
 
-  return apiRequestWithFormData<UploadDocumentResponse>('/registration/upload', formData);
+	return apiRequestWithFormData<UploadDocumentResponse>(
+		"/registration/upload",
+		formData
+	);
 }

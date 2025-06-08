@@ -1,8 +1,9 @@
+// app/dashboard/page.tsx
+
 "use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { DashboardCard } from "@/components/dashboard/DashboardCard";
 import { CountdownCard } from "@/components/dashboard/CountdownCard";
 import {
@@ -16,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
-import { useTeam } from "@/hooks/useTeam";
+// useTeam tidak lagi digunakan untuk fetch data
 import {
 	Trophy,
 	Users,
@@ -27,28 +28,44 @@ import {
 	ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
 	const { isAuthenticated, user } = useAuth();
-	const { registration, fetchRegistration } = useRegistration();
-	const { team, fetchMyTeam } = useTeam();
+	// Gunakan nama state dan fungsi yang baru dari useRegistration
+	const { registrations, fetchMyRegistrations, loading } = useRegistration();
 	const router = useRouter();
 
 	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push("/auth/login");
-			return;
+		// Middleware sudah menangani redirect jika tidak authenticated
+		// Jadi kita hanya perlu fetch data jika sudah pasti authenticated
+		if (isAuthenticated) {
+			fetchMyRegistrations();
 		}
-		fetchRegistration();
-		fetchMyTeam();
-	}, [isAuthenticated, fetchRegistration, fetchMyTeam, router]);
+	}, [isAuthenticated, fetchMyRegistrations]);
 
-	if (!isAuthenticated) {
-		return null;
+	if (loading || !registrations) {
+		return (
+			<div className="flex justify-center items-center h-full">
+				<Loader2 className="h-8 w-8 animate-spin" />
+			</div>
+		);
 	}
 
-	// Mock competition end date (replace with actual data)
-	const competitionEndDate = new Date("2025-07-30T23:59:59.000Z");
+	// Jika user belum mendaftar kompetisi apapun, arahkan ke halaman pemilihan
+	if (registrations.length === 0) {
+		router.push("/competition/select");
+		return null; // Tampilkan loading atau null selama redirect
+	}
+
+	// Untuk sementara kita tampilkan data dari registrasi pertama
+	const currentRegistration = registrations[0];
+	const team = currentRegistration?.team;
+	const competition = currentRegistration?.competition;
+
+	const competitionEndDate = new Date(
+		competition?.endDate || "2025-07-30T23:59:59.000Z"
+	);
 
 	const getStatusBadge = (status: string) => {
 		switch (status) {
@@ -64,12 +81,12 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<AppLayout>
+		<div>
 			<div className="space-y-6">
 				{/* Header */}
 				<div>
 					<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-						Welcome back, {user?.name}!
+						Welcome back, {user?.username}!
 					</h1>
 					<p className="mt-2 text-gray-600 dark:text-gray-400">
 						Here an overview of your competition status
@@ -80,24 +97,26 @@ export default function DashboardPage() {
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 					<DashboardCard
 						title="Registration Status"
-						value={registration?.status || "Not Registered"}
+						value={currentRegistration?.status || "Not Registered"}
 						icon={
-							registration?.status === "APPROVED" ? CheckCircle : AlertCircle
+							currentRegistration?.status === "APPROVED"
+								? CheckCircle
+								: AlertCircle
 						}
 						className={
-							registration?.status === "APPROVED"
+							currentRegistration?.status === "APPROVED"
 								? "border-green-200"
 								: "border-yellow-200"
 						}
 					/>
 					<DashboardCard
-						title="Competition ID"
-						value={registration?.competitionId || "N/A"}
+						title="Competition"
+						value={competition?.name || "N/A"}
 						icon={Trophy}
 					/>
 					<DashboardCard
 						title="Team Status"
-						value={team ? "In Team" : "No Team"}
+						value={team ? team.name : "No Team"}
 						icon={Users}
 					/>
 					<DashboardCard
@@ -108,17 +127,17 @@ export default function DashboardPage() {
 				</div>
 
 				{/* Registration Status Card */}
-				{registration && (
+				{currentRegistration && (
 					<Card>
 						<CardHeader>
 							<div className="flex items-center justify-between">
 								<div>
-									<CardTitle>Registration Details</CardTitle>
+									<CardTitle>Registration for {competition.name}</CardTitle>
 									<CardDescription>
 										Your current registration status and information
 									</CardDescription>
 								</div>
-								{getStatusBadge(registration.status)}
+								{getStatusBadge(currentRegistration.status)}
 							</div>
 						</CardHeader>
 						<CardContent className="space-y-4">
@@ -127,19 +146,17 @@ export default function DashboardPage() {
 									<p className="text-sm font-medium text-gray-500">
 										Registration ID
 									</p>
-									<p className="text-lg font-semibold">#{registration.id}</p>
-								</div>
-								<div>
-									<p className="text-sm font-medium text-gray-500">
-										Competition ID
-									</p>
 									<p className="text-lg font-semibold">
-										{registration.competitionId}
+										#{currentRegistration.id}
 									</p>
 								</div>
 								<div>
-									<p className="text-sm font-medium text-gray-500">User ID</p>
-									<p className="text-lg font-semibold">{registration.userId}</p>
+									<p className="text-sm font-medium text-gray-500">Team Name</p>
+									<p className="text-lg font-semibold">{team?.name}</p>
+								</div>
+								<div>
+									<p className="text-sm font-medium text-gray-500">Team ID</p>
+									<p className="text-lg font-semibold">{team?.id}</p>
 								</div>
 							</div>
 
@@ -161,54 +178,12 @@ export default function DashboardPage() {
 					</Card>
 				)}
 
-				{/* Team Information */}
-				{team && (
-					<Card>
-						<CardHeader>
-							<CardTitle className="flex items-center space-x-2">
-								<Users className="h-5 w-5" />
-								<span>Team Information</span>
-							</CardTitle>
-							<CardDescription>Your current team details</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								<div>
-									<p className="text-sm font-medium text-gray-500">Team Name</p>
-									<p className="text-lg font-semibold">{team.name}</p>
-								</div>
-								<div>
-									<p className="text-sm font-medium text-gray-500">
-										Competition
-									</p>
-									<p className="text-lg font-semibold">
-										{team.competition.name}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm font-medium text-gray-500">
-										Max Members
-									</p>
-									<p className="text-lg font-semibold">
-										{team.competition.maxMembers}
-									</p>
-								</div>
-								<div>
-									<p className="text-sm font-medium text-gray-500">Team ID</p>
-									<p className="text-lg font-semibold">{team.id}</p>
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-				)}
-
 				{/* Countdown */}
 				<div className="grid gap-4 md:grid-cols-2">
 					<CountdownCard
 						targetDate={competitionEndDate}
 						title="Competition Ends In"
 					/>
-
 					<Card>
 						<CardHeader>
 							<CardTitle className="flex items-center space-x-2">
@@ -225,7 +200,7 @@ export default function DashboardPage() {
 							>
 								<Link href="/dashboard/biodata">
 									<Users className="mr-2 h-4 w-4" />
-									View My Biodata
+									View My Biodata & Team
 								</Link>
 							</Button>
 							<Button
@@ -252,6 +227,6 @@ export default function DashboardPage() {
 					</Card>
 				</div>
 			</div>
-		</AppLayout>
+		</div>
 	);
 }
