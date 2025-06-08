@@ -1,5 +1,3 @@
-// components/registration/RegistrationForm.tsx
-
 "use client";
 
 import { useForm, useFieldArray } from "react-hook-form";
@@ -19,8 +17,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, PlusCircle, Trash2, Users } from "lucide-react";
 import { Competition } from "@/types/competition";
+import { MemberFields } from "./MemberFields";
 
-// Skema validasi disesuaikan dengan semua data yang dibutuhkan di form
+// Skema validasi tidak berubah
 const memberSchema = z.object({
 	memberName: z.string().min(2, "Name is required."),
 	memberEmail: z.string().email("Invalid email address."),
@@ -30,17 +29,16 @@ const memberSchema = z.object({
 });
 
 const registrationFormSchema = z.object({
-	teamName: z.string().min(3, "Team name must be at least 3 characters."), // Tambahan field nama tim
+	teamName: z.string().min(3, "Team name must be at least 3 characters."),
 	institutionName: z.string().min(3, "Institution name is required."),
 	members: z.array(memberSchema),
 });
 
-// Tipe data ini sekarang merepresentasikan semua data dari form
 export type FullRegistrationFormData = z.infer<typeof registrationFormSchema>;
 
 interface RegistrationFormProps {
 	competition: Competition;
-	onSubmit: (data: FullRegistrationFormData) => Promise<void>; // Prop onSubmit akan menerima semua data form
+	onSubmit: (data: FullRegistrationFormData) => Promise<void>;
 	isLoading: boolean;
 	error: string | null;
 }
@@ -151,90 +149,15 @@ export function RegistrationForm({
 					</div>
 
 					{fields.map((field, index) => (
-						<div
+						<MemberFields
 							key={field.id}
-							className="space-y-4 rounded-lg border p-4 relative pt-8"
-						>
-							<div className="flex justify-between items-center absolute top-2 right-2">
-								{fields.length > memberRules.min && (
-									<Button
-										type="button"
-										variant="ghost"
-										size="icon"
-										onClick={() => remove(index)}
-									>
-										<Trash2 className="h-4 w-4 text-destructive" />
-									</Button>
-								)}
-							</div>
-							<p className="font-semibold absolute top-2 left-4">
-								Member {index + 1} {index === 0 && "(Team Leader)"}
-							</p>
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								<div className="space-y-2">
-									<Label htmlFor={`members.${index}.memberName`}>
-										Full Name
-									</Label>
-									<Input {...register(`members.${index}.memberName`)} />
-									{errors.members?.[index]?.memberName && (
-										<p className="text-sm text-red-500">
-											{errors.members[index]?.memberName?.message}
-										</p>
-									)}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor={`members.${index}.memberEmail`}>Email</Label>
-									<Input
-										type="email"
-										{...register(`members.${index}.memberEmail`)}
-									/>
-									{errors.members?.[index]?.memberEmail && (
-										<p className="text-sm text-red-500">
-											{errors.members[index]?.memberEmail?.message}
-										</p>
-									)}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor={`members.${index}.memberDiscordUsername`}>
-										Discord Username
-									</Label>
-									<Input
-										{...register(`members.${index}.memberDiscordUsername`)}
-										placeholder="e.g., user#1234"
-									/>
-									{errors.members?.[index]?.memberDiscordUsername && (
-										<p className="text-sm text-red-500">
-											{errors.members[index]?.memberDiscordUsername?.message}
-										</p>
-									)}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor={`members.${index}.memberStudentId`}>
-										Student ID
-									</Label>
-									<Input {...register(`members.${index}.memberStudentId`)} />
-									{errors.members?.[index]?.memberStudentId && (
-										<p className="text-sm text-red-500">
-											{errors.members[index]?.memberStudentId?.message}
-										</p>
-									)}
-								</div>
-								<div className="space-y-2">
-									<Label htmlFor={`members.${index}.memberPhone`}>
-										Phone Number
-									</Label>
-									<Input
-										type="tel"
-										{...register(`members.${index}.memberPhone`)}
-									/>
-									{errors.members?.[index]?.memberPhone && (
-										<p className="text-sm text-red-500">
-											{errors.members[index]?.memberPhone?.message}
-										</p>
-									)}
-								</div>
-							</div>
-						</div>
+							index={index}
+							control={control}
+							register={register}
+							errors={errors}
+							remove={remove}
+							canRemove={fields.length > memberRules.min}
+						/>
 					))}
 
 					{fields.length < memberRules.max && (
@@ -260,8 +183,7 @@ export function RegistrationForm({
 					<Button type="submit" className="w-full" disabled={isLoading}>
 						{isLoading ? (
 							<>
-								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Submitting Registration...
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
 							</>
 						) : (
 							"Submit Registration"
