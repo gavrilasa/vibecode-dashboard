@@ -1,259 +1,200 @@
-'use client';
+// app/dashboard/biodata/edit/page.tsx
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useAuth } from '@/hooks/useAuth';
-import { Loader2, Save, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+"use client";
 
-const biodataSchema = z.object({
-  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
-  phone: z.string().min(10, 'Phone number must be at least 10 characters'),
-  university: z.string().min(2, 'University name is required'),
-  major: z.string().min(2, 'Major is required'),
-  studentId: z.string().min(5, 'Student ID is required'),
-  address: z.string().min(10, 'Address must be at least 10 characters'),
-  emergencyContact: z.string().min(10, 'Emergency contact is required'),
-  motivation: z.string().min(50, 'Motivation must be at least 50 characters'),
-});
-
-type BiodataFormData = z.infer<typeof biodataSchema>;
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/useAuth";
+import { useRegistration } from "@/hooks/useRegistration";
+import {
+	Loader2,
+	ArrowLeft,
+	User,
+	Users,
+	GraduationCap,
+	Mail,
+	Phone,
+	Shield,
+	Info,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function EditBiodataPage() {
-  const { isAuthenticated, user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const router = useRouter();
+	const { isAuthenticated } = useAuth();
+	const { registrations, loading, fetchMyRegistrations } = useRegistration();
+	const router = useRouter();
 
-  // Mock current biodata
-  const currentBiodata = {
-    fullName: user?.name || 'John Doe',
-    phone: '+62 812 3456 7890',
-    university: 'Universitas Diponegoro',
-    major: 'Computer Science',
-    studentId: '21120121130001',
-    address: 'Jl. Prof. Soedarto No.13, Tembalang, Semarang, Jawa Tengah 50275',
-    emergencyContact: '+62 812 9876 5432',
-    motivation: 'I am passionate about technology and innovation. Participating in this competition will help me develop my skills and network with like-minded individuals.',
-  };
+	useEffect(() => {
+		if (isAuthenticated) {
+			fetchMyRegistrations();
+		}
+	}, [isAuthenticated, fetchMyRegistrations]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<BiodataFormData>({
-    resolver: zodResolver(biodataSchema),
-    defaultValues: currentBiodata,
-  });
+	if (loading || !registrations) {
+		return (
+			<div>
+				<div className="flex h-full w-full items-center justify-center">
+					<Loader2 className="h-8 w-8 animate-spin" />
+				</div>
+			</div>
+		);
+	}
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    }
-  }, [isAuthenticated, router]);
+	if (registrations.length === 0) {
+		// Arahkan ke halaman kompetisi jika belum ada registrasi
+		router.push("/competition/select");
+		return null;
+	}
 
-  const onSubmit = async (data: BiodataFormData) => {
-    setIsSubmitting(true);
-    setError('');
-    setSuccess('');
+	// Mengambil data dari registrasi pertama yang ditemukan
+	const currentRegistration = registrations[0];
+	const { details, team } = currentRegistration;
 
-    try {
-      // In a real app, you would send this data to your backend
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      setSuccess('Biodata updated successfully!');
-      setTimeout(() => {
-        router.push('/dashboard/biodata');
-      }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Failed to update biodata');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+	return (
+		<div>
+			<div className="mx-auto space-y-6">
+				{/* Header */}
+				<div className="flex items-center space-x-4">
+					<Button asChild variant="ghost" size="icon">
+						<Link href="/dashboard/biodata">
+							<ArrowLeft className="h-5 w-5" />
+							<span className="sr-only">Back to Biodata</span>
+						</Link>
+					</Button>
+					<div>
+						<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+							View Registration Details
+						</h1>
+						<p className="mt-1 text-gray-600 dark:text-gray-400">
+							This is a read-only view of your team and member information.
+						</p>
+					</div>
+				</div>
 
-  if (!isAuthenticated) {
-    return null;
-  }
+				<Alert>
+					<Info className="h-4 w-4" />
+					<AlertTitle>Read-Only Mode</AlertTitle>
+					<AlertDescription>
+						You cannot edit this information directly. For any changes, please
+						contact the event committee.
+					</AlertDescription>
+				</Alert>
 
-  return (
-    <AppLayout>
-      <div className="max-w-2xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center space-x-4">
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/dashboard/biodata">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Biodata
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Edit Biodata
-            </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
-              Update your personal information
-            </p>
-          </div>
-        </div>
+				<Card>
+					<CardHeader>
+						<CardTitle>Team & Institution Information</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-4">
+						<div className="space-y-2">
+							<Label htmlFor="teamName">Team Name</Label>
+							<Input id="teamName" value={team.name} disabled />
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="institutionName">Institution / University</Label>
+							<Input
+								id="institutionName"
+								value={details.institutionName}
+								disabled
+							/>
+						</div>
+					</CardContent>
+				</Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>
-              Update your personal details below
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              
-              {success && (
-                <Alert>
-                  <AlertDescription>{success}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <Input
-                    id="fullName"
-                    {...register('fullName')}
-                    className={errors.fullName ? 'border-red-500' : ''}
-                  />
-                  {errors.fullName && (
-                    <p className="text-sm text-red-500">{errors.fullName.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    {...register('phone')}
-                    className={errors.phone ? 'border-red-500' : ''}
-                  />
-                  {errors.phone && (
-                    <p className="text-sm text-red-500">{errors.phone.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="university">University</Label>
-                  <Input
-                    id="university"
-                    {...register('university')}
-                    className={errors.university ? 'border-red-500' : ''}
-                  />
-                  {errors.university && (
-                    <p className="text-sm text-red-500">{errors.university.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="major">Major</Label>
-                  <Input
-                    id="major"
-                    {...register('major')}
-                    className={errors.major ? 'border-red-500' : ''}
-                  />
-                  {errors.major && (
-                    <p className="text-sm text-red-500">{errors.major.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="studentId">Student ID</Label>
-                  <Input
-                    id="studentId"
-                    {...register('studentId')}
-                    className={errors.studentId ? 'border-red-500' : ''}
-                  />
-                  {errors.studentId && (
-                    <p className="text-sm text-red-500">{errors.studentId.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyContact">Emergency Contact</Label>
-                  <Input
-                    id="emergencyContact"
-                    type="tel"
-                    {...register('emergencyContact')}
-                    className={errors.emergencyContact ? 'border-red-500' : ''}
-                  />
-                  {errors.emergencyContact && (
-                    <p className="text-sm text-red-500">{errors.emergencyContact.message}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Textarea
-                  id="address"
-                  {...register('address')}
-                  className={errors.address ? 'border-red-500' : ''}
-                  rows={3}
-                />
-                {errors.address && (
-                  <p className="text-sm text-red-500">{errors.address.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="motivation">Motivation</Label>
-                <Textarea
-                  id="motivation"
-                  placeholder="Tell us why you want to participate in this competition..."
-                  {...register('motivation')}
-                  className={errors.motivation ? 'border-red-500' : ''}
-                  rows={4}
-                />
-                {errors.motivation && (
-                  <p className="text-sm text-red-500">{errors.motivation.message}</p>
-                )}
-              </div>
-
-              <div className="flex space-x-2">
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Updating...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="mr-2 h-4 w-4" />
-                      Update Biodata
-                    </>
-                  )}
-                </Button>
-                <Button asChild variant="outline">
-                  <Link href="/dashboard/biodata">Cancel</Link>
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </AppLayout>
-  );
+				<Card>
+					<CardHeader>
+						<CardTitle>Member Details</CardTitle>
+						<CardDescription>
+							Detailed information for all members of team &apos;{team.name}
+							&apos;.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="space-y-6">
+						{details.members.map((member, index) => (
+							<div key={member.id}>
+								<div className="flex items-center mb-4">
+									<div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center mr-3">
+										<User className="h-5 w-5 text-muted-foreground" />
+									</div>
+									<h3 className="text-lg font-semibold">
+										Member {index + 1}{" "}
+										{index === 0 ? (
+											<Badge variant="secondary">Team Leader</Badge>
+										) : (
+											""
+										)}
+									</h3>
+								</div>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 pl-11">
+									<div className="space-y-2">
+										<Label htmlFor={`memberName-${member.id}`}>Full Name</Label>
+										<Input
+											id={`memberName-${member.id}`}
+											value={member.memberName}
+											disabled
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label htmlFor={`memberEmail-${member.id}`}>
+											Email Address
+										</Label>
+										<Input
+											id={`memberEmail-${member.id}`}
+											value={member.memberEmail}
+											disabled
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label htmlFor={`memberPhone-${member.id}`}>
+											Phone Number
+										</Label>
+										<Input
+											id={`memberPhone-${member.id}`}
+											value={member.memberPhone}
+											disabled
+										/>
+									</div>
+									<div className="space-y-2">
+										<Label htmlFor={`memberStudentId-${member.id}`}>
+											Student ID
+										</Label>
+										<Input
+											id={`memberStudentId-${member.id}`}
+											value={member.memberStudentId}
+											disabled
+										/>
+									</div>
+									<div className="space-y-2 md:col-span-2">
+										<Label htmlFor={`memberDiscord-${member.id}`}>
+											Discord Username
+										</Label>
+										<Input
+											id={`memberDiscord-${member.id}`}
+											value={member.memberDiscordUsername}
+											disabled
+										/>
+									</div>
+								</div>
+								{index < details.members.length - 1 && (
+									<Separator className="mt-6" />
+								)}
+							</div>
+						))}
+					</CardContent>
+				</Card>
+			</div>
+		</div>
+	);
 }

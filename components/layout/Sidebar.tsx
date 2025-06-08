@@ -1,3 +1,5 @@
+// components/layout/Sidebar.tsx
+
 "use client";
 
 import Link from "next/link";
@@ -18,13 +20,15 @@ import {
 	X,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
+import { useRegistration } from "@/hooks/useRegistration"; // 1. Impor hook registrasi
+import { useState, useEffect, useMemo } from "react"; // 2. Impor useEffect dan useMemo
 
 interface SidebarProps {
 	className?: string;
 }
 
-const userMenuItems = [
+// Menu dasar untuk semua user
+const baseUserMenuItems = [
 	{
 		title: "Dashboard",
 		href: "/dashboard",
@@ -35,23 +39,9 @@ const userMenuItems = [
 		href: "/dashboard/biodata",
 		icon: User,
 	},
-	{
-		title: "Countdown",
-		href: "/dashboard/countdown",
-		icon: Clock,
-	},
-	{
-		title: "Upload Berkas",
-		href: "/dashboard/upload",
-		icon: Upload,
-	},
-	{
-		title: "Notifications",
-		href: "/dashboard/notifications",
-		icon: Bell,
-	},
 ];
 
+// Menu untuk admin
 const adminMenuItems = [
 	{
 		title: "Dashboard",
@@ -73,9 +63,42 @@ const adminMenuItems = [
 export function Sidebar({ className }: SidebarProps) {
 	const pathname = usePathname();
 	const { user, logout, isAdmin } = useAuth();
+	const { registrations, fetchMyRegistrations } = useRegistration(); // 3. Gunakan hook registrasi
 	const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-	const menuItems = isAdmin ? adminMenuItems : userMenuItems;
+	// 4. Ambil data registrasi saat komponen dimuat
+	useEffect(() => {
+		if (!isAdmin) {
+			fetchMyRegistrations();
+		}
+	}, [isAdmin, fetchMyRegistrations]);
+
+	// 5. Buat menu item secara dinamis berdasarkan data registrasi
+	const menuItems = useMemo(() => {
+		if (isAdmin) {
+			return adminMenuItems;
+		}
+
+		const dynamicUserMenuItems = [...baseUserMenuItems];
+		const userRegistration =
+			registrations && registrations.length > 0 ? registrations[0] : null;
+
+		if (userRegistration) {
+			const competitionName = userRegistration.competition.name.toLowerCase();
+			if (competitionName.includes("ui/ux")) {
+				const countdownIndex = dynamicUserMenuItems.findIndex(
+					(item) => item.href === "/dashboard/countdown"
+				);
+				dynamicUserMenuItems.splice(countdownIndex + 3, 0, {
+					title: "Upload Berkas",
+					href: "/dashboard/upload",
+					icon: Upload,
+				});
+			}
+		}
+
+		return dynamicUserMenuItems;
+	}, [isAdmin, registrations]);
 
 	const handleLogout = () => {
 		logout();
@@ -134,7 +157,8 @@ export function Sidebar({ className }: SidebarProps) {
 							</div>
 							<div className="flex-1 min-w-0">
 								<p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-									{user?.name || "User"}
+									{/* PERBAIKAN: Gunakan `user.username` bukan `user.name` */}
+									{user?.username || "User"}
 								</p>
 								<p className="text-xs text-gray-500 dark:text-gray-400 truncate">
 									{user?.email || "user@example.com"}

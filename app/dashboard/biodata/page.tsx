@@ -1,8 +1,9 @@
+// app/dashboard/biodata/page.tsx
+
 "use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AppLayout } from "@/components/layout/AppLayout";
 import {
 	Card,
 	CardContent,
@@ -13,200 +14,167 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
+import { useRegistration } from "@/hooks/useRegistration";
 import {
 	User,
 	Mail,
 	Phone,
-	MapPin,
+	Home,
 	GraduationCap,
 	Edit,
 	FileText,
+	Users,
+	Info,
+	Shield,
+	Loader2,
+	Trophy, // PERBAIKAN: Impor ikon Trophy yang hilang
 } from "lucide-react";
 import Link from "next/link";
 
 export default function BiodataPage() {
-	const { isAuthenticated, user } = useAuth();
+	const { isAuthenticated } = useAuth();
+	const { registrations, loading, fetchMyRegistrations } = useRegistration();
 	const router = useRouter();
 
 	useEffect(() => {
-		if (!isAuthenticated) {
-			router.push("/auth/login");
+		if (isAuthenticated) {
+			fetchMyRegistrations();
 		}
-	}, [isAuthenticated, router]);
+	}, [isAuthenticated, fetchMyRegistrations]);
 
-	if (!isAuthenticated) {
-		return null;
+	if (loading || !registrations) {
+		return (
+			<div>
+				<div className="flex h-full w-full items-center justify-center">
+					<Loader2 className="h-8 w-8 animate-spin" />
+				</div>
+			</div>
+		);
 	}
 
-	// Mock biodata (in real app, fetch from API)
-	const biodata = {
-		fullName: user?.username || "John Doe",
-		email: user?.email || "john@example.com",
-		phone: "+62 812 3456 7890",
-		university: "Universitas Diponegoro",
-		major: "Computer Science",
-		studentId: "21120121130001",
-		address: "Jl. Prof. Soedarto No.13, Tembalang, Semarang, Jawa Tengah 50275",
-		emergencyContact: "+62 812 9876 5432",
-		motivation:
-			"I am passionate about technology and innovation. Participating in this competition will help me develop my skills and network with like-minded individuals.",
-		documents: [
-			{ name: "Student ID Card", status: "uploaded", type: "VALIDATION" },
-			{ name: "Transcript", status: "pending", type: "VALIDATION" },
-		],
-	};
+	if (registrations.length === 0) {
+		return (
+			<div>
+				<Card>
+					<CardHeader>
+						<CardTitle>No Registration Found</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p>You have not registered for any competition yet.</p>
+						<Button asChild className="mt-4">
+							<Link href="/competition/select">Select a Competition</Link>
+						</Button>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
 
-	const getStatusBadge = (status: string) => {
-		switch (status) {
-			case "uploaded":
-				return <Badge className="bg-green-100 text-green-800">Uploaded</Badge>;
-			case "pending":
-				return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
-			case "rejected":
-				return <Badge className="bg-red-100 text-red-800">Rejected</Badge>;
-			default:
-				return <Badge variant="secondary">Not Uploaded</Badge>;
-		}
-	};
+	const currentRegistration = registrations[0];
+	const { team, competition, details, documents } = currentRegistration;
 
 	return (
-		<AppLayout>
-			<div className="space-y-6">
+		<div>
+			<div className="space-y-8">
 				{/* Header */}
-				<div className="flex items-center justify-between">
+				<div className="flex flex-wrap items-center justify-between gap-4">
 					<div>
 						<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-							My Biodata
+							Team & Biodata
 						</h1>
 						<p className="mt-2 text-gray-600 dark:text-gray-400">
-							View and manage your personal information
+							View your team information, member details, and documents.
 						</p>
 					</div>
-					<Button asChild>
-						<Link href="/dashboard/biodata/edit">
-							<Edit className="mr-2 h-4 w-4" />
-							Edit Biodata
-						</Link>
+					<Button disabled>
+						<Edit className="mr-2 h-4 w-4" />
+						Edit Biodata (Coming Soon)
 					</Button>
 				</div>
 
-				{/* Personal Information */}
+				{/* Team & Competition Information */}
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center space-x-2">
-							<User className="h-5 w-5" />
-							<span>Personal Information</span>
+							<Users className="h-5 w-5" />
+							<span>Team & Competition Details</span>
 						</CardTitle>
-						<CardDescription>Your basic personal details</CardDescription>
+						<CardDescription>
+							Your team is registered for the {competition.name}.
+						</CardDescription>
 					</CardHeader>
-					<CardContent>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<div className="space-y-4">
-								<div className="flex items-center space-x-3">
-									<User className="h-5 w-5 text-gray-400" />
-									<div>
-										<p className="text-sm font-medium text-gray-500">
-											Full Name
-										</p>
-										<p className="text-lg font-semibold">{biodata.fullName}</p>
-									</div>
-								</div>
-
-								<div className="flex items-center space-x-3">
-									<Mail className="h-5 w-5 text-gray-400" />
-									<div>
-										<p className="text-sm font-medium text-gray-500">Email</p>
-										<p className="text-lg font-semibold">{biodata.email}</p>
-									</div>
-								</div>
-
-								<div className="flex items-center space-x-3">
-									<Phone className="h-5 w-5 text-gray-400" />
-									<div>
-										<p className="text-sm font-medium text-gray-500">
-											Phone Number
-										</p>
-										<p className="text-lg font-semibold">{biodata.phone}</p>
-									</div>
-								</div>
+					<CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+						<div className="flex items-start space-x-3">
+							<Users className="h-5 w-5 mt-1 text-muted-foreground" />
+							<div>
+								<p className="text-sm font-medium text-muted-foreground">
+									Team Name
+								</p>
+								<p className="text-lg font-semibold">{team.name}</p>
 							</div>
-
-							<div className="space-y-4">
-								<div className="flex items-center space-x-3">
-									<GraduationCap className="h-5 w-5 text-gray-400" />
-									<div>
-										<p className="text-sm font-medium text-gray-500">
-											University
-										</p>
-										<p className="text-lg font-semibold">
-											{biodata.university}
-										</p>
-									</div>
-								</div>
-
-								<div className="flex items-center space-x-3">
-									<GraduationCap className="h-5 w-5 text-gray-400" />
-									<div>
-										<p className="text-sm font-medium text-gray-500">Major</p>
-										<p className="text-lg font-semibold">{biodata.major}</p>
-									</div>
-								</div>
-
-								<div className="flex items-center space-x-3">
-									<FileText className="h-5 w-5 text-gray-400" />
-									<div>
-										<p className="text-sm font-medium text-gray-500">
-											Student ID
-										</p>
-										<p className="text-lg font-semibold">{biodata.studentId}</p>
-									</div>
-								</div>
+						</div>
+						<div className="flex items-start space-x-3">
+							<Trophy className="h-5 w-5 mt-1 text-muted-foreground" />
+							<div>
+								<p className="text-sm font-medium text-muted-foreground">
+									Competition
+								</p>
+								<p className="text-lg font-semibold">{competition.name}</p>
+							</div>
+						</div>
+						<div className="flex items-start space-x-3">
+							<GraduationCap className="h-5 w-5 mt-1 text-muted-foreground" />
+							<div>
+								<p className="text-sm font-medium text-muted-foreground">
+									Institution
+								</p>
+								<p className="text-lg font-semibold">
+									{details.institutionName}
+								</p>
 							</div>
 						</div>
 					</CardContent>
 				</Card>
 
-				{/* Address & Emergency Contact */}
-				<div className="grid gap-6 md:grid-cols-2">
-					<Card>
-						<CardHeader>
-							<CardTitle className="flex items-center space-x-2">
-								<MapPin className="h-5 w-5" />
-								<span>Address</span>
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p className="text-gray-900 dark:text-white">{biodata.address}</p>
-						</CardContent>
-					</Card>
-
-					<Card>
-						<CardHeader>
-							<CardTitle className="flex items-center space-x-2">
-								<Phone className="h-5 w-5" />
-								<span>Emergency Contact</span>
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<p className="text-gray-900 dark:text-white">
-								{biodata.emergencyContact}
-							</p>
-						</CardContent>
-					</Card>
-				</div>
-
-				{/* Motivation */}
+				{/* Member Details */}
 				<Card>
 					<CardHeader>
-						<CardTitle>Motivation</CardTitle>
+						<CardTitle>Member Details</CardTitle>
 						<CardDescription>
-							Why you want to participate in this competition
+							{/* PERBAIKAN: Menggunakan tanda kutip tunggal untuk menghindari error unescaped entities */}
+							Information for all members of team &quot;{team.name}&quot;.
 						</CardDescription>
 					</CardHeader>
-					<CardContent>
-						<p className="text-gray-900 dark:text-white leading-relaxed">
-							{biodata.motivation}
-						</p>
+					<CardContent className="space-y-4">
+						{details.members.map((member, index) => (
+							<div key={member.id} className="rounded-lg border p-4 space-y-4">
+								<h4 className="font-semibold text-foreground">
+									Member {index + 1} {index === 0 ? "(Team Leader)" : ""}
+								</h4>
+								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+									<div className="flex items-center space-x-2">
+										<User className="h-4 w-4 text-muted-foreground" />
+										<span>{member.memberName}</span>
+									</div>
+									<div className="flex items-center space-x-2">
+										<Mail className="h-4 w-4 text-muted-foreground" />
+										<span>{member.memberEmail}</span>
+									</div>
+									<div className="flex items-center space-x-2">
+										<Phone className="h-4 w-4 text-muted-foreground" />
+										<span>{member.memberPhone}</span>
+									</div>
+									<div className="flex items-center space-x-2">
+										<Info className="h-4 w-4 text-muted-foreground" />
+										<span>Student ID: {member.memberStudentId}</span>
+									</div>
+									<div className="flex items-center space-x-2">
+										<Shield className="h-4 w-4 text-muted-foreground" />
+										<span>Discord: {member.memberDiscordUsername}</span>
+									</div>
+								</div>
+							</div>
+						))}
 					</CardContent>
 				</Card>
 
@@ -215,34 +183,47 @@ export default function BiodataPage() {
 					<CardHeader>
 						<CardTitle className="flex items-center space-x-2">
 							<FileText className="h-5 w-5" />
-							<span>Document Status</span>
+							<span>Uploaded Documents</span>
 						</CardTitle>
-						<CardDescription>Status of your uploaded documents</CardDescription>
+						<CardDescription>
+							Status of your uploaded documents for registration ID #
+							{currentRegistration.id}
+						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<div className="space-y-3">
-							{biodata.documents.map((doc, index) => (
-								<div
-									key={index}
-									className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-								>
-									<div>
-										<p className="font-medium">{doc.name}</p>
-										<p className="text-sm text-gray-500">Type: {doc.type}</p>
+						{documents.length > 0 ? (
+							<div className="space-y-3">
+								{documents.map((doc) => (
+									<div
+										key={doc.id}
+										className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+									>
+										<div>
+											<p className="font-medium">{doc.filename}</p>
+											<p className="text-sm text-gray-500 capitalize">
+												{doc.type.toLowerCase()} Document
+											</p>
+										</div>
+										<Badge variant="secondary">{doc.filetype}</Badge>
 									</div>
-									{getStatusBadge(doc.status)}
-								</div>
-							))}
-						</div>
+								))}
+							</div>
+						) : (
+							<div className="text-center py-6">
+								<p className="text-muted-foreground">
+									No documents have been uploaded yet.
+								</p>
+							</div>
+						)}
 
-						<div className="mt-4">
+						<div className="mt-6">
 							<Button asChild variant="outline">
-								<Link href="/dashboard/upload">Upload More Documents</Link>
+								<Link href="/dashboard/upload">Upload / Manage Documents</Link>
 							</Button>
 						</div>
 					</CardContent>
 				</Card>
 			</div>
-		</AppLayout>
+		</div>
 	);
 }

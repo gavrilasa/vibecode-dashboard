@@ -1,188 +1,188 @@
-'use client';
+// app/dashboard/upload/page.tsx
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { UploadForm } from '@/components/upload/UploadForm';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/hooks/useAuth';
-import { FileText, Upload, CheckCircle, AlertCircle } from 'lucide-react';
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { UploadForm } from "@/components/upload/UploadForm";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
+import { useRegistration } from "@/hooks/useRegistration"; // Impor hook untuk data dinamis
+import { FileText, Upload, Info, Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function UploadPage() {
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
+	const { isAuthenticated } = useAuth();
+	const { registrations, loading, fetchMyRegistrations } = useRegistration();
+	const router = useRouter();
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-    }
-  }, [isAuthenticated, router]);
+	useEffect(() => {
+		if (isAuthenticated) {
+			fetchMyRegistrations();
+		}
+	}, [isAuthenticated, fetchMyRegistrations]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
+	// Ekstrak data registrasi pertama yang relevan
+	const currentRegistration =
+		registrations && registrations.length > 0 ? registrations[0] : null;
+	const competitionName = currentRegistration?.competition.name || "";
+	const uploadedDocuments = currentRegistration?.documents || [];
 
-  // Mock competition name (replace with actual data)
-  const competitionName = 'UI/UX Design Competition';
-  
-  // Mock uploaded documents
-  const uploadedDocuments = [
-    {
-      id: 1,
-      filename: 'student_id_card.pdf',
-      type: 'VALIDATION',
-      uploadedAt: '2025-01-12T10:30:00.000Z',
-      status: 'approved',
-    },
-    {
-      id: 2,
-      filename: 'preliminary_design.pdf',
-      type: 'PENYISIHAN',
-      uploadedAt: '2025-01-10T14:20:00.000Z',
-      status: 'pending',
-    },
-  ];
+	// PERBAIKAN: Logika "Gatekeeper"
+	useEffect(() => {
+		// Jangan lakukan apa-apa saat masih loading
+		if (loading) return;
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <Badge className="bg-green-100 text-green-800">Approved</Badge>;
-      case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending Review</Badge>;
-      case 'rejected':
-        return <Badge className="bg-red-100 text-red-800">Rejected</Badge>;
-      default:
-        return <Badge variant="secondary">Unknown</Badge>;
-    }
-  };
+		// Setelah loading selesai, jika user sudah punya data registrasi
+		if (registrations) {
+			// Jika nama kompetisi tidak mengandung 'ui/ux', redirect ke dashboard
+			if (!competitionName.toLowerCase().includes("ui/ux")) {
+				router.push("/dashboard");
+			}
+		}
+	}, [loading, registrations, competitionName, router]);
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
-      case 'pending':
-        return <AlertCircle className="h-5 w-5 text-yellow-600" />;
-      case 'rejected':
-        return <AlertCircle className="h-5 w-5 text-red-600" />;
-      default:
-        return <FileText className="h-5 w-5 text-gray-600" />;
-    }
-  };
+	// Tampilkan loading spinner selama data diambil atau proses redirect
+	if (loading || !registrations) {
+		return (
+			<div>
+				<div className="flex h-full w-full items-center justify-center">
+					<Loader2 className="h-8 w-8 animate-spin" />
+				</div>
+			</div>
+		);
+	}
 
-  const getDocumentTypeLabel = (type: string) => {
-    switch (type) {
-      case 'VALIDATION':
-        return 'Validation Document';
-      case 'PENYISIHAN':
-        return 'Preliminary Submission';
-      case 'FINAL':
-        return 'Final Submission';
-      default:
-        return type;
-    }
-  };
+	// Jika user tidak terdaftar di kompetisi UI/UX, tampilkan pesan atau biarkan redirect bekerja
+	if (!competitionName.toLowerCase().includes("ui/ux")) {
+		return (
+			<div>
+				<div className="flex h-full w-full items-center justify-center">
+					<Card className="w-full max-w-md">
+						<CardHeader>
+							<CardTitle>Access Denied</CardTitle>
+							<CardDescription>
+								This page is only for UI/UX Competition participants.
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p>Redirecting you to the dashboard...</p>
+						</CardContent>
+					</Card>
+				</div>
+			</div>
+		);
+	}
 
-  return (
-    <AppLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Upload Documents
-          </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Upload required documents for {competitionName}
-          </p>
-        </div>
+	return (
+		<div>
+			<div className="space-y-8">
+				{/* Header */}
+				<div>
+					<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+						Upload Documents
+					</h1>
+					<p className="mt-2 text-gray-600 dark:text-gray-400">
+						Upload required documents for **{competitionName}**
+					</p>
+				</div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Upload Form */}
-          <div>
-            <UploadForm competitionName={competitionName} />
-          </div>
+				<div className="grid gap-6 lg:grid-cols-2">
+					{/* Upload Form */}
+					<UploadForm competitionName={competitionName} />
 
-          {/* Upload Instructions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <FileText className="h-5 w-5" />
-                <span>Upload Guidelines</span>
-              </CardTitle>
-              <CardDescription>
-                Please read these guidelines before uploading
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <h4 className="font-medium text-gray-900 dark:text-white">File Requirements:</h4>
-                <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  <li>• Only PDF files are accepted</li>
-                  <li>• Maximum file size: 10MB</li>
-                  <li>• Files must be clearly legible</li>
-                  <li>• Use descriptive filenames</li>
-                </ul>
-              </div>
+					{/* Upload Instructions */}
+					<Card>
+						<CardHeader>
+							<CardTitle className="flex items-center space-x-2">
+								<Info className="h-5 w-5" />
+								<span>Upload Guidelines</span>
+							</CardTitle>
+							<CardDescription>
+								Please read these guidelines before uploading.
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							<div className="space-y-3">
+								<h4 className="font-semibold">File Requirements:</h4>
+								<ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+									<li>Only PDF files are accepted.</li>
+									<li>Maximum file size is typically 10MB.</li>
+									<li>Ensure files are clearly legible.</li>
+									<li>
+										Use descriptive filenames (e.g., `StudentID_JohnDoe.pdf`).
+									</li>
+								</ul>
+							</div>
 
-              <div className="space-y-3">
-                <h4 className="font-medium text-gray-900 dark:text-white">Document Types:</h4>
-                <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  <li>• <strong>Validation:</strong> Student ID, transcript, etc.</li>
-                  {competitionName.toLowerCase().includes('ui/ux') && (
-                    <>
-                      <li>• <strong>Preliminary:</strong> Initial design submission</li>
-                      <li>• <strong>Final:</strong> Final design and presentation</li>
-                    </>
-                  )}
-                </ul>
-              </div>
+							<div className="space-y-3">
+								<h4 className="font-semibold">Document Types:</h4>
+								<ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+									<li>
+										<strong>Validation:</strong> Identity card, student ID card,
+										etc.
+									</li>
+									<li>
+										<strong>Preliminary:</strong> Your initial design submission
+										files.
+									</li>
+									<li>
+										<strong>Final:</strong> Your final design and presentation
+										files.
+									</li>
+								</ul>
+							</div>
+						</CardContent>
+					</Card>
+				</div>
 
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <p className="text-sm text-blue-800 dark:text-blue-200">
-                  <strong>Note:</strong> All documents will be reviewed by our team. 
-                  You'll receive an email notification once your documents are processed.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Uploaded Documents */}
-        {uploadedDocuments.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Upload className="h-5 w-5" />
-                <span>Uploaded Documents</span>
-              </CardTitle>
-              <CardDescription>
-                Documents you have already uploaded
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {uploadedDocuments.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      {getStatusIcon(doc.status)}
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          {doc.filename}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {getDocumentTypeLabel(doc.type)} • Uploaded on{' '}
-                          {new Date(doc.uploadedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                    {getStatusBadge(doc.status)}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </AppLayout>
-  );
+				{/* Uploaded Documents */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center space-x-2">
+							<FileText className="h-5 w-5" />
+							<span>My Uploaded Documents</span>
+						</CardTitle>
+						<CardDescription>
+							A list of documents you have already uploaded for this
+							competition.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						{uploadedDocuments.length > 0 ? (
+							<div className="space-y-3">
+								{uploadedDocuments.map((doc) => (
+									<div
+										key={doc.id}
+										className="flex items-center justify-between rounded-lg border p-4"
+									>
+										<div className="flex items-center space-x-4">
+											<Upload className="h-5 w-5 text-muted-foreground" />
+											<div>
+												<p className="font-medium">{doc.filename}</p>
+												<p className="text-sm text-muted-foreground capitalize">
+													{doc.type.toLowerCase().replace("_", " ")}
+												</p>
+											</div>
+										</div>
+									</div>
+								))}
+							</div>
+						) : (
+							<div className="text-center text-muted-foreground py-8">
+								<p>You haven&apos;t uploaded any documents yet.</p>
+							</div>
+						)}
+					</CardContent>
+				</Card>
+			</div>
+		</div>
+	);
 }
