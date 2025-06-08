@@ -30,5 +30,3 @@ jobs:
           context: .
           push: true
           tags: theaceundip/website:frontend-prod
-          build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
