@@ -20,8 +20,8 @@ import {
 	X,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useRegistration } from "@/hooks/useRegistration"; // 1. Impor hook registrasi
-import { useState, useEffect, useMemo } from "react"; // 2. Impor useEffect dan useMemo
+import { useRegistration } from "@/hooks/useRegistration";
+import { useState, useEffect, useMemo } from "react";
 
 interface SidebarProps {
 	className?: string;
@@ -29,67 +29,50 @@ interface SidebarProps {
 
 // Menu dasar untuk semua user
 const baseUserMenuItems = [
-	{
-		title: "Dashboard",
-		href: "/dashboard",
-		icon: BarChart3,
-	},
-	{
-		title: "Biodata",
-		href: "/dashboard/biodata",
-		icon: User,
-	},
+	{ title: "Dashboard", href: "/dashboard", icon: BarChart3 },
+	{ title: "Biodata", href: "/dashboard/biodata", icon: User },
 ];
 
 // Menu untuk admin
 const adminMenuItems = [
-	{
-		title: "Dashboard",
-		href: "/admin/dashboard",
-		icon: BarChart3,
-	},
-	{
-		title: "Registrations",
-		href: "/admin/registrations",
-		icon: FileText,
-	},
-	{
-		title: "Teams",
-		href: "/admin/teams",
-		icon: Users,
-	},
+	{ title: "Dashboard", href: "/admin/dashboard", icon: BarChart3 },
+	{ title: "Registrations", href: "/admin/registrations", icon: FileText },
+	{ title: "Teams", href: "/admin/teams", icon: Users },
 ];
 
 export function Sidebar({ className }: SidebarProps) {
 	const pathname = usePathname();
-	const { user, logout, isAdmin } = useAuth();
-	const { registrations, fetchMyRegistrations } = useRegistration(); // 3. Gunakan hook registrasi
+	const { user, logout } = useAuth(); // isAdmin tidak perlu diambil langsung, sudah ada di user.role
+	const { registrations, fetchMyRegistrations } = useRegistration();
 	const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-	// 4. Ambil data registrasi saat komponen dimuat
+	const isAdmin = user?.role === "admin";
+
 	useEffect(() => {
-		if (!isAdmin) {
+		// Hanya fetch jika bukan admin dan ada user
+		if (user && !isAdmin) {
 			fetchMyRegistrations();
 		}
-	}, [isAdmin, fetchMyRegistrations]);
+	}, [user, isAdmin, fetchMyRegistrations]);
 
-	// 5. Buat menu item secara dinamis berdasarkan data registrasi
 	const menuItems = useMemo(() => {
 		if (isAdmin) {
 			return adminMenuItems;
 		}
 
-		const dynamicUserMenuItems = [...baseUserMenuItems];
+		let dynamicUserMenuItems = [...baseUserMenuItems];
 		const userRegistration =
 			registrations && registrations.length > 0 ? registrations[0] : null;
 
 		if (userRegistration) {
 			const competitionName = userRegistration.competition.name.toLowerCase();
+			// Hanya tampilkan menu upload jika nama kompetisi mengandung "ui/ux"
 			if (competitionName.includes("ui/ux")) {
-				const countdownIndex = dynamicUserMenuItems.findIndex(
-					(item) => item.href === "/dashboard/countdown"
+				// Sisipkan menu "Upload Berkas" setelah "Biodata"
+				const biodataIndex = dynamicUserMenuItems.findIndex(
+					(item) => item.href === "/dashboard/biodata"
 				);
-				dynamicUserMenuItems.splice(countdownIndex + 3, 0, {
+				dynamicUserMenuItems.splice(biodataIndex + 1, 0, {
 					title: "Upload Berkas",
 					href: "/dashboard/upload",
 					icon: Upload,
@@ -107,7 +90,6 @@ export function Sidebar({ className }: SidebarProps) {
 
 	return (
 		<>
-			{/* Mobile menu button */}
 			<Button
 				variant="ghost"
 				size="icon"
@@ -121,7 +103,6 @@ export function Sidebar({ className }: SidebarProps) {
 				)}
 			</Button>
 
-			{/* Mobile overlay */}
 			{isMobileOpen && (
 				<div
 					className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"
@@ -129,46 +110,43 @@ export function Sidebar({ className }: SidebarProps) {
 				/>
 			)}
 
-			{/* Sidebar */}
 			<div
 				className={cn(
-					"fixed left-0 top-0 z-40 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-transform duration-300 ease-in-out",
+					"fixed left-0 top-0 z-40 h-full w-64 bg-background border-r transition-transform duration-300 ease-in-out",
 					isMobileOpen ? "translate-x-0" : "-translate-x-full",
 					"md:translate-x-0 md:static md:h-screen",
 					className
 				)}
 			>
 				<div className="flex h-full flex-col">
-					{/* Logo */}
-					<div className="flex h-16 items-center justify-center border-b border-gray-200 dark:border-gray-800">
-						<div className="flex items-center space-x-2">
-							<Trophy className="h-8 w-8 text-blue-600" />
-							<span className="text-xl font-bold text-gray-900 dark:text-white">
-								The Ace
-							</span>
-						</div>
+					<div className="flex h-16 items-center justify-center border-b">
+						<Link
+							href={isAdmin ? "/admin/dashboard" : "/dashboard"}
+							className="flex items-center space-x-2"
+						>
+							<Trophy className="h-8 w-8 text-primary" />
+							<span className="text-xl font-bold">The Ace</span>
+						</Link>
 					</div>
 
-					{/* User info */}
-					<div className="border-b border-gray-200 dark:border-gray-800 p-4">
+					<div className="border-b p-4">
 						<div className="flex items-center space-x-3">
-							<div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-								<User className="h-6 w-6 text-white" />
+							<div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+								<User className="h-6 w-6" />
 							</div>
 							<div className="flex-1 min-w-0">
-								<p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-									{/* PERBAIKAN: Gunakan `user.username` bukan `user.name` */}
+								<p className="text-sm font-medium truncate">
 									{user?.username || "User"}
 								</p>
-								<p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+								<p className="text-xs text-muted-foreground truncate">
+									{/* SEKARANG AKAN TAMPIL DENGAN BENAR */}
 									{user?.email || "user@example.com"}
 								</p>
 							</div>
 						</div>
 					</div>
 
-					{/* Navigation */}
-					<nav className="flex-1 space-y-1 p-4">
+					<nav className="flex-1 space-y-1 p-2">
 						{menuItems.map((item) => {
 							const isActive = pathname === item.href;
 							return (
@@ -179,8 +157,8 @@ export function Sidebar({ className }: SidebarProps) {
 									className={cn(
 										"flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
 										isActive
-											? "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
-											: "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+											? "bg-accent text-accent-foreground"
+											: "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
 									)}
 								>
 									<item.icon className="h-5 w-5" />
@@ -190,11 +168,10 @@ export function Sidebar({ className }: SidebarProps) {
 						})}
 					</nav>
 
-					{/* Logout */}
-					<div className="border-t border-gray-200 dark:border-gray-800 p-4">
+					<div className="border-t p-2">
 						<Button
 							variant="ghost"
-							className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-900/20"
+							className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
 							onClick={handleLogout}
 						>
 							<LogOut className="h-5 w-5 mr-3" />

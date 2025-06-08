@@ -62,6 +62,18 @@ export async function register(
 	});
 }
 
+export async function verifyEmail(
+	token: string,
+	userId: string
+): Promise<{ message: string }> {
+	return apiRequest<{ message: string }>(
+		`/auth/verify?token=${token}&userId=${userId}`,
+		{
+			method: "GET",
+		}
+	);
+}
+
 export function decodeToken(token: string): DecodedToken | null {
 	try {
 		const decoded: DecodedToken = jwtDecode(token);
