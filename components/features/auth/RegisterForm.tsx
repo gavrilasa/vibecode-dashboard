@@ -57,9 +57,9 @@ export function RegisterForm() {
 		try {
 			// Send all fields including confirmPassword as the API expects it
 			await registerUser(data);
-			setSuccess("Registration successful! You can now sign in.");
+			setSuccess("Registration successful!");
 			setTimeout(() => {
-				router.push("/auth/login");
+				router.push("/auth/sending-email");
 			}, 2000);
 		} catch (err: any) {
 			setError(err.message || "Registration failed. Please try again.");

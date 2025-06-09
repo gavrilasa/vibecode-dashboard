@@ -1,4 +1,5 @@
 // app/auth/sending-email/page.tsx
+"use client";
 
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
