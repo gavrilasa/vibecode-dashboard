@@ -104,7 +104,7 @@ export default function DashboardPage() {
 					/>
 					<CountdownCard
 						targetDate={competitionEndDate}
-						title="Time Until Competition Ends"
+						title="Time Until Registration Ends"
 					/>
 				</section>
 				{/* Main Info Section */}
