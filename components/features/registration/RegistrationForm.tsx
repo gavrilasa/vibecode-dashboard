@@ -51,7 +51,7 @@ export function RegistrationForm({
 }: RegistrationFormProps) {
 	const getMemberRules = () => {
 		const name = competition.name.toLowerCase();
-		if (name.includes("ctf")) return { min: 3, max: 3 };
+		if (name.includes("ctf")) return { min: 1, max: 3 };
 		if (name.includes("ftl")) return { min: 2, max: 2 };
 		return { min: 2, max: 3 };
 	};
@@ -88,7 +88,9 @@ export function RegistrationForm({
 			<CardHeader>
 				<CardTitle>Team and Member Information</CardTitle>
 				<CardDescription>
-					You are registering for the **{competition.name}**. Please fill in
+					{/* bold competitin name */}
+					You are registering for the{" "}
+					<span className="font-semibold">{competition.name}</span>. Please fill in
 					your team details below.
 					<br />
 					<span className="font-semibold text-primary">
