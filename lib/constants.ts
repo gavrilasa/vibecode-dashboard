@@ -44,6 +44,8 @@ export const COMPETITION_KEYS = {
 export const APP_ROUTES = {
 	LOGIN: "/auth/login",
 	REGISTER: "/auth/register",
+	SENDING_EMAIL: "/auth/sending-email",
+	VERIFY_EMAIL: "/verify",
 	DASHBOARD: "/dashboard",
 	ADMIN_DASHBOARD: "/admin/dashboard",
 	ADMIN_REGISTRATIONS: "/admin/registrations",

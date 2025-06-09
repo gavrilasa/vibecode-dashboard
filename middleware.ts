@@ -26,7 +26,7 @@ export function middleware(request: NextRequest) {
 	const token = request.cookies.get("auth-token")?.value;
 
 	// Definisikan rute publik yang tidak memerlukan otentikasi.
-	const publicRoutes = [APP_ROUTES.LOGIN, APP_ROUTES.REGISTER];
+	const publicRoutes = [APP_ROUTES.LOGIN, APP_ROUTES.REGISTER, APP_ROUTES.SENDING_EMAIL, APP_ROUTES.VERIFY_EMAIL];
 
 	// Izinkan akses ke rute publik.
 	if (publicRoutes.includes(pathname)) {
