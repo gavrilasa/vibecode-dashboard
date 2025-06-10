@@ -22,6 +22,7 @@ COPY --from=base /usr/src/app/node_modules ./node_modules
 COPY --from=base /usr/src/app/.next ./.next
 COPY --from=base /usr/src/app/package*.json ./
 COPY --from=base /usr/src/app/bun.lock ./
+COPY --from=base /usr/src/app/next.config.js ./
 
 EXPOSE 3000
 
