@@ -23,6 +23,17 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import { useState, useEffect, useMemo } from "react";
 import { COMPETITION_KEYS, ROLES } from "@/lib/constants";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog"; // Import AlertDialog components
+import { useRouter } from "next/navigation"; // Import useRouter
 
 interface SidebarProps {
 	className?: string;
@@ -43,14 +54,15 @@ const adminMenuItems = [
 
 export function Sidebar({ className }: SidebarProps) {
 	const pathname = usePathname();
-	const { user, logout } = useAuth(); // isAdmin tidak perlu diambil langsung, sudah ada di user.role
+	const { user, logout } = useAuth();
 	const { registrations, fetchMyRegistrations } = useRegistration();
 	const [isMobileOpen, setIsMobileOpen] = useState(false);
+	const [showLogoutModal, setShowLogoutModal] = useState(false); // State for logout modal
+	const router = useRouter(); // Initialize useRouter
 
 	const isAdmin = user?.role === ROLES.ADMIN;
 
 	useEffect(() => {
-		// Hanya fetch jika bukan admin dan ada user
 		if (user && !isAdmin) {
 			fetchMyRegistrations();
 		}
@@ -68,7 +80,6 @@ export function Sidebar({ className }: SidebarProps) {
 		if (userRegistration) {
 			const competitionName = userRegistration.competition.name.toLowerCase();
 			if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
-				// Sisipkan menu "Upload Berkas" setelah "Biodata"
 				const biodataIndex = dynamicUserMenuItems.findIndex(
 					(item) => item.href === "/dashboard/biodata"
 				);
@@ -83,9 +94,10 @@ export function Sidebar({ className }: SidebarProps) {
 		return dynamicUserMenuItems;
 	}, [isAdmin, registrations]);
 
-	const handleLogout = () => {
+	const handleLogoutConfirm = () => {
 		logout();
-		setIsMobileOpen(false);
+		setShowLogoutModal(false);
+		router.push("/auth/login"); // Redirect immediately without full page refresh
 	};
 
 	return (
@@ -139,7 +151,6 @@ export function Sidebar({ className }: SidebarProps) {
 									{user?.username || "User"}
 								</p>
 								<p className="text-xs text-muted-foreground truncate">
-									{/* SEKARANG AKAN TAMPIL DENGAN BENAR */}
 									{user?.email || "user@example.com"}
 								</p>
 							</div>
@@ -172,7 +183,7 @@ export function Sidebar({ className }: SidebarProps) {
 						<Button
 							variant="ghost"
 							className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
-							onClick={handleLogout}
+							onClick={() => setShowLogoutModal(true)} // Open modal on click
 						>
 							<LogOut className="h-5 w-5 mr-3" />
 							Logout
@@ -180,6 +191,28 @@ export function Sidebar({ className }: SidebarProps) {
 					</div>
 				</div>
 			</div>
+
+			{/* Logout Confirmation Dialog */}
+			<AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							Are you sure you want to log out?
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							You will be redirected to the login page.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setShowLogoutModal(false)}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction onClick={handleLogoutConfirm}>
+							Logout
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</>
 	);
 }
