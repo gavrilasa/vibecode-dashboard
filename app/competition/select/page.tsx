@@ -4,16 +4,15 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CompetitionCard } from "@/components/features/competition/CompetitionCard";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompetition } from "@/hooks/useCompetition";
-import { useRegistration } from "@/hooks/useRegistration"; // Impor hook registrasi
+import { useRegistration } from "@/hooks/useRegistration";
 import { useRegistrationFlowStore } from "@/store/registration-flow-store";
 import { Competition } from "@/types/competition";
-import { ArrowRight } from "lucide-react";
 import { PageLoader } from "@/components/common/PageLoader";
+import { COMPETITION_KEYS } from "@/lib/constants";
 
 export default function CompetitionSelectPage() {
 	const { isAuthenticated } = useAuth();
@@ -24,85 +23,124 @@ export default function CompetitionSelectPage() {
 		fetchCompetitions,
 	} = useCompetition();
 
-	// PERBAIKAN: Tambahkan hook registrasi untuk memeriksa status
 	const {
 		registrations,
 		loading: registrationLoading,
 		fetchMyRegistrations,
 	} = useRegistration();
 
-	const { selectedCompetition, setSelectedCompetition } =
-		useRegistrationFlowStore();
+	const { setSelectedCompetition } = useRegistrationFlowStore();
 	const router = useRouter();
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			// Pertama, cek status registrasi user
 			fetchMyRegistrations();
-			// Kemudian, fetch data kompetisi
 			fetchCompetitions();
 		}
 	}, [isAuthenticated, fetchMyRegistrations, fetchCompetitions]);
 
-	const handleSelectCompetition = (competition: Competition) => {
-		setSelectedCompetition(competition);
-	};
-
-	const handleContinue = () => {
-		if (selectedCompetition) {
+	const handleSelectAndNavigate = (competition: Competition) => {
+		if (competition) {
+			setSelectedCompetition(competition);
 			router.push("/registration/form");
 		}
 	};
 
-	// Tampilkan loading jika sedang memeriksa status registrasi
 	if (registrationLoading || (registrations && registrations.length > 0)) {
 		return <PageLoader />;
 	}
 
-	return (
-		<div className="p-4 md:p-24">
-			<div className="space-y-6">
-				<div>
-					<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-						Select Competition
-					</h1>
-					<p className="mt-2 text-gray-600 dark:text-gray-400">
-						Choose a competition to participate in (Step 1 of 2)
-					</p>
-				</div>
+	const ctfCompetition = competitions.find((c) =>
+		c.name.toLowerCase().includes(COMPETITION_KEYS.CTF)
+	);
+	const uiuxCompetition = competitions.find((c) =>
+		c.name.toLowerCase().includes(COMPETITION_KEYS.UI_UX)
+	);
+	const ftlCompetition = competitions.find((c) =>
+		c.name.toLowerCase().includes(COMPETITION_KEYS.FTL)
+	);
 
-				{competitionsError && (
+	return (
+		<div className="flex flex-col md:flex-row h-screen w-screen text-white">
+			{competitionsLoading && <PageLoader />}
+			{competitionsError && (
+				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
 					<Alert variant="destructive">
 						<AlertDescription>{competitionsError}</AlertDescription>
 					</Alert>
-				)}
+				</div>
+			)}
 
-				{competitionsLoading ? (
-					<div className="flex justify-center py-12">
-						<PageLoader />
-					</div>
-				) : (
-					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-						{competitions.map((competition) => (
-							<CompetitionCard
-								key={competition.id}
-								competition={competition}
-								onSelect={handleSelectCompetition}
-								selected={selectedCompetition?.id === competition.id}
-							/>
-						))}
-					</div>
-				)}
+			{!competitionsLoading && !competitionsError && (
+				<>
+					{/* CTF Section */}
+					{ctfCompetition && (
+						<div
+							className="flex-1 flex flex-col justify-center items-center p-8 text-center transition-all duration-300 ease-in-out hover:flex-[1.1]"
+							style={{ backgroundColor: "#E58A2E" }}
+						>
+							<h1 className="text-4xl md:text-6xl font-bold">
+								Capture The Flag
+							</h1>
+							<p className="mt-4 text-lg max-w-sm">
+								Dive into a world of digital puzzles and cybersecurity
+								challenges.
+							</p>
+							<Button
+								onClick={() => handleSelectAndNavigate(ctfCompetition)}
+								className="mt-8 bg-white/20 hover:bg-white/30 text-white border-white border"
+								size="lg"
+							>
+								Select Competition
+							</Button>
+						</div>
+					)}
 
-				{selectedCompetition && (
-					<div className="flex justify-center pt-4">
-						<Button onClick={handleContinue} size="lg">
-							Continue to Biodata Form
-							<ArrowRight className="ml-2 h-4 w-4" />
-						</Button>
-					</div>
-				)}
-			</div>
+					{/* UI/UX Section */}
+					{uiuxCompetition && (
+						<div
+							className="flex-1 flex flex-col justify-center items-center p-8 text-center transition-all duration-300 ease-in-out hover:flex-[1.1]"
+							style={{ backgroundColor: "#377A80" }}
+						>
+							<h1 className="text-4xl md:text-6xl font-bold">UI/UX Design</h1>
+							<p className="mt-4 text-lg max-w-sm">
+								Shape the future by designing intuitive and beautiful user
+								experiences.
+							</p>
+							<Button
+								onClick={() => handleSelectAndNavigate(uiuxCompetition)}
+								className="mt-8 bg-white/20 hover:bg-white/30 text-white border-white border"
+								size="lg"
+							>
+								Select Competition
+							</Button>
+						</div>
+					)}
+
+					{/* FTL Section */}
+					{ftlCompetition && (
+						<div
+							className="flex-1 flex flex-col justify-center items-center p-8 text-center transition-all duration-300 ease-in-out hover:flex-[1.1]"
+							style={{ backgroundColor: "#204E60" }}
+						>
+							<h1 className="text-4xl md:text-6xl font-bold">
+								Follow The Light
+							</h1>
+							<p className="mt-4 text-lg max-w-sm">
+								Navigate complex algorithms in this fast-paced competitive
+								programming challenge.
+							</p>
+							<Button
+								onClick={() => handleSelectAndNavigate(ftlCompetition)}
+								className="mt-8 bg-white/20 hover:bg-white/30 text-white border-white border"
+								size="lg"
+							>
+								Select Competition
+							</Button>
+						</div>
+					)}
+				</>
+			)}
 		</div>
 	);
 }

@@ -181,7 +181,11 @@ export function RegistrationForm({
 						</Button>
 					)}
 
-					<Button type="submit" className="w-full" disabled={isLoading}>
+					<Button
+						type="submit"
+						className="w-full text-white"
+						disabled={isLoading}
+					>
 						{isLoading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...

@@ -113,7 +113,7 @@ export default function RegistrationFormPage() {
 	}
 
 	return (
-		<AppLayout>
+		<div className="p-4 md:p-24">
 			<div className="max-w-4xl mx-auto space-y-6">
 				<PageHeader
 					title="Complete Your Registration"
@@ -136,6 +136,6 @@ export default function RegistrationFormPage() {
 					error={error}
 				/>
 			</div>
-		</AppLayout>
+		</div>
 	);
 }
