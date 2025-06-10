@@ -8,7 +8,7 @@ import {
 	getRegistrationById,
 	changeRegistrationStatus,
 } from "@/lib/registration";
-import { Registration, REGISTRATION_STATUS } from "@/types/registration";
+import { Registration } from "@/types/registration";
 import { PageLoader } from "@/components/common/PageLoader";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { REGISTRATION_STATUS } from "@/lib/constants";
 
 export default function RegistrationDetailPage() {
 	const params = useParams();

@@ -1,3 +1,5 @@
+// components/features/biodata/MemberList.tsx
+
 import {
 	Card,
 	CardContent,
@@ -6,7 +8,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Member } from "@/types/registration";
-import { Info, Mail, Phone, Shield, User } from "lucide-react";
+import { Mail, Phone, User, Info } from "lucide-react"; // Shield (Discord icon) dihapus
 
 interface MemberListProps {
 	members: Member[];
@@ -28,7 +30,9 @@ export function MemberList({ members, teamName }: MemberListProps) {
 						<h4 className="font-semibold text-foreground">
 							Member {index + 1} {index === 0 ? "(Team Leader)" : ""}
 						</h4>
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 text-sm">
+							{" "}
+							{/* Disesuaikan menjadi 2 kolom */}
 							<div className="flex items-center space-x-2">
 								<User className="h-4 w-4 text-muted-foreground" />
 								<span>{member.memberName}</span>
@@ -44,10 +48,6 @@ export function MemberList({ members, teamName }: MemberListProps) {
 							<div className="flex items-center space-x-2">
 								<Info className="h-4 w-4 text-muted-foreground" />
 								<span>Student ID: {member.memberStudentId}</span>
-							</div>
-							<div className="flex items-center space-x-2">
-								<Shield className="h-4 w-4 text-muted-foreground" />
-								<span>Discord: {member.memberDiscordUsername}</span>
 							</div>
 						</div>
 					</div>

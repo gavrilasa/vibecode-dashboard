@@ -2,12 +2,14 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
 	Card,
 	CardContent,
@@ -15,19 +17,53 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
-import { ArrowLeft, User, Info } from "lucide-react";
+import { updateRegistration } from "@/lib/registration";
+import { Loader2, ArrowLeft, Users, PlusCircle, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLoader } from "@/components/common/PageLoader";
+import { toast } from "sonner";
+import { APP_ROUTES } from "@/lib/constants";
+
+// Skema validasi untuk form edit, tanpa discord
+const memberSchema = z.object({
+	memberName: z.string().min(2, "Name is required."),
+	memberEmail: z.string().email("Invalid email address."),
+	memberStudentId: z.string().min(5, "Student ID is required."),
+	memberPhone: z.string().min(10, "Phone number is required."),
+});
+
+const editBiodataSchema = z.object({
+	institutionName: z.string().min(3, "Institution name is required."),
+	members: z.array(memberSchema),
+});
+
+type EditBiodataFormData = z.infer<typeof editBiodataSchema>;
 
 export default function EditBiodataPage() {
 	const { isAuthenticated } = useAuth();
 	const { registrations, loading, fetchMyRegistrations } = useRegistration();
 	const router = useRouter();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const {
+		register,
+		control,
+		handleSubmit,
+		reset,
+		formState: { errors, isDirty },
+	} = useForm<EditBiodataFormData>({
+		resolver: zodResolver(editBiodataSchema),
+	});
+
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "members",
+	});
 
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -35,152 +71,217 @@ export default function EditBiodataPage() {
 		}
 	}, [isAuthenticated, fetchMyRegistrations]);
 
+	useEffect(() => {
+		if (registrations && registrations.length > 0) {
+			const reg = registrations[0];
+			reset({
+				institutionName: reg.details.institutionName,
+				members: reg.details.members.map((m) => ({
+					memberName: m.memberName,
+					memberEmail: m.memberEmail,
+					memberStudentId: m.memberStudentId,
+					memberPhone: m.memberPhone,
+				})),
+			});
+		}
+	}, [registrations, reset]);
+
+	const onSubmit = async (data: EditBiodataFormData) => {
+		setIsSubmitting(true);
+		try {
+			const payload = {
+				...data,
+				memberCount: data.members.length,
+				memberNames: data.members.map((m) => m.memberName),
+				memberEmails: data.members.map((m) => m.memberEmail),
+				memberStudentIds: data.members.map((m) => m.memberStudentId),
+				memberPhones: data.members.map((m) => m.memberPhone),
+			};
+
+			await updateRegistration(payload);
+			toast.success("Biodata updated successfully!");
+			fetchMyRegistrations(); // refetch data
+			router.push("/dashboard/biodata");
+		} catch (error: any) {
+			toast.error("Failed to update biodata", {
+				description: error.message || "An unexpected error occurred.",
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
 	if (loading || !registrations) {
-		return (
-			<div>
-				<PageLoader />
-			</div>
-		);
+		return <PageLoader />;
 	}
 
 	if (registrations.length === 0) {
-		// Arahkan ke halaman kompetisi jika belum ada registrasi
-		router.push("/competition/select");
-		return null;
+		router.push(APP_ROUTES.SELECT_COMPETITION);
+		return <PageLoader />;
 	}
 
-	// Mengambil data dari registrasi pertama yang ditemukan
-	const currentRegistration = registrations[0];
-	const { details, team } = currentRegistration;
+	const { team, competition } = registrations[0];
+	const memberRules = { min: 2, max: 3 }; // Ganti dengan logika yang sesuai jika ada
 
 	return (
-		<div>
-			<div className="mx-auto space-y-6">
-				{/* Header */}
-				<div className="flex items-center space-x-4">
-					<Button asChild variant="ghost" size="icon">
-						<Link href="/dashboard/biodata">
-							<ArrowLeft className="h-5 w-5" />
-							<span className="sr-only">Back to Biodata</span>
-						</Link>
-					</Button>
-					<PageHeader
-						title="View Registration Details"
-						description="This is a read-only view of your team and member information."
-					/>
-				</div>
+		<div className="space-y-6">
+			<PageHeader
+				title="Edit Biodata"
+				description={`Update your team and member information for ${competition.name}.`}
+			>
+				<Button variant="outline" asChild>
+					<Link href="/dashboard/biodata">
+						<ArrowLeft className="mr-2 h-4 w-4" />
+						Cancel
+					</Link>
+				</Button>
+			</PageHeader>
 
-				<Alert>
-					<Info className="h-4 w-4" />
-					<AlertTitle>Read-Only Mode</AlertTitle>
-					<AlertDescription>
-						You cannot edit this information directly. For any changes, please
-						contact the event committee.
-					</AlertDescription>
-				</Alert>
-
-				<Card>
-					<CardHeader>
-						<CardTitle>Team & Institution Information</CardTitle>
-					</CardHeader>
-					<CardContent className="space-y-4">
-						<div className="space-y-2">
-							<Label htmlFor="teamName">Team Name</Label>
-							<Input id="teamName" value={team.name} disabled />
-						</div>
-						<div className="space-y-2">
+			<Card>
+				<CardHeader>
+					<CardTitle>Team: {team.name}</CardTitle>
+					<CardDescription>
+						The team name cannot be changed. For other changes, please contact
+						the committee.
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+						<div>
 							<Label htmlFor="institutionName">Institution / University</Label>
 							<Input
 								id="institutionName"
-								value={details.institutionName}
-								disabled
+								{...register("institutionName")}
+								className={errors.institutionName ? "border-destructive" : ""}
 							/>
+							{errors.institutionName && (
+								<p className="text-sm text-destructive mt-1">
+									{errors.institutionName.message}
+								</p>
+							)}
 						</div>
-					</CardContent>
-				</Card>
+						<Separator />
+						<div className="flex items-center gap-2">
+							<Users className="h-5 w-5 text-muted-foreground" />
+							<h3 className="text-lg font-semibold">Member Details</h3>
+						</div>
 
-				<Card>
-					<CardHeader>
-						<CardTitle>Member Details</CardTitle>
-						<CardDescription>
-							Detailed information for all members of team &apos;{team.name}
-							&apos;.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-6">
-						{details.members.map((member, index) => (
-							<div key={member.id}>
-								<div className="flex items-center mb-4">
-									<div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center mr-3">
-										<User className="h-5 w-5 text-muted-foreground" />
-									</div>
-									<h3 className="text-lg font-semibold">
-										Member {index + 1}{" "}
-										{index === 0 ? (
-											<Badge variant="secondary">Team Leader</Badge>
-										) : (
-											""
+						<div className="space-y-6">
+							{fields.map((field, index) => (
+								<div
+									key={field.id}
+									className="relative space-y-4 rounded-lg border p-4 pt-8"
+								>
+									<div className="absolute top-2 flex w-[calc(100%-2rem)] justify-between">
+										<p className="font-semibold">
+											Member {index + 1} {index === 0 && "(Team Leader)"}
+										</p>
+										{fields.length > memberRules.min && (
+											<Button
+												type="button"
+												variant="ghost"
+												size="icon"
+												className="h-7 w-7"
+												onClick={() => remove(index)}
+											>
+												<Trash2 className="h-4 w-4 text-destructive" />
+											</Button>
 										)}
-									</h3>
+									</div>
+
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<div className="space-y-1">
+											<Label htmlFor={`members.${index}.memberName`}>
+												Full Name
+											</Label>
+											<Input {...register(`members.${index}.memberName`)} />
+											{errors.members?.[index]?.memberName && (
+												<p className="text-sm text-destructive">
+													{errors.members[index]?.memberName?.message}
+												</p>
+											)}
+										</div>
+										<div className="space-y-1">
+											<Label htmlFor={`members.${index}.memberEmail`}>
+												Email
+											</Label>
+											<Input
+												type="email"
+												{...register(`members.${index}.memberEmail`)}
+											/>
+											{errors.members?.[index]?.memberEmail && (
+												<p className="text-sm text-destructive">
+													{errors.members[index]?.memberEmail?.message}
+												</p>
+											)}
+										</div>
+										<div className="space-y-1">
+											<Label htmlFor={`members.${index}.memberStudentId`}>
+												Student ID
+											</Label>
+											<Input
+												{...register(`members.${index}.memberStudentId`)}
+											/>
+											{errors.members?.[index]?.memberStudentId && (
+												<p className="text-sm text-destructive">
+													{errors.members[index]?.memberStudentId?.message}
+												</p>
+											)}
+										</div>
+										<div className="space-y-1">
+											<Label htmlFor={`members.${index}.memberPhone`}>
+												Phone Number
+											</Label>
+											<Input
+												type="tel"
+												{...register(`members.${index}.memberPhone`)}
+											/>
+											{errors.members?.[index]?.memberPhone && (
+												<p className="text-sm text-destructive">
+													{errors.members[index]?.memberPhone?.message}
+												</p>
+											)}
+										</div>
+									</div>
 								</div>
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 pl-11">
-									<div className="space-y-2">
-										<Label htmlFor={`memberName-${member.id}`}>Full Name</Label>
-										<Input
-											id={`memberName-${member.id}`}
-											value={member.memberName}
-											disabled
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label htmlFor={`memberEmail-${member.id}`}>
-											Email Address
-										</Label>
-										<Input
-											id={`memberEmail-${member.id}`}
-											value={member.memberEmail}
-											disabled
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label htmlFor={`memberPhone-${member.id}`}>
-											Phone Number
-										</Label>
-										<Input
-											id={`memberPhone-${member.id}`}
-											value={member.memberPhone}
-											disabled
-										/>
-									</div>
-									<div className="space-y-2">
-										<Label htmlFor={`memberStudentId-${member.id}`}>
-											Student ID
-										</Label>
-										<Input
-											id={`memberStudentId-${member.id}`}
-											value={member.memberStudentId}
-											disabled
-										/>
-									</div>
-									<div className="space-y-2 md:col-span-2">
-										<Label htmlFor={`memberDiscord-${member.id}`}>
-											Discord Username
-										</Label>
-										<Input
-											id={`memberDiscord-${member.id}`}
-											value={member.memberDiscordUsername}
-											disabled
-										/>
-									</div>
-								</div>
-								{index < details.members.length - 1 && (
-									<Separator className="mt-6" />
-								)}
-							</div>
-						))}
-					</CardContent>
-				</Card>
-			</div>
+							))}
+						</div>
+
+						{fields.length < memberRules.max && (
+							<Button
+								type="button"
+								variant="outline"
+								className="w-full"
+								onClick={() =>
+									append({
+										memberName: "",
+										memberEmail: "",
+										memberStudentId: "",
+										memberPhone: "",
+									})
+								}
+							>
+								<PlusCircle className="mr-2 h-4 w-4" />
+								Add Member
+							</Button>
+						)}
+
+						<Button
+							type="submit"
+							className="w-full"
+							disabled={isSubmitting || !isDirty}
+						>
+							{isSubmitting ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
+								</>
+							) : (
+								"Save Changes"
+							)}
+						</Button>
+					</form>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
