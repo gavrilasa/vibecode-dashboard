@@ -124,11 +124,10 @@ export default function CompetitionSelectPage() {
 							style={{ backgroundColor: "#204E60" }}
 						>
 							<h1 className="text-4xl md:text-6xl font-bold">
-								Follow The Light
+								Follow The Line
 							</h1>
 							<p className="mt-4 text-lg max-w-sm">
-								Navigate complex algorithms in this fast-paced competitive
-								programming challenge.
+								Forge the future by engineering autonomous precision.
 							</p>
 							<Button
 								onClick={() => handleSelectAndNavigate(ftlCompetition)}
