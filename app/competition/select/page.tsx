@@ -44,14 +44,6 @@ export default function CompetitionSelectPage() {
 		}
 	}, [isAuthenticated, fetchMyRegistrations, fetchCompetitions]);
 
-	// PERBAIKAN: Tambahkan useEffect untuk redirect jika sudah terdaftar
-	useEffect(() => {
-		if (registrations && registrations.length > 0) {
-			// Jika user sudah punya data registrasi, langsung arahkan ke dashboard
-			router.push("/dashboard");
-		}
-	}, [registrations, router]);
-
 	const handleSelectCompetition = (competition: Competition) => {
 		setSelectedCompetition(competition);
 	};

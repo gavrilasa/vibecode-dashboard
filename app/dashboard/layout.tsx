@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageLoader } from "@/components/common/PageLoader";
+import { APP_ROUTES } from "@/lib/constants"; // Import APP_ROUTES
 
 /**
  * Layout ini berfungsi sebagai "gatekeeper" untuk semua halaman di bawah /dashboard.
@@ -40,13 +41,14 @@ export default function DashboardLayout({
 		// Setelah loading selesai, periksa hasil `registrations`
 		// Jika hasilnya adalah array kosong, berarti user belum terdaftar di kompetisi manapun.
 		if (!loading && registrations && registrations.length === 0) {
-			router.push("/competition/select");
+			router.push(APP_ROUTES.SELECT_COMPETITION); // Menggunakan konstanta APP_ROUTES
 		}
 	}, [loading, registrations, router]);
 
 	// 3. Tampilkan layar loading selama pengecekan berlangsung
 	// Ini mencegah "flash" konten dashboard sebelum redirect.
-	if (loading || !registrations) {
+	// Juga tampilkan loading jika user belum terautentikasi (middleware akan redirect)
+	if (!isAuthenticated || loading || !registrations) {
 		return <PageLoader />;
 	}
 
