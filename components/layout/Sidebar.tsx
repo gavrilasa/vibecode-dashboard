@@ -7,11 +7,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-	Trophy,
 	User,
-	Clock,
 	Upload,
-	Bell,
 	LogOut,
 	BarChart3,
 	Users,
@@ -32,20 +29,19 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/components/ui/alert-dialog"; // Import AlertDialog components
-import { useRouter } from "next/navigation"; // Import useRouter
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface SidebarProps {
 	className?: string;
 }
 
-// Menu dasar untuk semua user
 const baseUserMenuItems = [
 	{ title: "Dashboard", href: "/dashboard", icon: BarChart3 },
 	{ title: "Biodata", href: "/dashboard/biodata", icon: User },
 ];
 
-// Menu untuk admin
 const adminMenuItems = [
 	{ title: "Dashboard", href: "/admin/dashboard", icon: BarChart3 },
 	{ title: "Registrations", href: "/admin/registrations", icon: FileText },
@@ -57,8 +53,8 @@ export function Sidebar({ className }: SidebarProps) {
 	const { user, logout } = useAuth();
 	const { registrations, fetchMyRegistrations } = useRegistration();
 	const [isMobileOpen, setIsMobileOpen] = useState(false);
-	const [showLogoutModal, setShowLogoutModal] = useState(false); // State for logout modal
-	const router = useRouter(); // Initialize useRouter
+	const [showLogoutModal, setShowLogoutModal] = useState(false);
+	const router = useRouter();
 
 	const isAdmin = user?.role === ROLES.ADMIN;
 
@@ -94,10 +90,31 @@ export function Sidebar({ className }: SidebarProps) {
 		return dynamicUserMenuItems;
 	}, [isAdmin, registrations]);
 
+	const profileImageUrl = useMemo(() => {
+		if (isAdmin || !registrations || registrations.length === 0) {
+			return null;
+		}
+
+		const userRegistration = registrations[0];
+		const competitionName = userRegistration.competition.name.toLowerCase();
+
+		if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
+			return "https://storage.theaceundip.id/assets/profile-uiux.png";
+		}
+		if (competitionName.includes(COMPETITION_KEYS.CTF)) {
+			return "https://storage.theaceundip.id/assets/profile-ctf.png";
+		}
+		if (competitionName.includes(COMPETITION_KEYS.FTL)) {
+			return "https://storage.theaceundip.id/assets/profile-ftl.png";
+		}
+
+		return null;
+	}, [isAdmin, registrations]);
+
 	const handleLogoutConfirm = () => {
 		logout();
 		setShowLogoutModal(false);
-		router.push("/auth/login"); // Redirect immediately without full page refresh
+		router.push("/auth/login");
 	};
 
 	return (
@@ -131,21 +148,41 @@ export function Sidebar({ className }: SidebarProps) {
 				)}
 			>
 				<div className="flex h-full flex-col">
-					<div className="flex h-16 items-center justify-center border-b">
+					<div className="flex h-20 items-center justify-center border-b">
 						<Link
 							href={isAdmin ? "/admin/dashboard" : "/dashboard"}
 							className="flex items-center space-x-2"
 						>
-							<Trophy className="h-8 w-8 text-primary" />
-							<span className="text-xl font-bold">The Ace</span>
+							<Image
+								src={
+									"https://storage.theaceundip.id/assets/TheAce-Mini-Logo.png"
+								}
+								height={36}
+								width={36}
+								alt="Logo The Ace"
+								className="object-cover size-max"
+							/>
+							<span className="text-xl font-bold text-secondary">
+								Dashboard
+							</span>
 						</Link>
 					</div>
 
 					<div className="border-b p-4">
 						<div className="flex items-center space-x-3">
-							<div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-								<User className="h-6 w-6" />
-							</div>
+							{profileImageUrl ? (
+								<Image
+									src={profileImageUrl}
+									alt="Profile Picture"
+									width={40}
+									height={40}
+									className="rounded-full h-10 w-10 object-cover"
+								/>
+							) : (
+								<div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+									<User className="h-6 w-6" />
+								</div>
+							)}
 							<div className="flex-1 min-w-0">
 								<p className="text-sm font-medium truncate">
 									{user?.username || "User"}
@@ -157,7 +194,7 @@ export function Sidebar({ className }: SidebarProps) {
 						</div>
 					</div>
 
-					<nav className="flex-1 space-y-1 p-2">
+					<nav className="flex-1 space-y-2 px-2 py-4">
 						{menuItems.map((item) => {
 							const isActive = pathname === item.href;
 							return (
@@ -166,10 +203,10 @@ export function Sidebar({ className }: SidebarProps) {
 									href={item.href}
 									onClick={() => setIsMobileOpen(false)}
 									className={cn(
-										"flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+										"flex items-center space-x-3 rounded-lg p-3 text-sm font-medium transition-colors",
 										isActive
 											? "bg-accent text-accent-foreground"
-											: "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+											: "py-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
 									)}
 								>
 									<item.icon className="h-5 w-5" />
@@ -183,7 +220,7 @@ export function Sidebar({ className }: SidebarProps) {
 						<Button
 							variant="ghost"
 							className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
-							onClick={() => setShowLogoutModal(true)} // Open modal on click
+							onClick={() => setShowLogoutModal(true)}
 						>
 							<LogOut className="h-5 w-5 mr-3" />
 							Logout
@@ -192,7 +229,6 @@ export function Sidebar({ className }: SidebarProps) {
 				</div>
 			</div>
 
-			{/* Logout Confirmation Dialog */}
 			<AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
