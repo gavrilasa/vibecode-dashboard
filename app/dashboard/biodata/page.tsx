@@ -65,7 +65,7 @@ export default function BiodataPage() {
 				title="Team & Biodata"
 				description="View your team information, member details, and documents."
 			>
-				<Button asChild>
+				<Button asChild className="text-white">
 					<Link href="/dashboard/biodata/edit">
 						<Edit className="mr-2 h-4 w-4" />
 						Edit Biodata

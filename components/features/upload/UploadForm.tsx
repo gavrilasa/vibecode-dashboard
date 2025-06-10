@@ -157,7 +157,11 @@ export function UploadForm({ competitionName }: UploadFormProps) {
 						)}
 					</div>
 
-					<Button type="submit" className="w-full" disabled={loading}>
+					<Button
+						type="submit"
+						className="w-full text-white"
+						disabled={loading}
+					>
 						{loading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />

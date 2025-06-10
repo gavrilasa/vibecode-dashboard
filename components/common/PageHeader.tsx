@@ -22,14 +22,15 @@ export function PageHeader({
 			)}
 		>
 			<div>
-				<h1 className="text-3xl font-bold text-secondary dark:text-white">
+				<h1 className="text-3xl font-bold text-primary dark:text-white">
 					{title}
 				</h1>
 				{description && (
-					<p className="mt-2 text-gray-600 dark:text-gray-400">{description}</p>
+					<p className="mt-2 text-secondary dark:text-gray-400">
+						{description}
+					</p>
 				)}
 			</div>
-			{/* "Slot" untuk tombol atau elemen lainnya */}
 			{children && <div>{children}</div>}
 		</div>
 	);
