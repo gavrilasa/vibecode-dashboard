@@ -21,7 +21,7 @@ export function DashboardCard({
 	title,
 	description,
 	value,
-	icon: Icon, // Kita tetap menggunakan alias 'Icon' di sini, ini sudah benar.
+	icon: Icon,
 	className,
 }: DashboardCardProps) {
 	return (

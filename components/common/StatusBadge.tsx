@@ -1,7 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-type Status = "PENDING" | "APPROVED" | "REJECTED" | string;
+type Status =
+	| "PENDING"
+	| "APPROVED"
+	| "REJECTED"
+	| "PRELIMINARY"
+	| "FINAL"
+	| string;
 
 interface StatusBadgeProps {
 	status: Status;
@@ -9,9 +15,9 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-	const baseClasses = "text-white hover:text-white";
+	const baseClasses = "text-white hover:text-white text-sm";
 	let statusClass = "";
-	let statusText = "Unknown";
+	let statusText = status; // Default ke status mentah jika tidak cocok
 
 	switch (status) {
 		case "APPROVED":
@@ -25,6 +31,14 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 		case "REJECTED":
 			statusClass = "bg-red-600 hover:bg-red-700";
 			statusText = "Rejected";
+			break;
+		case "PRELIMINARY":
+			statusClass = "bg-blue-600 hover:bg-blue-700";
+			statusText = "Preliminary";
+			break;
+		case "FINAL":
+			statusClass = "bg-purple-600 hover:bg-purple-700";
+			statusText = "Final";
 			break;
 		default:
 			statusClass = "bg-gray-500 hover:bg-gray-600";

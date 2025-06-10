@@ -49,7 +49,7 @@ export interface Registration {
 	reviewedBy: string | null;
 	reviewedAt: string | null;
 	competition: Omit<Competition, "batches">;
-	team: Omit<Team, "competition">; // Disesuaikan dengan respons baru
+	team: Omit<Team, "competition">;
 	documents: DocumentUpload[];
 	details: RegistrationDetails;
 }

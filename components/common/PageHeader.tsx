@@ -5,7 +5,7 @@ interface PageHeaderProps {
 	title: string;
 	description?: string;
 	className?: string;
-	children?: React.ReactNode; // Slot untuk elemen tambahan seperti tombol
+	children?: React.ReactNode;
 }
 
 export function PageHeader({
@@ -22,7 +22,7 @@ export function PageHeader({
 			)}
 		>
 			<div>
-				<h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+				<h1 className="text-3xl font-bold text-secondary dark:text-white">
 					{title}
 				</h1>
 				{description && (
