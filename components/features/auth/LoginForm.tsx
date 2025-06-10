@@ -33,7 +33,7 @@ export function LoginForm() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState("");
 	const router = useRouter();
-	const setAuth = useAuthStore((state) => state.setAuth); // Ambil fungsi setAuth dari store
+	const setAuth = useAuthStore((state) => state.setAuth);
 
 	const {
 		register,
@@ -49,10 +49,8 @@ export function LoginForm() {
 
 		try {
 			const response = await login(data);
-			// PERBAIKAN: Kirim seluruh objek response, bukan hanya response.token
 			setAuth(response);
 
-			// Redirect berdasarkan role dari response
 			if (response.role === "admin") {
 				router.push("/admin/dashboard");
 			} else {
@@ -67,7 +65,7 @@ export function LoginForm() {
 
 	return (
 		<Card className="w-full max-w-md">
-			<CardHeader className="space-y-1">
+			<CardHeader>
 				<CardTitle className="text-2xl font-bold text-center">
 					Welcome back
 				</CardTitle>
@@ -111,7 +109,11 @@ export function LoginForm() {
 						)}
 					</div>
 
-					<Button type="submit" className="w-full" disabled={isLoading}>
+					<Button
+						type="submit"
+						className="w-full text-white"
+						disabled={isLoading}
+					>
 						{isLoading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />

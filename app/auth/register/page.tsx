@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { RegisterForm } from "@/components/features/auth/RegisterForm";
-import { Trophy } from "lucide-react";
+import Image from "next/image";
 
 export default function RegisterPage() {
 	const { isAuthenticated } = useAuth();
@@ -22,28 +22,27 @@ export default function RegisterPage() {
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-			<div className="w-full max-w-md space-y-8">
+		<div className="min-h-screen flex items-center justify-center dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 bg-[url(https://storage.theaceundip.id/assets/compressed-bg-theace.webp)] bg-cover bg-center">
+			<div className="w-full max-w-md space-y-4">
 				<div className="text-center">
 					<div className="flex justify-center">
-						<Trophy className="h-12 w-12 text-blue-600" />
+						<Image
+							src={"https://storage.theaceundip.id/assets/TheAce-Mini-Logo.png"}
+							height={128}
+							width={128}
+							alt="Logo The Ace"
+						/>
 					</div>
-					<h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-						The Ace
-					</h2>
-					<p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-						Create your account
-					</p>
 				</div>
 
 				<RegisterForm />
 
 				<div className="text-center">
-					<p className="text-sm text-gray-600 dark:text-gray-400">
+					<p className="text-sm text-gray-300 dark:text-gray-400">
 						Already have an account?{" "}
 						<Link
 							href="/auth/login"
-							className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+							className="font-medium text-primary hover:text-orange-500"
 						>
 							Sign in here
 						</Link>
