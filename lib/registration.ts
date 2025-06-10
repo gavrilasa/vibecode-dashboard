@@ -1,12 +1,14 @@
 // lib/registration.ts
 
-import { apiRequest, apiRequestWithFormData } from "./api";
+import { apiRequest } from "./api";
 import {
 	Registration,
 	PaginatedRegistrations,
 	CreateRegistrationRequest,
 	UploadDocumentResponse,
 } from "@/types/registration";
+
+// ... (fungsi yang ada tidak diubah)
 
 /**
  * Mengambil data pendaftaran milik user yang sedang login.
@@ -66,8 +68,33 @@ export async function uploadDocument(
 	formData.append("file", file);
 	formData.append("documentType", documentType);
 
-	return apiRequestWithFormData<UploadDocumentResponse>(
-		"/registration/upload",
-		formData
-	);
+	return apiRequest<UploadDocumentResponse>("/registration/upload", {
+		method: "POST",
+		body: formData,
+	});
+}
+
+// ================== FUNGSI BARU ==================
+
+/**
+ * Mengambil detail registrasi berdasarkan ID (HANYA UNTUK ADMIN).
+ * Endpoint: GET /registration/:id
+ */
+export async function getRegistrationById(id: number): Promise<Registration> {
+	return apiRequest<Registration>(`/registration/${id}`);
+}
+
+/**
+ * Mengubah status registrasi (HANYA UNTUK ADMIN).
+ * Endpoint: PATCH /admin/change-status
+ */
+export async function changeRegistrationStatus(payload: {
+	registrationId: number;
+	status: string;
+}): Promise<void> {
+	// Endpoint ini tidak memiliki body respons, jadi kita harapkan Tipe-nya `void`
+	return apiRequest<void>("/admin/change-status", {
+		method: "PATCH",
+		body: JSON.stringify(payload),
+	});
 }

@@ -1,7 +1,19 @@
 // types/registration.ts
 import { Competition } from "./competition";
 import { Team } from "./team";
-import { REGISTRATION_STATUS, DOCUMENT_TYPE } from "@/lib/constants";
+import { DOCUMENT_TYPE } from "@/lib/constants";
+
+/**
+ * Status Registrasi
+ * Merepresentasikan status pendaftaran sebuah tim dalam kompetisi.
+ */
+export const REGISTRATION_STATUS = {
+	PENDING: "PENDING",
+	APPROVED: "APPROVED",
+	REJECTED: "REJECTED",
+	PRELIMINARY: "PRELIMINARY", // Status baru
+	FINAL: "FINAL", // Status baru
+} as const;
 
 /**
  * Tipe data untuk detail anggota tim dalam pendaftaran.
@@ -38,6 +50,7 @@ export interface DocumentUpload {
 
 /**
  * Tipe data utama untuk sebuah pendaftaran.
+ * Diperbarui sesuai dengan respons GET /registration/:id
  */
 export interface Registration {
 	id: number;
@@ -47,8 +60,8 @@ export interface Registration {
 	status: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS];
 	reviewedBy: string | null;
 	reviewedAt: string | null;
-	competition: Omit<Competition, "batches">; // Kompetisi tidak menyertakan batches di sini
-	team: Omit<Team, "competition">;
+	competition: Omit<Competition, "batches">;
+	team: Omit<Team, "competition">; // Disesuaikan dengan respons baru
 	documents: DocumentUpload[];
 	details: RegistrationDetails;
 }

@@ -174,8 +174,8 @@ export default function AdminRegistrationsPage() {
 												<StatusBadge status={reg.status} />
 											</TableCell>
 											<TableCell>
-												<Button asChild variant="outline" size="sm" disabled>
-													<Link href="#">
+												<Button asChild variant="outline" size="sm">
+													<Link href={`/admin/registrations/${reg.id}`}>
 														<Eye className="h-4 w-4 mr-1" /> View
 													</Link>
 												</Button>

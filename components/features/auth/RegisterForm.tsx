@@ -59,7 +59,7 @@ export function RegisterForm() {
 			setSuccess("Registration successful!");
 			setTimeout(() => {
 				router.push("/auth/sending-email");
-			}, 2000);
+			}, 1000);
 		} catch (err: any) {
 			setError(err.message || "Registration failed. Please try again.");
 		} finally {

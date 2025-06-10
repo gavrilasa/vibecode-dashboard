@@ -16,6 +16,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageLoader } from "@/components/common/PageLoader";
 
 export default function RegistrationFormPage() {
 	const { isAuthenticated } = useAuth();
@@ -111,14 +112,14 @@ export default function RegistrationFormPage() {
 	if (!selectedCompetition) {
 		return (
 			<div className="flex h-screen w-full items-center justify-center bg-background">
-				<Loader2 className="h-8 w-8 animate-spin text-primary" />
+				<PageLoader />
 			</div>
 		);
 	}
 
 	return (
-		<AppLayout>
-			<div className="max-w-4xl mx-auto space-y-6">
+		<div className="p-4 md:p-24">
+			<div className="space-y-6">
 				<PageHeader
 					title="Complete Your Registration"
 					description="Fill in the details for your team to finalize your registration (Step 2 of 2)."
@@ -140,6 +141,6 @@ export default function RegistrationFormPage() {
 					error={error}
 				/>
 			</div>
-		</AppLayout>
+		</div>
 	);
 }
