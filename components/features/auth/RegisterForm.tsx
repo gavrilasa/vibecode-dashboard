@@ -55,7 +55,6 @@ export function RegisterForm() {
 		setSuccess("");
 
 		try {
-			// Send all fields including confirmPassword as the API expects it
 			await registerUser(data);
 			setSuccess("Registration successful!");
 			setTimeout(() => {
