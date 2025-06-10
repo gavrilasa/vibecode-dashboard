@@ -10,25 +10,44 @@
 		--card-foreground: 222.2 84% 4.9%;
 		--popover: 0 0% 100%;
 		--popover-foreground: 222.2 84% 4.9%;
-		--primary: 221.2 83.2% 53.3%;
-		--primary-foreground: 210 40% 98%;
-		--secondary: 210 40% 96%;
-		--secondary-foreground: 222.2 84% 4.9%;
+
+		/* --- COLOR CHANGES START HERE --- */
+
+		/* Primary color changed to Orange */
+		--primary: 30 87% 54%; /* #F08A24 */
+		/* To ensure readability, the text on the primary color is now dark. */
+		--primary-foreground: 222.2 84% 4.9%;
+
+		/* Secondary color changed to Blue */
+		--secondary: 200 78% 20%; /* #0B425B */
+		/* The text on the secondary color is now light for better contrast. */
+		--secondary-foreground: 210 40% 98%;
+
 		--muted: 210 40% 96%;
 		--muted-foreground: 215.4 16.3% 46.9%;
+
 		--accent: 210 40% 96%;
 		--accent-foreground: 222.2 84% 4.9%;
+
 		--destructive: 0 84.2% 60.2%;
 		--destructive-foreground: 210 40% 98%;
+
 		--border: 214.3 31.8% 91.4%;
 		--input: 214.3 31.8% 91.4%;
-		--ring: 221.2 83.2% 53.3%;
+
+		/* Ring color updated to match the new primary orange color */
+		--ring: 30 87% 54%;
+
 		--radius: 0.5rem;
-		--chart-1: 12 76% 61%;
-		--chart-2: 173 58% 39%;
-		--chart-3: 197 37% 24%;
+
+		/* Chart colors updated to include the new palette. */
+		--chart-1: 30 87% 54%; /* Orange */
+		--chart-2: 184 41% 36%; /* Green */
+		--chart-3: 200 78% 20%; /* Blue */
 		--chart-4: 43 74% 66%;
 		--chart-5: 27 87% 67%;
+
+		/* --- COLOR CHANGES END HERE --- */
 	}
 
 	.dark {
