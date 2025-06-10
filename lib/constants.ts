@@ -15,6 +15,8 @@ export const REGISTRATION_STATUS = {
 	PENDING: "PENDING",
 	APPROVED: "APPROVED",
 	REJECTED: "REJECTED",
+	PRELIMINARY: "PRELIMINARY", // Status baru
+	FINAL: "FINAL", // Status baru
 } as const;
 
 /**

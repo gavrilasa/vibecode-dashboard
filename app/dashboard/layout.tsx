@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageLoader } from "@/components/common/PageLoader";
-import { APP_ROUTES } from "@/lib/constants"; // Import APP_ROUTES
+import { APP_ROUTES } from "@/lib/constants";
 
 /**
  * Layout ini berfungsi sebagai "gatekeeper" untuk semua halaman di bawah /dashboard.

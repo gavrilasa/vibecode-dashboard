@@ -5,6 +5,8 @@ import {
 	Registration,
 	PaginatedRegistrations,
 	CreateRegistrationRequest,
+	UpdateRegistrationRequest,
+	RegistrationResponse,
 	UploadDocumentResponse,
 } from "@/types/registration";
 
@@ -49,9 +51,18 @@ export async function getAllRegistrations(params: {
  */
 export async function registerForCompetition(
 	data: CreateRegistrationRequest
-): Promise<{ message: string }> {
-	return apiRequest<{ message: string }>("/registration/register", {
+): Promise<RegistrationResponse> {
+	return apiRequest<RegistrationResponse>("/registration/register", {
 		method: "POST",
+		body: JSON.stringify(data),
+	});
+}
+
+export async function updateRegistration(
+	data: UpdateRegistrationRequest
+): Promise<RegistrationResponse> {
+	return apiRequest<RegistrationResponse>("/registration/update", {
+		method: "PUT",
 		body: JSON.stringify(data),
 	});
 }

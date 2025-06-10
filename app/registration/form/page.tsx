@@ -16,7 +16,6 @@ import {
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PageHeader } from "@/components/common/PageHeader";
-import { PageLoader } from "@/components/common/PageLoader";
 
 export default function RegistrationFormPage() {
 	const { isAuthenticated } = useAuth();
@@ -57,24 +56,20 @@ export default function RegistrationFormPage() {
 		}
 
 		try {
-			// Step 1: Create the team
+			// Langkah 1: Buat Tim (tetap sama)
 			const teamPayload = {
 				name: data.teamName,
 				competitionId: selectedCompetition.id,
 			};
 			await createTeam(teamPayload);
 
-			// Step 2: Register the team with member details
-			// PERBAIKAN: Payload disesuaikan persis dengan dokumentasi API
-			// Tidak ada lagi `competitionId` di sini.
+			// Langkah 2: Daftarkan detail anggota dengan payload baru
+			// Payload disesuaikan dengan API baru (tanpa discord usernames)
 			const registrationPayload = {
 				institutionName: data.institutionName,
 				memberCount: data.members.length,
 				memberNames: data.members.map((m) => m.memberName),
 				memberEmails: data.members.map((m) => m.memberEmail),
-				memberDiscordUsernames: data.members.map(
-					(m) => m.memberDiscordUsername
-				),
 				memberStudentIds: data.members.map((m) => m.memberStudentId),
 				memberPhones: data.members.map((m) => m.memberPhone),
 			};
@@ -112,14 +107,14 @@ export default function RegistrationFormPage() {
 	if (!selectedCompetition) {
 		return (
 			<div className="flex h-screen w-full items-center justify-center bg-background">
-				<PageLoader />
+				<Loader2 className="h-8 w-8 animate-spin text-primary" />
 			</div>
 		);
 	}
 
 	return (
-		<div className="p-4 md:p-24">
-			<div className="space-y-6">
+		<AppLayout>
+			<div className="max-w-4xl mx-auto space-y-6">
 				<PageHeader
 					title="Complete Your Registration"
 					description="Fill in the details for your team to finalize your registration (Step 2 of 2)."
@@ -141,6 +136,6 @@ export default function RegistrationFormPage() {
 					error={error}
 				/>
 			</div>
-		</div>
+		</AppLayout>
 	);
 }

@@ -1,3 +1,5 @@
+// components/features/registration/MemberFields.tsx
+
 import { Control, FieldErrors, UseFormRegister } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,20 +61,7 @@ export function MemberFields({
 						</p>
 					)}
 				</div>
-				<div className="space-y-2">
-					<Label htmlFor={`members.${index}.memberDiscordUsername`}>
-						Discord Username
-					</Label>
-					<Input
-						{...register(`members.${index}.memberDiscordUsername`)}
-						placeholder="e.g., user#1234"
-					/>
-					{errors.members?.[index]?.memberDiscordUsername && (
-						<p className="text-sm text-red-500">
-							{errors.members[index]?.memberDiscordUsername?.message}
-						</p>
-					)}
-				</div>
+				{/* Discord Username Dihapus */}
 				<div className="space-y-2">
 					<Label htmlFor={`members.${index}.memberStudentId`}>Student ID</Label>
 					<Input {...register(`members.${index}.memberStudentId`)} />

@@ -1,3 +1,5 @@
+// components/features/registration/RegistrationForm.tsx
+
 "use client";
 
 import { useForm, useFieldArray } from "react-hook-form";
@@ -19,11 +21,10 @@ import { Loader2, PlusCircle, Trash2, Users } from "lucide-react";
 import { Competition } from "@/types/competition";
 import { MemberFields } from "./MemberFields";
 
-// Skema validasi tidak berubah
+// Skema validasi diperbarui: memberDiscordUsername dihapus
 const memberSchema = z.object({
 	memberName: z.string().min(2, "Name is required."),
 	memberEmail: z.string().email("Invalid email address."),
-	memberDiscordUsername: z.string().min(2, "Discord username is required."),
 	memberStudentId: z.string().min(5, "Student ID is required."),
 	memberPhone: z.string().min(10, "Phone number is required."),
 });
@@ -49,6 +50,7 @@ export function RegistrationForm({
 	isLoading,
 	error,
 }: RegistrationFormProps) {
+	// ... (Sisa dari komponen ini tidak berubah, karena logika formnya masih sama)
 	const getMemberRules = () => {
 		const name = competition.name.toLowerCase();
 		if (name.includes("ctf")) return { min: 1, max: 3 };
@@ -71,7 +73,6 @@ export function RegistrationForm({
 			members: Array.from({ length: memberRules.min }, () => ({
 				memberName: "",
 				memberEmail: "",
-				memberDiscordUsername: "",
 				memberStudentId: "",
 				memberPhone: "",
 			})),
@@ -88,10 +89,9 @@ export function RegistrationForm({
 			<CardHeader>
 				<CardTitle>Team and Member Information</CardTitle>
 				<CardDescription>
-					{/* bold competitin name */}
 					You are registering for the{" "}
-					<span className="font-semibold">{competition.name}</span>. Please fill in
-					your team details below.
+					<span className="font-semibold">{competition.name}</span>. Please fill
+					in your team details below.
 					<br />
 					<span className="font-semibold text-primary">
 						Team Size:{" "}
@@ -171,7 +171,6 @@ export function RegistrationForm({
 								append({
 									memberName: "",
 									memberEmail: "",
-									memberDiscordUsername: "",
 									memberStudentId: "",
 									memberPhone: "",
 								})

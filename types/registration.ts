@@ -1,19 +1,7 @@
 // types/registration.ts
 import { Competition } from "./competition";
 import { Team } from "./team";
-import { DOCUMENT_TYPE } from "@/lib/constants";
-
-/**
- * Status Registrasi
- * Merepresentasikan status pendaftaran sebuah tim dalam kompetisi.
- */
-export const REGISTRATION_STATUS = {
-	PENDING: "PENDING",
-	APPROVED: "APPROVED",
-	REJECTED: "REJECTED",
-	PRELIMINARY: "PRELIMINARY", // Status baru
-	FINAL: "FINAL", // Status baru
-} as const;
+import { DOCUMENT_TYPE, REGISTRATION_STATUS } from "@/lib/constants";
 
 /**
  * Tipe data untuk detail anggota tim dalam pendaftaran.
@@ -84,9 +72,21 @@ export interface CreateRegistrationRequest {
 	memberCount: number;
 	memberNames: string[];
 	memberEmails: string[];
-	memberDiscordUsernames: string[];
 	memberStudentIds: string[];
 	memberPhones: string[];
+}
+
+export interface UpdateRegistrationRequest {
+	institutionName: string;
+	memberCount: number;
+	memberNames: string[];
+	memberEmails: string[];
+	memberStudentIds: string[];
+	memberPhones: string[];
+}
+
+export interface RegistrationResponse {
+	message: string;
 }
 
 /**
