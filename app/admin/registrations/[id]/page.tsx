@@ -144,9 +144,9 @@ export default function RegistrationDetailPage() {
 							<p>
 								<strong>Institution:</strong> {details.institutionName}
 							</p>
-							<p>
+							<div>
 								<strong>Current Status:</strong> <StatusBadge status={status} />
-							</p>
+							</div>
 						</CardContent>
 					</Card>
 
@@ -163,7 +163,6 @@ export default function RegistrationDetailPage() {
 									</p>
 									<p>Name: {member.memberName}</p>
 									<p>Email: {member.memberEmail}</p>
-									<p>Discord: {member.memberDiscordUsername}</p>
 									<p>Student ID: {member.memberStudentId}</p>
 									<p>Phone: {member.memberPhone}</p>
 								</div>
