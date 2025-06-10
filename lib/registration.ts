@@ -73,7 +73,7 @@ export async function updateRegistration(
  */
 export async function uploadDocument(
 	file: File,
-	documentType: "VALIDATION" | "PENYISIHAN" | "FINAL"
+	documentType: "VALIDATION" | "SPONSOR" | "PRELIMINARY" | "FINAL"
 ): Promise<UploadDocumentResponse> {
 	const formData = new FormData();
 	formData.append("file", file);

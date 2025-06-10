@@ -15,6 +15,7 @@ import {
 	FileText,
 	Menu,
 	X,
+	Trophy,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
@@ -32,6 +33,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { REGISTRATION_STATUS } from "@/lib/constants";
 
 interface SidebarProps {
 	className?: string;
@@ -74,16 +76,30 @@ export function Sidebar({ className }: SidebarProps) {
 			registrations && registrations.length > 0 ? registrations[0] : null;
 
 		if (userRegistration) {
+			// Menu "Upload Berkas" untuk semua kompetisi
+			dynamicUserMenuItems.push({
+				title: "Upload Berkas",
+				href: "/dashboard/upload-berkas",
+				icon: Upload,
+			});
+
 			const competitionName = userRegistration.competition.name.toLowerCase();
+			// Menu khusus UI/UX
 			if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
-				const biodataIndex = dynamicUserMenuItems.findIndex(
-					(item) => item.href === "/dashboard/biodata"
-				);
-				dynamicUserMenuItems.splice(biodataIndex + 1, 0, {
-					title: "Upload Berkas",
-					href: "/dashboard/upload",
-					icon: Upload,
+				dynamicUserMenuItems.push({
+					title: "Berkas Penyisihan",
+					href: "/dashboard/upload-penyisihan",
+					icon: FileText,
 				});
+
+				// Menu khusus Finalis UI/UX
+				if (userRegistration.status === REGISTRATION_STATUS.FINAL) {
+					dynamicUserMenuItems.push({
+						title: "Berkas Final",
+						href: "/dashboard/upload-final",
+						icon: Trophy, // Menggunakan ikon berbeda untuk membedakan
+					});
+				}
 			}
 		}
 

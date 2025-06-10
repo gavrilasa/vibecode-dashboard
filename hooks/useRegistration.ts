@@ -12,15 +12,18 @@ import {
 	UploadDocumentResponse,
 } from "@/types/registration";
 import { useApi } from "./useApi"; // Menggunakan hook generik kita
+import { DOCUMENT_TYPE } from "@/lib/constants"; // Impor DOCUMENT_TYPE
 
 // Tipe untuk parameter fungsi upload, agar lebih jelas
 type UploadParams = {
 	file: File;
-	documentType: "VALIDATION" | "PENYISIHAN" | "FINAL";
+	// PERBAIKAN: Tambahkan tipe 'SPONSOR' di sini
+	documentType: (typeof DOCUMENT_TYPE)[keyof typeof DOCUMENT_TYPE];
 };
 
 // Wrapper untuk fungsi upload agar sesuai dengan ekspektasi useApi
 const uploadApiWrapper = (params: UploadParams) => {
+	// Di sini documentType akan diteruskan dengan benar
 	return uploadDocument(params.file, params.documentType);
 };
 
@@ -34,8 +37,6 @@ export function useRegistration() {
 		setData: setRegistrations,
 	} = useApi(getMyRegistrations, {
 		onError: (errorMessage) => {
-			// Jika error 404, itu bukan error aplikasi, tapi user belum terdaftar.
-			// Kita anggap datanya array kosong, sama seperti logika di kode lama.
 			if (errorMessage.includes("404")) {
 				setRegistrations([]);
 			}

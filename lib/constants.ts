@@ -25,7 +25,8 @@ export const REGISTRATION_STATUS = {
  */
 export const DOCUMENT_TYPE = {
 	VALIDATION: "VALIDATION",
-	PRELIMINARY: "PENYISIHAN", // Menggunakan nama sesuai API
+	SPONSOR: "SPONSOR",
+	PRELIMINARY: "PRELIMINARY",
 	FINAL: "FINAL",
 } as const;
 
