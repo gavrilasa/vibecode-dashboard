@@ -16,8 +16,8 @@ export const REGISTRATION_STATUS = {
 	REVIEW: "REVIEW",
 	APPROVED: "APPROVED",
 	REJECTED: "REJECTED",
-	PRELIMINARY: "PRELIMINARY", // Status baru
-	FINAL: "FINAL", // Status baru
+	PRELIMINARY: "PRELIMINARY",
+	FINAL: "FINAL",
 } as const;
 
 /**
@@ -56,5 +56,8 @@ export const APP_ROUTES = {
 	ADMIN_TEAMS: "/admin/teams",
 	SELECT_COMPETITION: "/competition/select",
 	BIODATA: "/dashboard/biodata",
-	UPLOAD: "/dashboard/upload",
+	BIODATA_EDIT: "/dashboard/biodata/edit",
+	UPLOAD_BERKAS: "/dashboard/upload-berkas",
+	UPLOAD_PENYISIHAN: "/dashboard/upload-penyisihan",
+	UPLOAD_FINAL: "/dashboard/upload-final",
 };

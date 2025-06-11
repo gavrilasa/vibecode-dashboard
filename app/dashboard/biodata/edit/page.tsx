@@ -17,7 +17,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
@@ -27,9 +26,13 @@ import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLoader } from "@/components/common/PageLoader";
 import { toast } from "sonner";
-import { APP_ROUTES, COMPETITION_KEYS } from "@/lib/constants";
+import {
+	APP_ROUTES,
+	COMPETITION_KEYS,
+	REGISTRATION_STATUS,
+} from "@/lib/constants";
 
-// Skema validasi untuk form edit, tanpa discord
+// Skema Zod tidak berubah
 const memberSchema = z.object({
 	memberName: z.string().min(2, "Name is required."),
 	memberEmail: z.string().email("Invalid email address."),
@@ -49,6 +52,12 @@ export default function EditBiodataPage() {
 	const { registrations, loading, fetchMyRegistrations } = useRegistration();
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	// PERUBAHAN & PERBAIKAN: Mendefinisikan status mana saja yang BOLEH mengedit.
+	const EDITABLE_STATUSES: string[] = [
+		REGISTRATION_STATUS.PENDING,
+		REGISTRATION_STATUS.REJECTED,
+	];
 
 	const {
 		register,
@@ -74,6 +83,16 @@ export default function EditBiodataPage() {
 	useEffect(() => {
 		if (registrations && registrations.length > 0) {
 			const reg = registrations[0];
+
+			// PERUBAHAN & PERBAIKAN: Logika dibalik, redirect jika status TIDAK TERMASUK dalam EDITABLE_STATUSES
+			if (!EDITABLE_STATUSES.includes(reg.status)) {
+				toast.info("Cannot Edit Biodata", {
+					description: `Your registration status is "${reg.status}", which cannot be edited.`,
+				});
+				router.push("/dashboard/biodata");
+				return;
+			}
+
 			reset({
 				institutionName: reg.details.institutionName,
 				members: reg.details.members.map((m) => ({
@@ -84,7 +103,7 @@ export default function EditBiodataPage() {
 				})),
 			});
 		}
-	}, [registrations, reset]);
+	}, [registrations, reset, router, EDITABLE_STATUSES]);
 
 	const onSubmit = async (data: EditBiodataFormData) => {
 		setIsSubmitting(true);
@@ -97,10 +116,6 @@ export default function EditBiodataPage() {
 				memberStudentIds: data.members.map((m) => m.memberStudentId),
 				memberPhones: data.members.map((m) => m.memberPhone),
 			};
-
-			// --- TAMBAHKAN BARIS INI UNTUK DEBUGGING ---
-			console.log("Payload to be sent:", JSON.stringify(payload, null, 2));
-			// -----------------------------------------
 
 			await updateRegistration(payload);
 			toast.success("Biodata updated successfully!");
@@ -115,28 +130,19 @@ export default function EditBiodataPage() {
 		}
 	};
 
-	if (loading || !registrations) {
-		return <PageLoader />;
-	}
-
-	if (registrations.length === 0) {
-		router.push(APP_ROUTES.SELECT_COMPETITION);
+	if (loading || !registrations || registrations.length === 0) {
 		return <PageLoader />;
 	}
 
 	const { team, competition } = registrations[0];
 
-	// --- PERBAIKAN DIMULAI DI SINI ---
-	// Menambahkan logika dinamis untuk menentukan aturan jumlah anggota
 	const getMemberRules = () => {
 		const name = competition.name.toLowerCase();
 		if (name.includes(COMPETITION_KEYS.CTF)) return { min: 1, max: 3 };
 		if (name.includes(COMPETITION_KEYS.FTL)) return { min: 2, max: 2 };
-		return { min: 2, max: 3 }; // Default untuk UI/UX
+		return { min: 2, max: 3 };
 	};
-
 	const memberRules = getMemberRules();
-	// --- PERBAIKAN SELESAI DI SINI ---
 
 	return (
 		<div className="space-y-6">
@@ -151,7 +157,6 @@ export default function EditBiodataPage() {
 					</Link>
 				</Button>
 			</PageHeader>
-
 			<Card>
 				<CardHeader>
 					<CardTitle>Team: {team.name}</CardTitle>
@@ -162,6 +167,7 @@ export default function EditBiodataPage() {
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+						{/* ... Sisa dari form tidak ada perubahan ... */}
 						<div>
 							<Label htmlFor="institutionName">Institution / University</Label>
 							<Input
@@ -180,7 +186,6 @@ export default function EditBiodataPage() {
 							<Users className="h-5 w-5 text-muted-foreground" />
 							<h3 className="text-lg font-semibold">Member Details</h3>
 						</div>
-
 						<div className="space-y-6">
 							{fields.map((field, index) => (
 								<div
@@ -191,7 +196,7 @@ export default function EditBiodataPage() {
 										<p className="font-semibold">
 											Member {index + 1} {index === 0 && "(Team Leader)"}
 										</p>
-										{fields.length > memberRules.min && ( // Menggunakan memberRules dinamis
+										{fields.length > memberRules.min && (
 											<Button
 												type="button"
 												variant="ghost"
@@ -203,7 +208,6 @@ export default function EditBiodataPage() {
 											</Button>
 										)}
 									</div>
-
 									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 										<div className="space-y-1">
 											<Label htmlFor={`members.${index}.memberName`}>
@@ -261,8 +265,7 @@ export default function EditBiodataPage() {
 								</div>
 							))}
 						</div>
-
-						{fields.length < memberRules.max && ( // Menggunakan memberRules dinamis
+						{fields.length < memberRules.max && (
 							<Button
 								type="button"
 								variant="outline"
@@ -280,7 +283,6 @@ export default function EditBiodataPage() {
 								Add Member
 							</Button>
 						)}
-
 						<Button
 							type="submit"
 							className="w-full"

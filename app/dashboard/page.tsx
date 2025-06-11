@@ -65,7 +65,7 @@ export default function DashboardPage() {
 				return {
 					value: "In Review",
 					icon: CheckCircle,
-					className: "border-2 border-blue-300 dark:border-blue-700",
+					className: "border-2 border-gray-300 dark:border-gray-700",
 				};
 			case REGISTRATION_STATUS.REJECTED:
 				return {

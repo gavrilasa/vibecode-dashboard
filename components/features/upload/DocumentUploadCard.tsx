@@ -13,11 +13,20 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useRegistration } from "@/hooks/useRegistration";
 import { Loader2, Upload, CheckCircle, File } from "lucide-react";
-import { DOCUMENT_TYPE } from "@/lib/constants";
+import { DOCUMENT_TYPE, REGISTRATION_STATUS } from "@/lib/constants";
 import { DocumentUpload } from "@/types/registration";
-import { Badge } from "@/components/ui/badge";
 
 interface UploadFormData {
 	file: FileList;
@@ -29,6 +38,8 @@ interface DocumentUploadCardProps {
 	documentType: (typeof DOCUMENT_TYPE)[keyof typeof DOCUMENT_TYPE];
 	uploadedDocuments: DocumentUpload[];
 	className?: string;
+	registrationStatus: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS];
+	onFinalSubmit: () => Promise<void>;
 }
 
 export function DocumentUploadCard({
@@ -37,8 +48,13 @@ export function DocumentUploadCard({
 	documentType,
 	uploadedDocuments,
 	className,
+	registrationStatus,
+	onFinalSubmit,
 }: DocumentUploadCardProps) {
 	const [success, setSuccess] = useState("");
+	const [isConfirming, setIsConfirming] = useState(false);
+	const [fileToSubmit, setFileToSubmit] = useState<File | null>(null);
+
 	const { upload, loading, error } = useRegistration();
 
 	const {
@@ -52,18 +68,57 @@ export function DocumentUploadCard({
 		(doc) => doc.type === documentType
 	);
 
-	const onSubmit = async (data: UploadFormData) => {
-		if (!data.file || data.file.length === 0) {
-			return;
-		}
-		const file = data.file[0];
-		const result = await upload({ file, documentType });
+	// PERUBAHAN & PERBAIKAN: Logika baru untuk menentukan apakah form terkunci
+	const EDITABLE_STATUSES: string[] = [
+		REGISTRATION_STATUS.PENDING,
+		REGISTRATION_STATUS.REJECTED,
+	];
+	const isLocked = !EDITABLE_STATUSES.includes(registrationStatus);
 
+	const onSubmit = async (data: UploadFormData) => {
+		if (!data.file || data.file.length === 0) return;
+
+		const file = data.file[0];
+		setFileToSubmit(file);
+
+		const hasValidationDoc = uploadedDocuments.some(
+			(d) => d.type === DOCUMENT_TYPE.VALIDATION
+		);
+		const hasSponsorDoc = uploadedDocuments.some(
+			(d) => d.type === DOCUMENT_TYPE.SPONSOR
+		);
+
+		const isFinalSubmission =
+			(documentType === DOCUMENT_TYPE.VALIDATION && hasSponsorDoc) ||
+			(documentType === DOCUMENT_TYPE.SPONSOR && hasValidationDoc);
+
+		// Pop-up hanya muncul jika statusnya bisa diedit (PENDING/REJECTED) dan ini adalah pengajuan final
+		if (isFinalSubmission && !isLocked) {
+			setIsConfirming(true);
+		} else {
+			await handleUpload(file);
+		}
+	};
+
+	const handleUpload = async (file: File) => {
+		const result = await upload({ file, documentType });
 		if (result) {
 			setSuccess(`"${result.filename}" uploaded successfully!`);
 			reset();
 			setTimeout(() => setSuccess(""), 5000);
+			return true;
 		}
+		return false;
+	};
+
+	const handleConfirmSubmit = async () => {
+		if (!fileToSubmit) return;
+		setIsConfirming(false);
+		const uploadSuccess = await handleUpload(fileToSubmit);
+		if (uploadSuccess) {
+			await onFinalSubmit();
+		}
+		setFileToSubmit(null);
 	};
 
 	return (
@@ -76,7 +131,7 @@ export function DocumentUploadCard({
 				<CardDescription>{description}</CardDescription>
 			</CardHeader>
 			<CardContent>
-				{existingDocument ? (
+				{existingDocument && (
 					<div className="space-y-3">
 						<Alert variant="default" className="border-green-500">
 							<CheckCircle className="h-4 w-4 !text-green-500" />
@@ -87,18 +142,13 @@ export function DocumentUploadCard({
 								</p>
 							</AlertDescription>
 						</Alert>
-						<p className="text-sm text-muted-foreground">
-							If you need to replace it, please upload a new file below. The
-							previous one will be overwritten.
-						</p>
+						{isLocked && (
+							<p className="text-sm text-yellow-600">
+								Your registration status is "{registrationStatus}", so this
+								document cannot be changed.
+							</p>
+						)}
 					</div>
-				) : (
-					<Alert>
-						<File className="h-4 w-4" />
-						<AlertDescription>
-							No document of this type has been uploaded yet.
-						</AlertDescription>
-					</Alert>
 				)}
 
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
@@ -107,7 +157,6 @@ export function DocumentUploadCard({
 							<AlertDescription>{error}</AlertDescription>
 						</Alert>
 					)}
-
 					{success && (
 						<Alert>
 							<AlertDescription>{success}</AlertDescription>
@@ -122,6 +171,7 @@ export function DocumentUploadCard({
 							id={`file-${documentType}`}
 							type="file"
 							accept=".pdf"
+							disabled={loading || isLocked}
 							{...register("file", {
 								required: "Please select a file to upload",
 								validate: {
@@ -143,19 +193,33 @@ export function DocumentUploadCard({
 					<Button
 						type="submit"
 						className="w-full text-white"
-						disabled={loading}
+						disabled={loading || isLocked}
 					>
-						{loading ? (
-							<>
-								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Uploading...
-							</>
-						) : (
-							"Upload Document"
-						)}
+						{loading ? "Uploading..." : isLocked ? "Locked" : "Upload Document"}
 					</Button>
 				</form>
 			</CardContent>
+
+			<AlertDialog open={isConfirming} onOpenChange={setIsConfirming}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Ajukan Berkas Pendaftaran?</AlertDialogTitle>
+						<AlertDialogDescription>
+							Dengan mengajukan berkas, semua data biodata dan dokumen yang
+							telah diunggah akan dikunci dan tidak dapat diubah lagi. Pastikan
+							semua data sudah benar.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={() => setFileToSubmit(null)}>
+							Batal
+						</AlertDialogCancel>
+						<AlertDialogAction onClick={handleConfirmSubmit}>
+							Ya, Ajukan Berkas
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</Card>
 	);
 }
