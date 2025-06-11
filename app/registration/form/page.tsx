@@ -12,9 +12,20 @@ import {
 	RegistrationForm,
 	FullRegistrationFormData,
 } from "@/components/features/registration/RegistrationForm";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
-import { APP_ROUTES } from "@/lib/constants"; // Import APP_ROUTES
+import { APP_ROUTES } from "@/lib/constants";
+import { toast } from "sonner";
 
 export default function RegistrationFormPage() {
 	const { isAuthenticated } = useAuth();
@@ -28,10 +39,14 @@ export default function RegistrationFormPage() {
 		loading: teamLoading,
 		error: teamError,
 	} = useTeam();
-	const { selectedCompetition, clearFlow } = useRegistrationFlowStore();
+	const { selectedCompetition } = useRegistrationFlowStore();
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [isConfirming, setIsConfirming] = useState(false);
+	const [formData, setFormData] = useState<FullRegistrationFormData | null>(
+		null
+	);
 	const router = useRouter();
 
 	useEffect(() => {
@@ -42,36 +57,43 @@ export default function RegistrationFormPage() {
 		}
 	}, [isAuthenticated, selectedCompetition, router]);
 
-	const handleRegistrationSubmit = async (data: FullRegistrationFormData) => {
-		setIsSubmitting(true);
-		setError(null);
+	// PERBAIKAN 1: Jadikan fungsi ini async untuk memenuhi tipe prop onSubmit
+	const handleFormSubmit = async (data: FullRegistrationFormData) => {
+		setFormData(data);
+		setIsConfirming(true);
+	};
 
-		if (!selectedCompetition) {
-			setError("Competition not selected. Please go back.");
-			setIsSubmitting(false);
+	const handleConfirmSubmit = async () => {
+		if (!formData || !selectedCompetition) {
+			toast.error("An unexpected error occurred. Please try again.");
+			setIsConfirming(false);
 			return;
 		}
 
+		setIsConfirming(false);
+		setIsSubmitting(true);
+		setError(null);
+
 		try {
 			const teamPayload = {
-				name: data.teamName,
+				name: formData.teamName,
 				competitionId: selectedCompetition.id,
 			};
 			await createTeam(teamPayload);
 
 			const registrationPayload = {
-				institutionName: data.institutionName,
-				memberCount: data.members.length,
-				memberNames: data.members.map((m) => m.memberName),
-				memberEmails: data.members.map((m) => m.memberEmail),
-				memberStudentIds: data.members.map((m) => m.memberStudentId),
-				memberPhones: data.members.map((m) => m.memberPhone),
+				institutionName: formData.institutionName,
+				memberCount: formData.members.length,
+				memberNames: formData.members.map((m) => m.memberName),
+				memberEmails: formData.members.map((m) => m.memberEmail),
+				memberStudentIds: formData.members.map((m) => m.memberStudentId),
+				memberPhones: formData.members.map((m) => m.memberPhone),
 			};
 			const result = await registerCompetition(registrationPayload);
 
-			if (result) {
-				// PERUBAHAN: Hapus state success dan timeout, langsung arahkan ke halaman baru
-				clearFlow();
+			// PERBAIKAN 2: Cek apakah result tidak null untuk memastikan sukses
+			if (result !== null) {
+				toast.success("Registration successful!");
 				router.push(APP_ROUTES.REGISTRATION_SUCCESS);
 			} else {
 				setError(
@@ -84,6 +106,9 @@ export default function RegistrationFormPage() {
 				err.message ||
 					"An unexpected error occurred during the submission process."
 			);
+			toast.error("Submission Failed", {
+				description: "An unexpected error occurred. Please try again.",
+			});
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -103,22 +128,40 @@ export default function RegistrationFormPage() {
 	}
 
 	return (
-		<div className="p-4 md:p-24">
-			<div className="max-w-4xl mx-auto space-y-6">
-				<PageHeader
-					title="Complete Your Registration"
-					description="Fill in the details for your team to finalize your registration (Step 2 of 2)."
-				/>
+		<>
+			<div className="p-4 md:p-24">
+				<div className="max-w-4xl mx-auto space-y-6">
+					<PageHeader
+						title="Complete Your Registration"
+						description="Fill in the details for your team to finalize your registration (Step 2 of 2)."
+					/>
 
-				{/* State 'success' tidak lagi digunakan di sini */}
-
-				<RegistrationForm
-					competition={selectedCompetition}
-					onSubmit={handleRegistrationSubmit}
-					isLoading={isSubmitting || teamLoading || registrationLoading}
-					error={error}
-				/>
+					<RegistrationForm
+						competition={selectedCompetition}
+						onSubmit={handleFormSubmit}
+						isLoading={isSubmitting || teamLoading || registrationLoading}
+						error={error}
+					/>
+				</div>
 			</div>
-		</div>
+
+			<AlertDialog open={isConfirming} onOpenChange={setIsConfirming}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Konfirmasi Data Pendaftaran</AlertDialogTitle>
+						<AlertDialogDescription>
+							Apakah Anda yakin semua data tim dan anggota sudah benar? Data ini
+							akan digunakan untuk proses verifikasi.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Batal</AlertDialogCancel>
+						<AlertDialogAction onClick={handleConfirmSubmit}>
+							Ya, Saya Yakin
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		</>
 	);
 }

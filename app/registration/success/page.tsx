@@ -3,6 +3,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -12,16 +13,52 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { APP_ROUTES } from "@/lib/constants";
+import { APP_ROUTES, COMPETITION_KEYS } from "@/lib/constants";
 import { CheckCircle, BookOpen, MessageSquare, ArrowRight } from "lucide-react";
-import Image from "next/image";
 import { AuthLayout } from "@/components/layout/AuthLayout";
+import { useRegistrationFlowStore } from "@/store/registration-flow-store";
 
-// Ganti dengan URL asli Anda
-const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/your-group-invite-code";
-const GUIDEBOOK_LINK = "https://link-to-your.guidebook.pdf";
+const competitionLinks = {
+	[COMPETITION_KEYS.CTF]: {
+		guidebook: "https://example.com/guidebook-ctf.pdf",
+		whatsapp: "https://chat.whatsapp.com/GROUP_ID_CTF",
+	},
+	[COMPETITION_KEYS.UI_UX]: {
+		guidebook: "https://example.com/guidebook-uiux.pdf",
+		whatsapp: "https://chat.whatsapp.com/GROUP_ID_UIUX",
+	},
+	[COMPETITION_KEYS.FTL]: {
+		guidebook: "https://example.com/guidebook-ftl.pdf",
+		whatsapp: "https://chat.whatsapp.com/GROUP_ID_FTL",
+	},
+	default: {
+		guidebook: "#",
+		whatsapp: "#",
+	},
+};
 
 export default function RegistrationSuccessPage() {
+	const { selectedCompetition, clearFlow } = useRegistrationFlowStore();
+
+	useEffect(() => {
+		return () => {
+			clearFlow();
+		};
+	}, [clearFlow]);
+
+	const competitionName = selectedCompetition?.name.toLowerCase() || "";
+	let competitionKey: keyof typeof competitionLinks = "default";
+
+	if (competitionName.includes(COMPETITION_KEYS.CTF)) {
+		competitionKey = COMPETITION_KEYS.CTF;
+	} else if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
+		competitionKey = COMPETITION_KEYS.UI_UX;
+	} else if (competitionName.includes(COMPETITION_KEYS.FTL)) {
+		competitionKey = COMPETITION_KEYS.FTL;
+	}
+
+	const links = competitionLinks[competitionKey];
+
 	return (
 		<AuthLayout>
 			<Card className="w-full max-w-md text-center">
@@ -43,10 +80,10 @@ export default function RegistrationSuccessPage() {
 							LANGKAH SELANJUTNYA
 						</h3>
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-							{/* Tombol Grup WhatsApp */}
+							{/* Tombol Grup WhatsApp Dinamis */}
 							<Button asChild variant="outline" size="lg">
 								<a
-									href={WHATSAPP_GROUP_LINK}
+									href={links.whatsapp}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
@@ -55,10 +92,10 @@ export default function RegistrationSuccessPage() {
 								</a>
 							</Button>
 
-							{/* Tombol Guidebook */}
+							{/* Tombol Guidebook Dinamis */}
 							<Button asChild variant="outline" size="lg">
 								<a
-									href={GUIDEBOOK_LINK}
+									href={links.guidebook}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
