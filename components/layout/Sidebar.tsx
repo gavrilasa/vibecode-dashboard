@@ -78,7 +78,7 @@ export function Sidebar({ className }: SidebarProps) {
 		if (userRegistration) {
 			// Menu "Upload Berkas" untuk semua kompetisi
 			dynamicUserMenuItems.push({
-				title: "Upload Berkas",
+				title: "Berkas Pendaftaran",
 				href: "/dashboard/upload-berkas",
 				icon: Upload,
 			});
@@ -87,7 +87,7 @@ export function Sidebar({ className }: SidebarProps) {
 			// Menu khusus UI/UX
 			if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
 				dynamicUserMenuItems.push({
-					title: "Berkas Penyisihan",
+					title: "Pengumpulan Karya",
 					href: "/dashboard/upload-penyisihan",
 					icon: FileText,
 				});
@@ -95,7 +95,7 @@ export function Sidebar({ className }: SidebarProps) {
 				// Menu khusus Finalis UI/UX
 				if (userRegistration.status === REGISTRATION_STATUS.FINAL) {
 					dynamicUserMenuItems.push({
-						title: "Berkas Final",
+						title: "Berkas Finalis",
 						href: "/dashboard/upload-final",
 						icon: Trophy, // Menggunakan ikon berbeda untuk membedakan
 					});
@@ -259,7 +259,10 @@ export function Sidebar({ className }: SidebarProps) {
 						<AlertDialogCancel onClick={() => setShowLogoutModal(false)}>
 							Cancel
 						</AlertDialogCancel>
-						<AlertDialogAction onClick={handleLogoutConfirm}>
+						<AlertDialogAction
+							onClick={handleLogoutConfirm}
+							className="text-white bg-red-600 hover:bg-red-700"
+						>
 							Logout
 						</AlertDialogAction>
 					</AlertDialogFooter>

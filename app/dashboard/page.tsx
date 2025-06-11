@@ -61,6 +61,12 @@ export default function DashboardPage() {
 					icon: Clock,
 					className: "border-2 border-yellow-300 dark:border-yellow-700",
 				};
+			case REGISTRATION_STATUS.REVIEW:
+				return {
+					value: "In Review",
+					icon: CheckCircle,
+					className: "border-2 border-blue-300 dark:border-blue-700",
+				};
 			case REGISTRATION_STATUS.REJECTED:
 				return {
 					value: "Rejected",
