@@ -4,7 +4,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppLayout } from "@/components/layout/AppLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import { useTeam } from "@/hooks/useTeam";
@@ -14,8 +13,8 @@ import {
 	FullRegistrationFormData,
 } from "@/components/features/registration/RegistrationForm";
 import { Loader2 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PageHeader } from "@/components/common/PageHeader";
+import { APP_ROUTES } from "@/lib/constants"; // Import APP_ROUTES
 
 export default function RegistrationFormPage() {
 	const { isAuthenticated } = useAuth();
@@ -33,21 +32,19 @@ export default function RegistrationFormPage() {
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [success, setSuccess] = useState("");
 	const router = useRouter();
 
 	useEffect(() => {
 		if (!isAuthenticated) {
-			router.push("/auth/login");
+			router.push(APP_ROUTES.LOGIN);
 		} else if (!selectedCompetition) {
-			router.push("/competition/select");
+			router.push(APP_ROUTES.SELECT_COMPETITION);
 		}
 	}, [isAuthenticated, selectedCompetition, router]);
 
 	const handleRegistrationSubmit = async (data: FullRegistrationFormData) => {
 		setIsSubmitting(true);
 		setError(null);
-		setSuccess("");
 
 		if (!selectedCompetition) {
 			setError("Competition not selected. Please go back.");
@@ -56,15 +53,12 @@ export default function RegistrationFormPage() {
 		}
 
 		try {
-			// Langkah 1: Buat Tim (tetap sama)
 			const teamPayload = {
 				name: data.teamName,
 				competitionId: selectedCompetition.id,
 			};
 			await createTeam(teamPayload);
 
-			// Langkah 2: Daftarkan detail anggota dengan payload baru
-			// Payload disesuaikan dengan API baru (tanpa discord usernames)
 			const registrationPayload = {
 				institutionName: data.institutionName,
 				memberCount: data.members.length,
@@ -76,13 +70,9 @@ export default function RegistrationFormPage() {
 			const result = await registerCompetition(registrationPayload);
 
 			if (result) {
-				setSuccess(
-					"Registration submitted successfully! You will be redirected to the dashboard."
-				);
+				// PERUBAHAN: Hapus state success dan timeout, langsung arahkan ke halaman baru
 				clearFlow();
-				setTimeout(() => {
-					router.push("/dashboard");
-				}, 3000);
+				router.push(APP_ROUTES.REGISTRATION_SUCCESS);
 			} else {
 				setError(
 					registrationError ||
@@ -120,14 +110,7 @@ export default function RegistrationFormPage() {
 					description="Fill in the details for your team to finalize your registration (Step 2 of 2)."
 				/>
 
-				{success && (
-					<Alert variant="default" className="bg-green-50 border-green-200">
-						<AlertTitle className="text-green-800">Success!</AlertTitle>
-						<AlertDescription className="text-green-700">
-							{success}
-						</AlertDescription>
-					</Alert>
-				)}
+				{/* State 'success' tidak lagi digunakan di sini */}
 
 				<RegistrationForm
 					competition={selectedCompetition}

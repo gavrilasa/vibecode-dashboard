@@ -55,6 +55,8 @@ export const APP_ROUTES = {
 	ADMIN_REGISTRATIONS: "/admin/registrations",
 	ADMIN_TEAMS: "/admin/teams",
 	SELECT_COMPETITION: "/competition/select",
+	REGISTRATION_FORM: "/registration/form", // PENAMBAHAN
+	REGISTRATION_SUCCESS: "/registration/success", // PENAMBAHAN
 	BIODATA: "/dashboard/biodata",
 	BIODATA_EDIT: "/dashboard/biodata/edit",
 	UPLOAD_BERKAS: "/dashboard/upload-berkas",
