@@ -26,7 +26,12 @@ export function middleware(request: NextRequest) {
 	const token = request.cookies.get("auth-token")?.value;
 
 	// Definisikan rute publik yang tidak memerlukan otentikasi.
-	const publicRoutes = [APP_ROUTES.LOGIN, APP_ROUTES.REGISTER, APP_ROUTES.SENDING_EMAIL, APP_ROUTES.VERIFY_EMAIL];
+	const publicRoutes = [
+		APP_ROUTES.LOGIN,
+		APP_ROUTES.REGISTER,
+		APP_ROUTES.SENDING_EMAIL,
+		APP_ROUTES.VERIFY_EMAIL,
+	];
 
 	// Izinkan akses ke rute publik.
 	if (publicRoutes.includes(pathname)) {
@@ -72,16 +77,6 @@ export function middleware(request: NextRequest) {
 	return NextResponse.next();
 }
 
-// Konfigurasi matcher untuk menentukan rute mana saja yang akan diproses oleh middleware.
 export const config = {
-	matcher: [
-		/*
-		 * Cocokkan semua path request kecuali untuk:
-		 * - api/ (rute API Next.js)
-		 * - _next/static (file statis)
-		 * - _next/image (file optimisasi gambar)
-		 * - favicon.ico (file favicon)
-		 */
-		"/((?!api|_next/static|_next/image|favicon.ico).*)",
-	],
+	matcher: ["/((?!api|_next/static|_next/image|.*\\..*).*)"],
 };
