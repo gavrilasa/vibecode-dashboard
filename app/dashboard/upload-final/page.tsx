@@ -12,13 +12,7 @@ import {
 	COMPETITION_KEYS,
 	REGISTRATION_STATUS,
 } from "@/lib/constants";
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Trophy } from "lucide-react";
 
@@ -81,11 +75,20 @@ export default function UploadFinalPage() {
 				description="Selamat! Anda adalah finalis. Silakan unggah berkas final Anda di sini."
 			/>
 			<div className="max-w-2xl mx-auto">
+				{/* PERUBAHAN: Menambahkan props baru untuk konfirmasi */}
 				<DocumentUploadCard
 					title="Submission Final"
 					description="Unggah deck presentasi dan prototipe final Anda."
 					documentType={DOCUMENT_TYPE.FINAL}
 					uploadedDocuments={currentRegistration.documents}
+					registrationStatus={currentRegistration.status}
+					confirmEveryTime={true} // Selalu tampilkan konfirmasi
+					confirmationText={{
+						title: "Konfirmasi Pengumpulan Final",
+						description:
+							"Apakah Anda yakin ingin mengumpulkan berkas final ini? Pastikan ini adalah versi final dari karya Anda.",
+						action: "Ya, Kumpulkan Final",
+					}}
 				/>
 			</div>
 		</div>

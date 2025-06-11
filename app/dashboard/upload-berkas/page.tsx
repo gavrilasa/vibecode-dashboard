@@ -14,7 +14,6 @@ import { Info } from "lucide-react";
 
 export default function UploadBerkasPage() {
 	const { isAuthenticated } = useAuth();
-	// PERUBAHAN: fetchMyRegistrations sekarang juga akan dipanggil untuk refresh
 	const { registrations, loading, fetchMyRegistrations } = useRegistration();
 
 	useEffect(() => {
@@ -30,7 +29,6 @@ export default function UploadBerkasPage() {
 	const currentRegistration = registrations[0];
 	const { documents, status, id: registrationId } = currentRegistration;
 
-	// FAKTOR PENENTU: Apakah form terkunci
 	const isLocked =
 		status === REGISTRATION_STATUS.REVIEW ||
 		status === REGISTRATION_STATUS.APPROVED ||

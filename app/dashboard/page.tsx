@@ -23,7 +23,6 @@ import {
 	CheckCircle,
 	AlertCircle,
 	Calendar,
-	ArrowRight,
 	FileText,
 	XCircle,
 } from "lucide-react";

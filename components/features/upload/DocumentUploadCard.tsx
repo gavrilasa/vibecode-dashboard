@@ -32,6 +32,7 @@ interface UploadFormData {
 	file: FileList;
 }
 
+// PERUBAHAN: Menambahkan props untuk kustomisasi pop-up
 interface DocumentUploadCardProps {
 	title: string;
 	description: string;
@@ -39,7 +40,14 @@ interface DocumentUploadCardProps {
 	uploadedDocuments: DocumentUpload[];
 	className?: string;
 	registrationStatus: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS];
-	onFinalSubmit: () => Promise<void>;
+	onFinalSubmit?: () => Promise<void>; // Dibuat opsional
+	confirmEveryTime?: boolean; // Prop baru untuk memicu konfirmasi setiap saat
+	confirmationText?: {
+		// Prop baru untuk teks pop-up
+		title: string;
+		description: string;
+		action: string;
+	};
 }
 
 export function DocumentUploadCard({
@@ -50,6 +58,8 @@ export function DocumentUploadCard({
 	className,
 	registrationStatus,
 	onFinalSubmit,
+	confirmEveryTime = false,
+	confirmationText,
 }: DocumentUploadCardProps) {
 	const [success, setSuccess] = useState("");
 	const [isConfirming, setIsConfirming] = useState(false);
@@ -68,12 +78,20 @@ export function DocumentUploadCard({
 		(doc) => doc.type === documentType
 	);
 
-	// PERUBAHAN & PERBAIKAN: Logika baru untuk menentukan apakah form terkunci
 	const EDITABLE_STATUSES: string[] = [
 		REGISTRATION_STATUS.PENDING,
 		REGISTRATION_STATUS.REJECTED,
 	];
 	const isLocked = !EDITABLE_STATUSES.includes(registrationStatus);
+
+	const defaultConfirmationText = {
+		title: "Ajukan Berkas Pendaftaran?",
+		description:
+			"Dengan mengajukan berkas, semua data biodata dan dokumen yang telah diunggah akan dikunci. Pastikan semua data sudah benar.",
+		action: "Ya, Ajukan Berkas",
+	};
+
+	const currentConfirmationText = confirmationText || defaultConfirmationText;
 
 	const onSubmit = async (data: UploadFormData) => {
 		if (!data.file || data.file.length === 0) return;
@@ -88,12 +106,12 @@ export function DocumentUploadCard({
 			(d) => d.type === DOCUMENT_TYPE.SPONSOR
 		);
 
-		const isFinalSubmission =
+		const isFinalSubmissionTrigger =
 			(documentType === DOCUMENT_TYPE.VALIDATION && hasSponsorDoc) ||
 			(documentType === DOCUMENT_TYPE.SPONSOR && hasValidationDoc);
 
-		// Pop-up hanya muncul jika statusnya bisa diedit (PENDING/REJECTED) dan ini adalah pengajuan final
-		if (isFinalSubmission && !isLocked) {
+		// PERUBAHAN: Logika untuk menampilkan pop-up
+		if (confirmEveryTime || isFinalSubmissionTrigger) {
 			setIsConfirming(true);
 		} else {
 			await handleUpload(file);
@@ -115,7 +133,9 @@ export function DocumentUploadCard({
 		if (!fileToSubmit) return;
 		setIsConfirming(false);
 		const uploadSuccess = await handleUpload(fileToSubmit);
-		if (uploadSuccess) {
+
+		// PERUBAHAN: onFinalSubmit hanya dipanggil jika bukan konfirmasi setiap saat
+		if (uploadSuccess && onFinalSubmit && !confirmEveryTime) {
 			await onFinalSubmit();
 		}
 		setFileToSubmit(null);
@@ -150,7 +170,6 @@ export function DocumentUploadCard({
 						)}
 					</div>
 				)}
-
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
 					{error && (
 						<Alert variant="destructive">
@@ -162,7 +181,6 @@ export function DocumentUploadCard({
 							<AlertDescription>{success}</AlertDescription>
 						</Alert>
 					)}
-
 					<div className="space-y-2">
 						<Label htmlFor={`file-${documentType}`}>
 							File (PDF only, max 10MB)
@@ -189,25 +207,22 @@ export function DocumentUploadCard({
 							<p className="text-sm text-red-500">{errors.file.message}</p>
 						)}
 					</div>
-
 					<Button
 						type="submit"
-						className="w-full text-white"
+						className="w-full text-white disabled:bg-gray-400"
 						disabled={loading || isLocked}
 					>
 						{loading ? "Uploading..." : isLocked ? "Locked" : "Upload Document"}
 					</Button>
 				</form>
 			</CardContent>
-
 			<AlertDialog open={isConfirming} onOpenChange={setIsConfirming}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Ajukan Berkas Pendaftaran?</AlertDialogTitle>
+						{/* PERUBAHAN: Teks pop-up dinamis */}
+						<AlertDialogTitle>{currentConfirmationText.title}</AlertDialogTitle>
 						<AlertDialogDescription>
-							Dengan mengajukan berkas, semua data biodata dan dokumen yang
-							telah diunggah akan dikunci dan tidak dapat diubah lagi. Pastikan
-							semua data sudah benar.
+							{currentConfirmationText.description}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
@@ -215,7 +230,7 @@ export function DocumentUploadCard({
 							Batal
 						</AlertDialogCancel>
 						<AlertDialogAction onClick={handleConfirmSubmit}>
-							Ya, Ajukan Berkas
+							{currentConfirmationText.action}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

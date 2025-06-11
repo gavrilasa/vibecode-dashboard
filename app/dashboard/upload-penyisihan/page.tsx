@@ -8,13 +8,6 @@ import { PageLoader } from "@/components/common/PageLoader";
 import { PageHeader } from "@/components/common/PageHeader";
 import { DocumentUploadCard } from "@/components/features/upload/DocumentUploadCard";
 import { DOCUMENT_TYPE, COMPETITION_KEYS } from "@/lib/constants";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 
 export default function UploadPenyisihanPage() {
 	const { isAuthenticated } = useAuth();
@@ -60,11 +53,20 @@ export default function UploadPenyisihanPage() {
 				description="Halaman ini khusus untuk pengumpulan berkas tahap penyisihan kompetisi UI/UX."
 			/>
 			<div className="max-w-2xl mx-auto">
+				{/* PERUBAHAN: Menambahkan props baru untuk konfirmasi */}
 				<DocumentUploadCard
 					title="Submission Penyisihan"
 					description="Unggah proposal atau hasil karya tahap penyisihan Anda di sini."
 					documentType={DOCUMENT_TYPE.PRELIMINARY}
 					uploadedDocuments={currentRegistration.documents}
+					registrationStatus={currentRegistration.status}
+					confirmEveryTime={true} // Selalu tampilkan konfirmasi
+					confirmationText={{
+						title: "Konfirmasi Pengumpulan Penyisihan",
+						description:
+							"Apakah Anda yakin ingin mengumpulkan berkas ini? Anda masih bisa mengubahnya sebelum batas waktu berakhir.",
+						action: "Ya, Kumpulkan",
+					}}
 				/>
 			</div>
 		</div>
