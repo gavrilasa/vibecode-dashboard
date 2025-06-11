@@ -49,7 +49,7 @@ export const APP_ROUTES = {
 	LOGIN: "/auth/login",
 	REGISTER: "/auth/register",
 	SENDING_EMAIL: "/auth/sending-email",
-	VERIFY_EMAIL: "/verify",
+	VERIFY_EMAIL: "/auth/verify",
 	DASHBOARD: "/dashboard",
 	ADMIN_DASHBOARD: "/admin/dashboard",
 	ADMIN_REGISTRATIONS: "/admin/registrations",

@@ -1,4 +1,4 @@
-// app/verify/page.tsx
+// app/auth/verify/page.tsx
 
 "use client";
 
@@ -15,6 +15,7 @@ import {
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { AuthLayout } from "@/components/layout/AuthLayout";
 
 function VerificationComponent() {
 	const searchParams = useSearchParams();
@@ -31,7 +32,7 @@ function VerificationComponent() {
 		const userId = searchParams.get("userId");
 
 		if (!token || !userId) {
-			setMessage("Invalid verification link. Required parameters are missing.");
+			setMessage("Invalid verification link.");
 			setStatus("error");
 			return;
 		}
@@ -45,7 +46,6 @@ function VerificationComponent() {
 				);
 				setStatus("success");
 
-				// Redirect to login page after 5 seconds
 				setTimeout(() => {
 					router.push("/auth/login");
 				}, 5000);
@@ -63,7 +63,7 @@ function VerificationComponent() {
 
 	return (
 		<Card className="w-full max-w-md text-center">
-			<CardHeader className="items-center">
+			<CardHeader className="items-center space-y-3">
 				{status === "loading" && (
 					<Loader2 className="h-12 w-12 animate-spin text-primary" />
 				)}
@@ -79,11 +79,11 @@ function VerificationComponent() {
 					{status === "success" && "Verification Successful!"}
 					{status === "error" && "Verification Failed"}
 				</CardTitle>
-				<CardDescription>{message}</CardDescription>
+				<CardDescription className="text-base">{message}</CardDescription>
 			</CardHeader>
 			<CardContent>
 				{status !== "loading" && (
-					<Button asChild>
+					<Button asChild className="w-full text-white">
 						<Link href="/auth/login">Go to Login</Link>
 					</Button>
 				)}
@@ -92,22 +92,23 @@ function VerificationComponent() {
 	);
 }
 
-// Gunakan Suspense untuk memastikan useSearchParams bisa bekerja dengan baik
 export default function VerifyPage() {
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+		<AuthLayout>
 			<Suspense
 				fallback={
-					<div className="text-center">
-						<Loader2 className="h-8 w-8 animate-spin" />
-						<p className="mt-2 text-muted-foreground">
-							Loading verification...
-						</p>
-					</div>
+					<Card>
+						<CardHeader>
+							<Loader2 className="h-8 w-8 animate-spin mx-auto" />
+							<CardDescription className="mt-2">
+								Loading verification...
+							</CardDescription>
+						</CardHeader>
+					</Card>
 				}
 			>
 				<VerificationComponent />
 			</Suspense>
-		</div>
+		</AuthLayout>
 	);
 }
