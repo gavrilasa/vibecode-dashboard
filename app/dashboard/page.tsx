@@ -119,7 +119,7 @@ export default function DashboardPage() {
 
 	return (
 		<div>
-			<div className="space-y-8">
+			<div className="space-y-6">
 				{/* Header dengan judul berwarna primer */}
 				<div>
 					<h1 className="text-3xl font-bold text-primary">

@@ -53,7 +53,7 @@ export default function UploadFinalPage() {
 
 	if (!isUIUX || !isFinalist) {
 		return (
-			<div className="space-y-8">
+			<div className="space-y-6">
 				<PageHeader title="Akses Ditolak" />
 				<Card>
 					<CardContent className="pt-6">
@@ -69,7 +69,7 @@ export default function UploadFinalPage() {
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			<PageHeader
 				title="Upload Berkas Final"
 				description="Selamat! Anda adalah finalis. Silakan unggah berkas final Anda di sini."

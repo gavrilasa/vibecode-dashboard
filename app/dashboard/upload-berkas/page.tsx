@@ -54,39 +54,40 @@ export default function UploadBerkasPage() {
 	};
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			<PageHeader
 				title="Upload Berkas Wajib"
 				description="Unggah dokumen wajib untuk kelengkapan tim Anda. Setelah kedua dokumen diunggah, data akan dikunci."
 			/>
 
-			{isLocked && (
-				<Alert className="border-blue-500 text-blue-800">
-					<Info className="h-4 w-4 !text-blue-500" />
-					<AlertDescription>
-						Pendaftaran Anda sedang dalam tahap peninjauan. Perubahan pada
-						biodata dan dokumen tidak dapat dilakukan.
-					</AlertDescription>
-				</Alert>
-			)}
-
-			<div className="grid gap-6 lg:grid-cols-2">
-				<DocumentUploadCard
-					title="Formulir Tim"
-					description="Unggah formulir pendaftaran tim yang telah diisi."
-					documentType={DOCUMENT_TYPE.VALIDATION}
-					uploadedDocuments={documents}
-					registrationStatus={status}
-					onFinalSubmit={handleFinalSubmit}
-				/>
-				<DocumentUploadCard
-					title="Berkas Mitra Cloudkilat"
-					description="Unggah bukti pendaftaran atau penggunaan layanan dari Cloudkilat."
-					documentType={DOCUMENT_TYPE.SPONSOR}
-					uploadedDocuments={documents}
-					registrationStatus={status}
-					onFinalSubmit={handleFinalSubmit}
-				/>
+			<div className="space-y-4">
+				{isLocked && (
+					<Alert className="border-secondary text-secondary">
+						<Info className="h-4 w-4 !text-secondary" />
+						<AlertDescription>
+							Pendaftaran Anda sedang dalam tahap peninjauan. Perubahan pada
+							biodata dan dokumen tidak dapat dilakukan.
+						</AlertDescription>
+					</Alert>
+				)}
+				<div className="grid gap-6 lg:grid-cols-2">
+					<DocumentUploadCard
+						title="Formulir Tim"
+						description="Unggah formulir pendaftaran tim yang telah diisi."
+						documentType={DOCUMENT_TYPE.VALIDATION}
+						uploadedDocuments={documents}
+						registrationStatus={status}
+						onFinalSubmit={handleFinalSubmit}
+					/>
+					<DocumentUploadCard
+						title="Berkas Mitra Cloudkilat"
+						description="Unggah bukti pendaftaran atau penggunaan layanan dari Cloudkilat."
+						documentType={DOCUMENT_TYPE.SPONSOR}
+						uploadedDocuments={documents}
+						registrationStatus={status}
+						onFinalSubmit={handleFinalSubmit}
+					/>
+				</div>
 			</div>
 		</div>
 	);

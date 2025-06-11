@@ -47,7 +47,7 @@ export default function UploadPenyisihanPage() {
 	}
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			<PageHeader
 				title="Upload Berkas Penyisihan"
 				description="Halaman ini khusus untuk pengumpulan berkas tahap penyisihan kompetisi UI/UX."

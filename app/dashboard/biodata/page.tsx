@@ -3,7 +3,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
@@ -14,14 +13,16 @@ import { TeamInfoCard } from "@/components/features/biodata/TeamInfoCard";
 import { MemberList } from "@/components/features/biodata/MemberList";
 import { DocumentList } from "@/components/features/biodata/DocumentList";
 import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/common/EmptyState";
 import { APP_ROUTES, REGISTRATION_STATUS } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 export default function BiodataPage() {
 	const { isAuthenticated } = useAuth();
 	const { registrations, loading, fetchMyRegistrations } = useRegistration();
-	const router = useRouter();
 
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -34,7 +35,6 @@ export default function BiodataPage() {
 	}
 
 	if (registrations.length === 0) {
-		// ... (tidak ada perubahan di sini)
 		return (
 			<div className="space-y-8">
 				<PageHeader title="No Registration Found" />
@@ -60,7 +60,6 @@ export default function BiodataPage() {
 	const currentRegistration = registrations[0];
 	const { team, competition, details, documents, status } = currentRegistration;
 
-	// PERUBAHAN & PERBAIKAN: Logika baru untuk menentukan apakah form terkunci
 	const EDITABLE_STATUSES: string[] = [
 		REGISTRATION_STATUS.PENDING,
 		REGISTRATION_STATUS.REJECTED,
@@ -68,12 +67,18 @@ export default function BiodataPage() {
 	const isLocked = !EDITABLE_STATUSES.includes(status);
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			<PageHeader
 				title="Team & Biodata"
 				description="View your team information, member details, and documents."
 			>
-				<Button asChild className="text-white" disabled={isLocked}>
+				<Button
+					asChild
+					className={cn("text-white", {
+						"bg-gray-400 hover:bg-gray-500 pointer-events-none": isLocked,
+					})}
+					disabled={isLocked}
+				>
 					<Link
 						href={isLocked ? "#" : APP_ROUTES.BIODATA_EDIT}
 						aria-disabled={isLocked}
@@ -87,18 +92,23 @@ export default function BiodataPage() {
 				</Button>
 			</PageHeader>
 
-			{isLocked && (
-				<p className="text-sm text-yellow-600">
-					Your registration status is "{status}", so biodata cannot be edited.
-				</p>
-			)}
-
-			<TeamInfoCard team={team} competition={competition} details={details} />
-			<MemberList members={details.members} teamName={team.name} />
-			<DocumentList
-				documents={documents}
-				registrationId={currentRegistration.id}
-			/>
+			<div className="space-y-4">
+				{isLocked && (
+					<Alert className="border-secondary text-secondary">
+						<Info className="h-4 w-4 !text-secondary" />
+						<AlertDescription>
+							Pendaftaran Anda sedang dalam tahap peninjauan. Perubahan pada
+							biodata dan dokumen tidak dapat dilakukan.
+						</AlertDescription>
+					</Alert>
+				)}
+				<TeamInfoCard team={team} competition={competition} details={details} />
+				<MemberList members={details.members} teamName={team.name} />
+				<DocumentList
+					documents={documents}
+					registrationId={currentRegistration.id}
+				/>
+			</div>
 		</div>
 	);
 }

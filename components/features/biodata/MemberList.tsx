@@ -24,7 +24,7 @@ export function MemberList({ members, teamName }: MemberListProps) {
 					Information for all members of team &quot;{teamName}&quot;.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="space-y-4">
+			<CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				{members.map((member, index) => (
 					<div key={member.id} className="rounded-lg border p-4 space-y-4">
 						<h4 className="font-semibold text-foreground">
@@ -32,7 +32,6 @@ export function MemberList({ members, teamName }: MemberListProps) {
 						</h4>
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 text-sm">
 							{" "}
-							{/* Disesuaikan menjadi 2 kolom */}
 							<div className="flex items-center space-x-2">
 								<User className="h-4 w-4 text-muted-foreground" />
 								<span>{member.memberName}</span>
