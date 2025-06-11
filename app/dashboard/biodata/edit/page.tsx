@@ -27,7 +27,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLoader } from "@/components/common/PageLoader";
 import { toast } from "sonner";
-import { APP_ROUTES } from "@/lib/constants";
+import { APP_ROUTES, COMPETITION_KEYS } from "@/lib/constants";
 
 // Skema validasi untuk form edit, tanpa discord
 const memberSchema = z.object({
@@ -90,7 +90,7 @@ export default function EditBiodataPage() {
 		setIsSubmitting(true);
 		try {
 			const payload = {
-				...data,
+				institutionName: data.institutionName,
 				memberCount: data.members.length,
 				memberNames: data.members.map((m) => m.memberName),
 				memberEmails: data.members.map((m) => m.memberEmail),
@@ -98,9 +98,13 @@ export default function EditBiodataPage() {
 				memberPhones: data.members.map((m) => m.memberPhone),
 			};
 
+			// --- TAMBAHKAN BARIS INI UNTUK DEBUGGING ---
+			console.log("Payload to be sent:", JSON.stringify(payload, null, 2));
+			// -----------------------------------------
+
 			await updateRegistration(payload);
 			toast.success("Biodata updated successfully!");
-			fetchMyRegistrations(); // refetch data
+			fetchMyRegistrations();
 			router.push("/dashboard/biodata");
 		} catch (error: any) {
 			toast.error("Failed to update biodata", {
@@ -121,7 +125,18 @@ export default function EditBiodataPage() {
 	}
 
 	const { team, competition } = registrations[0];
-	const memberRules = { min: 2, max: 3 }; // Ganti dengan logika yang sesuai jika ada
+
+	// --- PERBAIKAN DIMULAI DI SINI ---
+	// Menambahkan logika dinamis untuk menentukan aturan jumlah anggota
+	const getMemberRules = () => {
+		const name = competition.name.toLowerCase();
+		if (name.includes(COMPETITION_KEYS.CTF)) return { min: 1, max: 3 };
+		if (name.includes(COMPETITION_KEYS.FTL)) return { min: 2, max: 2 };
+		return { min: 2, max: 3 }; // Default untuk UI/UX
+	};
+
+	const memberRules = getMemberRules();
+	// --- PERBAIKAN SELESAI DI SINI ---
 
 	return (
 		<div className="space-y-6">
@@ -176,7 +191,7 @@ export default function EditBiodataPage() {
 										<p className="font-semibold">
 											Member {index + 1} {index === 0 && "(Team Leader)"}
 										</p>
-										{fields.length > memberRules.min && (
+										{fields.length > memberRules.min && ( // Menggunakan memberRules dinamis
 											<Button
 												type="button"
 												variant="ghost"
@@ -247,7 +262,7 @@ export default function EditBiodataPage() {
 							))}
 						</div>
 
-						{fields.length < memberRules.max && (
+						{fields.length < memberRules.max && ( // Menggunakan memberRules dinamis
 							<Button
 								type="button"
 								variant="outline"

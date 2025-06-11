@@ -11,7 +11,6 @@ export interface Member {
 	registrationDetailsId: number;
 	memberName: string;
 	memberEmail: string;
-	memberDiscordUsername: string;
 	memberStudentId: string;
 	memberPhone: string;
 }
