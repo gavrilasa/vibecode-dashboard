@@ -15,6 +15,7 @@ import {
 import { APP_ROUTES } from "@/lib/constants";
 import { CheckCircle, BookOpen, MessageSquare, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { AuthLayout } from "@/components/layout/AuthLayout";
 
 // Ganti dengan URL asli Anda
 const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/your-group-invite-code";
@@ -22,16 +23,16 @@ const GUIDEBOOK_LINK = "https://link-to-your.guidebook.pdf";
 
 export default function RegistrationSuccessPage() {
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-			<Card className="w-full max-w-lg text-center shadow-lg">
-				<CardHeader className="items-center space-y-3">
-					<div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-full">
-						<CheckCircle className="h-12 w-12 text-green-500" />
+		<AuthLayout>
+			<Card className="w-full max-w-md text-center">
+				<CardHeader className="items-center space-y-4">
+					<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+						<CheckCircle className="h-6 w-6 text-green-600" />
 					</div>
 					<CardTitle className="text-3xl font-bold">
 						Pendaftaran Berhasil!
 					</CardTitle>
-					<CardDescription className="text-lg">
+					<CardDescription className="text-md px-2">
 						Data tim dan anggota Anda telah kami simpan. Selamat datang di The
 						ACE!
 					</CardDescription>
@@ -81,6 +82,6 @@ export default function RegistrationSuccessPage() {
 					</Button>
 				</CardFooter>
 			</Card>
-		</div>
+		</AuthLayout>
 	);
 }

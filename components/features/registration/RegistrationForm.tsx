@@ -50,7 +50,6 @@ export function RegistrationForm({
 	isLoading,
 	error,
 }: RegistrationFormProps) {
-	// ... (Sisa dari komponen ini tidak berubah, karena logika formnya masih sama)
 	const getMemberRules = () => {
 		const name = competition.name.toLowerCase();
 		if (name.includes("ctf")) return { min: 1, max: 3 };
