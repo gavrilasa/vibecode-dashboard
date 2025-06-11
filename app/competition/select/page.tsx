@@ -1,5 +1,3 @@
-// app/competition/select/page.tsx
-
 "use client";
 
 import { useEffect } from "react";
@@ -13,6 +11,12 @@ import { useRegistrationFlowStore } from "@/store/registration-flow-store";
 import { Competition } from "@/types/competition";
 import { PageLoader } from "@/components/common/PageLoader";
 import { COMPETITION_KEYS } from "@/lib/constants";
+
+// URL Gambar Placeholder (ganti jika Anda punya gambar sendiri)
+const ctfImageUrl = "https://storage.theaceundip.id/assets/ctf-bg-picture.webp";
+const uiuxImageUrl =
+	"https://storage.theaceundip.id/assets/uiux-bg-picture.webp";
+const ftlImageUrl = "https://storage.theaceundip.id/assets/ftl-bg-picture.webp";
 
 export default function CompetitionSelectPage() {
 	const { isAuthenticated } = useAuth();
@@ -61,10 +65,10 @@ export default function CompetitionSelectPage() {
 	);
 
 	return (
-		<div className="flex flex-col md:flex-row h-screen w-screen text-white">
+		<div className="flex h-screen w-screen flex-col md:flex-row overflow-hidden bg-black text-white">
 			{competitionsLoading && <PageLoader />}
 			{competitionsError && (
-				<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-4">
+				<div className="absolute top-1/2 left-1/2 z-10 w-full max-w-md -translate-x-1/2 -translate-y-1/2 p-4">
 					<Alert variant="destructive">
 						<AlertDescription>{competitionsError}</AlertDescription>
 					</Alert>
@@ -73,69 +77,118 @@ export default function CompetitionSelectPage() {
 
 			{!competitionsLoading && !competitionsError && (
 				<>
-					{/* CTF Section */}
+					{/* ================== Panel untuk CTF ================== */}
 					{ctfCompetition && (
 						<div
-							className="flex-1 flex flex-col justify-center items-center p-8 text-center transition-all duration-300 ease-in-out hover:flex-[1.1]"
-							style={{ backgroundColor: "#E58A2E" }}
+							className="group relative flex-1 overflow-hidden transition-all duration-700 ease-in-out hover:flex-[8]"
+							onClick={() => handleSelectAndNavigate(ctfCompetition)}
 						>
-							<h1 className="text-4xl md:text-6xl font-bold">
-								Capture The Flag
-							</h1>
-							<p className="mt-4 text-lg max-w-sm">
-								Dive into a world of digital puzzles and cybersecurity
-								challenges.
-							</p>
-							<Button
-								onClick={() => handleSelectAndNavigate(ctfCompetition)}
-								className="mt-8 bg-white/20 hover:bg-white/30 text-white border-white border"
-								size="lg"
-							>
-								Select Competition
-							</Button>
+							<div
+								className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out group-hover:scale-110"
+								style={{ backgroundImage: `url(${ctfImageUrl})` }}
+							/>
+							<div className="absolute inset-0 bg-secondary/40 transition-colors duration-500 group-hover:bg-secondary/50" />
+							<div className="relative flex h-full w-full flex-col items-center justify-between p-6">
+								<h2 className="absolute left-0 top-0 h-full w-16 flex items-center justify-center text-center text-2xl font-bold uppercase tracking-widest [writing-mode:vertical-rl] transition-colors duration-500 group-hover:text-primary">
+									Capture The Flag
+								</h2>
+								<div className="flex h-full w-full flex-col items-center justify-end text-center opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
+									<h1 className="text-4xl font-bold tracking-tighter md:text-6xl transition-colors duration-1000 group-hover:text-primary">
+										Capture The Flag
+									</h1>
+									<p className="mt-4 max-w-sm text-lg text-white/80">
+										Cyber Sentinel 2025: Break the Code, Secure the Future.
+									</p>
+									<Button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleSelectAndNavigate(ctfCompetition);
+										}}
+										variant="outline"
+										className="mt-8 border-2 font-medium tracking-wide border-white/50 bg-transparent text-lg text-white transition-all hover:border-white hover:bg-white hover:text-secondary cursor-pointer"
+										size="lg"
+									>
+										Select Competition
+									</Button>
+								</div>
+							</div>
 						</div>
 					)}
 
-					{/* UI/UX Section */}
+					{/* ================== Panel untuk UI/UX ================== */}
 					{uiuxCompetition && (
 						<div
-							className="flex-1 flex flex-col justify-center items-center p-8 text-center transition-all duration-300 ease-in-out hover:flex-[1.1]"
-							style={{ backgroundColor: "#377A80" }}
+							className="group relative flex-1 overflow-hidden transition-all duration-700 ease-in-out hover:flex-[8]"
+							onClick={() => handleSelectAndNavigate(uiuxCompetition)}
 						>
-							<h1 className="text-4xl md:text-6xl font-bold">UI/UX Design</h1>
-							<p className="mt-4 text-lg max-w-sm">
-								Shape the future by designing intuitive and beautiful user
-								experiences.
-							</p>
-							<Button
-								onClick={() => handleSelectAndNavigate(uiuxCompetition)}
-								className="mt-8 bg-white/20 hover:bg-white/30 text-white border-white border"
-								size="lg"
-							>
-								Select Competition
-							</Button>
+							<div
+								className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out group-hover:scale-110"
+								style={{ backgroundImage: `url(${uiuxImageUrl})` }}
+							/>
+							<div className="absolute inset-0 bg-secondary/40 transition-colors duration-500 group-hover:bg-secondary/50" />
+							<div className="relative flex h-full w-full flex-col items-center justify-between p-6">
+								<h2 className="absolute left-0 top-0 h-full w-16 flex items-center justify-center text-center text-2xl font-bold uppercase tracking-widest [writing-mode:vertical-rl] transition-colors duration-500 group-hover:text-primary">
+									UI/UX Design
+								</h2>
+								<div className="flex h-full w-full flex-col items-center justify-end text-center opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
+									<h1 className="text-4xl font-bold tracking-tighter md:text-6xl transition-colors duration-1000 group-hover:text-primary">
+										UI/UX Design
+									</h1>
+									<p className="mt-4 max-w-sm text-lg text-white/80">
+										Impactful Digital Innovation: Designing Valuable and
+										Sustainable Solutions.
+									</p>
+									<Button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleSelectAndNavigate(uiuxCompetition);
+										}}
+										variant="outline"
+										className="mt-8 border-2 font-medium tracking-wide border-white/50 bg-transparent text-lg text-white transition-all hover:border-white hover:bg-white hover:text-secondary cursor-pointer"
+										size="lg"
+									>
+										Select Competition
+									</Button>
+								</div>
+							</div>
 						</div>
 					)}
 
-					{/* FTL Section */}
+					{/* ================== Panel untuk FTL ================== */}
 					{ftlCompetition && (
 						<div
-							className="flex-1 flex flex-col justify-center items-center p-8 text-center transition-all duration-300 ease-in-out hover:flex-[1.1]"
-							style={{ backgroundColor: "#204E60" }}
+							className="group relative flex-1 overflow-hidden transition-all duration-700 ease-in-out hover:flex-[8]"
+							onClick={() => handleSelectAndNavigate(ftlCompetition)}
 						>
-							<h1 className="text-4xl md:text-6xl font-bold">
-								Follow The Line
-							</h1>
-							<p className="mt-4 text-lg max-w-sm">
-								Forge the future by engineering autonomous precision.
-							</p>
-							<Button
-								onClick={() => handleSelectAndNavigate(ftlCompetition)}
-								className="mt-8 bg-white/20 hover:bg-white/30 text-white border-white border"
-								size="lg"
-							>
-								Select Competition
-							</Button>
+							<div
+								className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out group-hover:scale-110"
+								style={{ backgroundImage: `url(${ftlImageUrl})` }}
+							/>
+							<div className="absolute inset-0 bg-secondary/40 transition-colors duration-500 group-hover:bg-secondary/50" />
+							<div className="relative flex h-full w-full flex-col items-center justify-between p-6">
+								<h2 className="absolute left-0 top-0 h-full w-16 flex items-center justify-center text-center text-2xl font-bold uppercase tracking-widest [writing-mode:vertical-rl] transition-colors duration-500 group-hover:text-primary">
+									Follow The Line
+								</h2>
+								<div className="flex h-full w-full flex-col items-center justify-end text-center opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
+									<h1 className="text-4xl font-bold tracking-tighter md:text-6xl transition-colors duration-1000 group-hover:text-primary">
+										Follow The Line
+									</h1>
+									<p className="mt-4 max-w-sm text-lg text-white/80">
+										Algorithmic Edge: Precision in Motion, Unrivaled Victory.
+									</p>
+									<Button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleSelectAndNavigate(ftlCompetition);
+										}}
+										variant="outline"
+										className="mt-8 border-2 font-medium tracking-wide border-white/50 bg-transparent text-lg text-white transition-all hover:border-white hover:bg-white hover:text-secondary cursor-pointer"
+										size="lg"
+									>
+										Select Competition
+									</Button>
+								</div>
+							</div>
 						</div>
 					)}
 				</>
