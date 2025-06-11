@@ -44,7 +44,7 @@ export function DocumentList({ documents, registrationId }: DocumentListProps) {
 										{doc.type.toLowerCase()} Document
 									</p>
 								</div>
-								<Badge variant="secondary">{doc.filetype}</Badge>
+								<Badge variant="secondary">pdf</Badge>
 							</div>
 						))}
 					</div>
@@ -56,12 +56,6 @@ export function DocumentList({ documents, registrationId }: DocumentListProps) {
 						/>
 					</div>
 				)}
-
-				<div className="mt-6">
-					<Button asChild variant="outline">
-						<Link href="/dashboard/upload">Upload / Manage Documents</Link>
-					</Button>
-				</div>
 			</CardContent>
 		</Card>
 	);

@@ -27,21 +27,26 @@ export async function apiRequest<T>(
 		process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.theaceundip.id/api/v1"
 	}${endpoint}`;
 
+	// --- PERBAIKAN DIMULAI DI SINI ---
+	// Gunakan constructor Headers untuk membuat objek header yang type-safe.
+	const headers = new Headers(options.headers);
+
+	// Jangan atur 'Content-Type' jika body adalah FormData
+	if (!(options.body instanceof FormData)) {
+		// Gunakan metode .set() yang aman untuk mengatur header.
+		headers.set("Content-Type", "application/json");
+	}
+	// --- PERBAIKAN SELESAI DI SINI ---
+
 	const config: RequestInit = {
-		headers: {
-			"Content-Type": "application/json",
-			...options.headers,
-		},
 		...options,
+		headers: headers, // Sekarang headers adalah objek Headers yang valid
 	};
 
 	if (typeof window !== "undefined") {
 		const token = getCookie("auth-token");
 		if (token) {
-			config.headers = {
-				...config.headers,
-				Authorization: `Bearer ${token}`,
-			};
+			(config.headers as Headers).set("Authorization", `Bearer ${token}`);
 		}
 	}
 
@@ -75,8 +80,6 @@ export async function apiRequest<T>(
 	}
 }
 
-// ... sisa file api.ts (apiRequestWithFormData, dll)
-
 export function apiRequestWithFormData<T>(
 	endpoint: string,
 	formData: FormData,
@@ -88,7 +91,6 @@ export function apiRequestWithFormData<T>(
 		method: "POST",
 		body: formData,
 		headers: {
-			// Don't set Content-Type for FormData, let browser set it
 			...headers,
 		},
 		...restOptions,
