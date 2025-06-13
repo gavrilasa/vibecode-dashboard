@@ -171,7 +171,7 @@ export function DocumentUploadCard({
 						</Alert>
 						{isLocked && (
 							<p className="text-sm text-yellow-600">
-								Your registration status is "{registrationStatus}", so this
+								Your registration status is {registrationStatus}, so this
 								document cannot be changed.
 							</p>
 						)}

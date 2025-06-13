@@ -47,6 +47,11 @@ const editBiodataSchema = z.object({
 
 type EditBiodataFormData = z.infer<typeof editBiodataSchema>;
 
+const EDITABLE_STATUSES: string[] = [
+	REGISTRATION_STATUS.PENDING,
+	REGISTRATION_STATUS.REJECTED,
+];
+
 export default function EditBiodataPage() {
 	const { isAuthenticated } = useAuth();
 	const { registrations, loading, fetchMyRegistrations } = useRegistration();
@@ -54,10 +59,6 @@ export default function EditBiodataPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// PERUBAHAN & PERBAIKAN: Mendefinisikan status mana saja yang BOLEH mengedit.
-	const EDITABLE_STATUSES: string[] = [
-		REGISTRATION_STATUS.PENDING,
-		REGISTRATION_STATUS.REJECTED,
-	];
 
 	const {
 		register,
@@ -103,7 +104,7 @@ export default function EditBiodataPage() {
 				})),
 			});
 		}
-	}, [registrations, reset, router, EDITABLE_STATUSES]);
+	}, [registrations, reset, router]);
 
 	const onSubmit = async (data: EditBiodataFormData) => {
 		setIsSubmitting(true);
