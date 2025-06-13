@@ -84,6 +84,12 @@ export default function DashboardPage() {
 					icon: Trophy,
 					className: "border-2 border-purple-300 dark:border-purple-700",
 				};
+			case REGISTRATION_STATUS.ELIMINATED:
+				return {
+					value: "Eliminated",
+					icon: XCircle,
+					className: "border-2 border-red-300 dark:border-red-700",
+				};
 			default:
 				return {
 					value: "Unknown",

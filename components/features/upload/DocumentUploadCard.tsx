@@ -1,3 +1,5 @@
+// components/features/upload/DocumentUploadCard.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -39,6 +41,7 @@ interface DocumentUploadCardProps {
 	documentType: (typeof DOCUMENT_TYPE)[keyof typeof DOCUMENT_TYPE];
 	uploadedDocuments: DocumentUpload[];
 	className?: string;
+	allowedStatuses?: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS][];
 	registrationStatus: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS];
 	onFinalSubmit?: () => Promise<void>; // Dibuat opsional
 	confirmEveryTime?: boolean; // Prop baru untuk memicu konfirmasi setiap saat
@@ -56,6 +59,7 @@ export function DocumentUploadCard({
 	documentType,
 	uploadedDocuments,
 	className,
+	allowedStatuses,
 	registrationStatus,
 	onFinalSubmit,
 	confirmEveryTime = false,
@@ -78,11 +82,14 @@ export function DocumentUploadCard({
 		(doc) => doc.type === documentType
 	);
 
-	const EDITABLE_STATUSES: string[] = [
+	const defaultEditableStatuses: string[] = [
 		REGISTRATION_STATUS.PENDING,
 		REGISTRATION_STATUS.REJECTED,
 	];
-	const isLocked = !EDITABLE_STATUSES.includes(registrationStatus);
+
+	// Gunakan allowedStatuses dari props jika ada, jika tidak gunakan default.
+	const editableStatuses = allowedStatuses || defaultEditableStatuses;
+	const isLocked = !editableStatuses.includes(registrationStatus);
 
 	const defaultConfirmationText = {
 		title: "Ajukan Berkas Pendaftaran?",

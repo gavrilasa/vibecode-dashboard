@@ -66,6 +66,14 @@ export default function BiodataPage() {
 	];
 	const isLocked = !EDITABLE_STATUSES.includes(status);
 
+	// --- PERUBAHAN DI SINI ---
+	// Tentukan daftar dokumen yang akan ditampilkan.
+	// Jika statusnya REJECTED, kirim array kosong agar UI menampilkan EmptyState.
+	// Jika status lain, tampilkan dokumen yang ada.
+	const documentsToShow =
+		status === REGISTRATION_STATUS.REJECTED ? [] : documents;
+	// --- AKHIR PERUBAHAN ---
+
 	return (
 		<div className="space-y-6">
 			<PageHeader
@@ -105,7 +113,7 @@ export default function BiodataPage() {
 				<TeamInfoCard team={team} competition={competition} details={details} />
 				<MemberList members={details.members} teamName={team.name} />
 				<DocumentList
-					documents={documents}
+					documents={documentsToShow} // Gunakan variabel yang sudah dimodifikasi
 					registrationId={currentRegistration.id}
 				/>
 			</div>

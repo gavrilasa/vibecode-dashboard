@@ -1,3 +1,5 @@
+// app/dashboard/upload-berkas/page.tsx
+
 "use client";
 
 import { useEffect } from "react";
@@ -29,12 +31,7 @@ export default function UploadBerkasPage() {
 	const currentRegistration = registrations[0];
 	const { documents, status, id: registrationId } = currentRegistration;
 
-	const isLocked =
-		status === REGISTRATION_STATUS.REVIEW ||
-		status === REGISTRATION_STATUS.APPROVED ||
-		status === REGISTRATION_STATUS.REJECTED;
-
-	// PENAMBAHAN: Fungsi untuk menangani final submit
+	// Fungsi untuk menangani final submit
 	const handleFinalSubmit = async () => {
 		try {
 			await changeRegistrationStatus({
@@ -53,6 +50,12 @@ export default function UploadBerkasPage() {
 		}
 	};
 
+	// Definisikan status yang dapat diedit secara eksplisit
+	const editableStatuses: string[] = [
+		REGISTRATION_STATUS.PENDING,
+		REGISTRATION_STATUS.REJECTED,
+	];
+
 	return (
 		<div className="space-y-6">
 			<PageHeader
@@ -61,7 +64,7 @@ export default function UploadBerkasPage() {
 			/>
 
 			<div className="space-y-4">
-				{isLocked && (
+				{!editableStatuses.includes(status) && (
 					<Alert className="border-secondary text-secondary">
 						<Info className="h-4 w-4 !text-secondary" />
 						<AlertDescription>

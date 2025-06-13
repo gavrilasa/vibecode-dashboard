@@ -1,3 +1,4 @@
+// components/common/StatusBadge.tsx
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -7,6 +8,7 @@ type Status =
 	| "REJECTED"
 	| "PRELIMINARY"
 	| "FINAL"
+	| "ELIMINATED"
 	| string;
 
 interface StatusBadgeProps {
@@ -39,6 +41,10 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 		case "FINAL":
 			statusClass = "bg-purple-600 hover:bg-purple-700";
 			statusText = "Final";
+			break;
+		case "ELIMINATED":
+			statusClass = "bg-red-600 hover:bg-red-700";
+			statusText = "Eliminated";
 			break;
 		default:
 			statusClass = "bg-gray-500 hover:bg-gray-600";

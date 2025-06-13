@@ -227,6 +227,9 @@ export default function RegistrationDetailPage() {
 									<SelectItem value={REGISTRATION_STATUS.FINAL}>
 										Final
 									</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.ELIMINATED}>
+										Eliminated
+									</SelectItem>
 								</SelectContent>
 							</Select>
 							<Button onClick={handleStatusChange} className="w-full">

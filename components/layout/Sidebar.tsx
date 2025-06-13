@@ -83,12 +83,22 @@ export function Sidebar({ className }: SidebarProps) {
 			});
 
 			const competitionName = userRegistration.competition.name.toLowerCase();
+			const nonSubmissionStatuses: string[] = [
+				REGISTRATION_STATUS.PENDING,
+				REGISTRATION_STATUS.REJECTED,
+			];
+			const isSubmissionPhase = !nonSubmissionStatuses.includes(
+				userRegistration.status
+			);
+
 			if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
-				dynamicUserMenuItems.push({
-					title: "Pengumpulan Karya",
-					href: APP_ROUTES.UPLOAD_PENYISIHAN,
-					icon: FileText,
-				});
+				if (isSubmissionPhase) {
+					dynamicUserMenuItems.push({
+						title: "Pengumpulan Karya",
+						href: APP_ROUTES.UPLOAD_PENYISIHAN,
+						icon: FileText,
+					});
+				}
 
 				if (userRegistration.status === REGISTRATION_STATUS.FINAL) {
 					dynamicUserMenuItems.push({
