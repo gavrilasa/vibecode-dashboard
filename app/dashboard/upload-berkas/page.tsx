@@ -80,7 +80,6 @@ export default function UploadBerkasPage() {
 						documentType={DOCUMENT_TYPE.VALIDATION}
 						uploadedDocuments={documents}
 						registrationStatus={status}
-						onFinalSubmit={handleFinalSubmit}
 					/>
 					<DocumentUploadCard
 						title="Berkas Mitra Cloudkilat"
@@ -88,7 +87,6 @@ export default function UploadBerkasPage() {
 						documentType={DOCUMENT_TYPE.SPONSOR}
 						uploadedDocuments={documents}
 						registrationStatus={status}
-						onFinalSubmit={handleFinalSubmit}
 					/>
 				</div>
 			</div>

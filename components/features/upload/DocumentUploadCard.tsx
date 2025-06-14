@@ -26,15 +26,16 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRegistration } from "@/hooks/useRegistration";
-import { Loader2, Upload, CheckCircle, File } from "lucide-react";
+import { Loader2, Upload, CheckCircle } from "lucide-react";
 import { DOCUMENT_TYPE, REGISTRATION_STATUS } from "@/lib/constants";
-import { DocumentUpload } from "@/types/registration";
+import { DocumentUpload, Registration } from "@/types/registration";
+import { getMyRegistrations } from "@/lib/registration";
+import { toast } from "sonner";
 
 interface UploadFormData {
 	file: FileList;
 }
 
-// PERUBAHAN: Menambahkan props untuk kustomisasi pop-up
 interface DocumentUploadCardProps {
 	title: string;
 	description: string;
@@ -43,10 +44,8 @@ interface DocumentUploadCardProps {
 	className?: string;
 	allowedStatuses?: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS][];
 	registrationStatus: (typeof REGISTRATION_STATUS)[keyof typeof REGISTRATION_STATUS];
-	onFinalSubmit?: () => Promise<void>; // Dibuat opsional
-	confirmEveryTime?: boolean; // Prop baru untuk memicu konfirmasi setiap saat
+	confirmEveryTime?: boolean;
 	confirmationText?: {
-		// Prop baru untuk teks pop-up
 		title: string;
 		description: string;
 		action: string;
@@ -61,7 +60,6 @@ export function DocumentUploadCard({
 	className,
 	allowedStatuses,
 	registrationStatus,
-	onFinalSubmit,
 	confirmEveryTime = false,
 	confirmationText,
 }: DocumentUploadCardProps) {
@@ -87,48 +85,22 @@ export function DocumentUploadCard({
 		REGISTRATION_STATUS.REJECTED,
 	];
 
-	// Gunakan allowedStatuses dari props jika ada, jika tidak gunakan default.
 	const editableStatuses = allowedStatuses || defaultEditableStatuses;
 	const isLocked = !editableStatuses.includes(registrationStatus);
 
 	const defaultConfirmationText = {
 		title: "Ajukan Berkas Pendaftaran?",
 		description:
-			"Dengan mengajukan berkas, semua data biodata dan dokumen yang telah diunggah akan dikunci. Pastikan semua data sudah benar.",
+			"Dengan mengajukan berkas ini, pendaftaran Anda akan dikunci dan dikirim untuk peninjauan. Pastikan semua data sudah benar.",
 		action: "Ya, Ajukan Berkas",
 	};
 
 	const currentConfirmationText = confirmationText || defaultConfirmationText;
 
-	const onSubmit = async (data: UploadFormData) => {
-		if (!data.file || data.file.length === 0) return;
-
-		const file = data.file[0];
-		setFileToSubmit(file);
-
-		const hasValidationDoc = uploadedDocuments.some(
-			(d) => d.type === DOCUMENT_TYPE.VALIDATION
-		);
-		const hasSponsorDoc = uploadedDocuments.some(
-			(d) => d.type === DOCUMENT_TYPE.SPONSOR
-		);
-
-		const isFinalSubmissionTrigger =
-			(documentType === DOCUMENT_TYPE.VALIDATION && hasSponsorDoc) ||
-			(documentType === DOCUMENT_TYPE.SPONSOR && hasValidationDoc);
-
-		// PERUBAHAN: Logika untuk menampilkan pop-up
-		if (confirmEveryTime || isFinalSubmissionTrigger) {
-			setIsConfirming(true);
-		} else {
-			await handleUpload(file);
-		}
-	};
-
 	const handleUpload = async (file: File) => {
 		const result = await upload({ file, documentType });
 		if (result) {
-			setSuccess(`"${result.filename}" uploaded successfully!`);
+			setSuccess(`"${result.filename}" berhasil diunggah!`);
 			reset();
 			setTimeout(() => setSuccess(""), 5000);
 			return true;
@@ -136,15 +108,56 @@ export function DocumentUploadCard({
 		return false;
 	};
 
+	const onSubmit = async (data: UploadFormData) => {
+		if (!data.file || data.file.length === 0) return;
+
+		const fileToUpload = data.file[0];
+		setFileToSubmit(fileToUpload);
+
+		try {
+			// Ambil data registrasi terbaru dari server SEBELUM melakukan pengecekan
+			const freshRegistrations: Registration[] = await getMyRegistrations();
+			if (!freshRegistrations || freshRegistrations.length === 0) {
+				toast.error("Gagal memverifikasi status registrasi Anda.");
+				return;
+			}
+
+			const serverDocuments = freshRegistrations[0].documents;
+
+			// Buat daftar dokumen hipotetis dari data server + file yg akan diupload
+			const hypotheticalDocuments: Partial<DocumentUpload>[] = [
+				...serverDocuments,
+				{ type: documentType },
+			];
+
+			const hasValidationDoc = hypotheticalDocuments.some(
+				(d) => d.type === DOCUMENT_TYPE.VALIDATION
+			);
+			const hasSponsorDoc = hypotheticalDocuments.some(
+				(d) => d.type === DOCUMENT_TYPE.SPONSOR
+			);
+
+			// Pemicu pop-up hanya jika ini adalah dokumen kedua yang melengkapi persyaratan
+			const isFinalSubmissionTrigger =
+				(documentType === DOCUMENT_TYPE.VALIDATION && hasSponsorDoc) ||
+				(documentType === DOCUMENT_TYPE.SPONSOR && hasValidationDoc);
+
+			if (confirmEveryTime || isFinalSubmissionTrigger) {
+				setIsConfirming(true);
+			} else {
+				await handleUpload(fileToUpload);
+			}
+		} catch (apiError) {
+			toast.error("Gagal memeriksa data terbaru.", {
+				description: "Silakan coba lagi.",
+			});
+		}
+	};
+
 	const handleConfirmSubmit = async () => {
 		if (!fileToSubmit) return;
 		setIsConfirming(false);
-		const uploadSuccess = await handleUpload(fileToSubmit);
-
-		// PERUBAHAN: onFinalSubmit hanya dipanggil jika bukan konfirmasi setiap saat
-		if (uploadSuccess && onFinalSubmit && !confirmEveryTime) {
-			await onFinalSubmit();
-		}
+		await handleUpload(fileToSubmit);
 		setFileToSubmit(null);
 	};
 
@@ -226,7 +239,6 @@ export function DocumentUploadCard({
 			<AlertDialog open={isConfirming} onOpenChange={setIsConfirming}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						{/* PERUBAHAN: Teks pop-up dinamis */}
 						<AlertDialogTitle>{currentConfirmationText.title}</AlertDialogTitle>
 						<AlertDialogDescription>
 							{currentConfirmationText.description}
