@@ -50,7 +50,7 @@ export const APP_ROUTES = {
 	LOGIN: "/auth/login",
 	REGISTER: "/auth/register",
 	SENDING_EMAIL: "/auth/sending-email",
-	VERIFY_EMAIL: "/auth/verify",
+	VERIFY_EMAIL: "/verify",
 	DASHBOARD: "/dashboard",
 	ADMIN_DASHBOARD: "/admin/dashboard",
 	ADMIN_REGISTRATIONS: "/admin/registrations",
