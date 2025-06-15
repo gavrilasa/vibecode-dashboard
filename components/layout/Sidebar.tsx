@@ -20,7 +20,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import { useState, useEffect, useMemo } from "react";
-import { COMPETITION_KEYS, ROLES } from "@/lib/constants";
+import { APP_ROUTES, COMPETITION_KEYS, ROLES } from "@/lib/constants";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -33,7 +33,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { REGISTRATION_STATUS, APP_ROUTES } from "@/lib/constants";
+import {
+	canAccessUploadFinal,
+	canAccessUploadPenyisihan,
+} from "@/lib/permissions";
 
 interface SidebarProps {
 	className?: string;
@@ -82,31 +85,20 @@ export function Sidebar({ className }: SidebarProps) {
 				icon: Upload,
 			});
 
-			const competitionName = userRegistration.competition.name.toLowerCase();
-			const nonSubmissionStatuses: string[] = [
-				REGISTRATION_STATUS.PENDING,
-				REGISTRATION_STATUS.REJECTED,
-			];
-			const isSubmissionPhase = !nonSubmissionStatuses.includes(
-				userRegistration.status
-			);
+			if (canAccessUploadPenyisihan(userRegistration)) {
+				dynamicUserMenuItems.push({
+					title: "Pengumpulan Karya",
+					href: APP_ROUTES.UPLOAD_PENYISIHAN,
+					icon: FileText,
+				});
+			}
 
-			if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
-				if (isSubmissionPhase) {
-					dynamicUserMenuItems.push({
-						title: "Pengumpulan Karya",
-						href: APP_ROUTES.UPLOAD_PENYISIHAN,
-						icon: FileText,
-					});
-				}
-
-				if (userRegistration.status === REGISTRATION_STATUS.FINAL) {
-					dynamicUserMenuItems.push({
-						title: "Berkas Finalis",
-						href: APP_ROUTES.UPLOAD_FINAL,
-						icon: Trophy,
-					});
-				}
+			if (canAccessUploadFinal(userRegistration)) {
+				dynamicUserMenuItems.push({
+					title: "Berkas Finalis",
+					href: APP_ROUTES.UPLOAD_FINAL,
+					icon: Trophy,
+				});
 			}
 		}
 

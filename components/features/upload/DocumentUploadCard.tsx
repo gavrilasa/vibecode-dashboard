@@ -248,7 +248,10 @@ export function DocumentUploadCard({
 						<AlertDialogCancel onClick={() => setFileToSubmit(null)}>
 							Batal
 						</AlertDialogCancel>
-						<AlertDialogAction onClick={handleConfirmSubmit}>
+						<AlertDialogAction
+							onClick={handleConfirmSubmit}
+							className="text-white"
+						>
 							{currentConfirmationText.action}
 						</AlertDialogAction>
 					</AlertDialogFooter>

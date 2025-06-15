@@ -286,12 +286,12 @@ export default function EditBiodataPage() {
 						)}
 						<Button
 							type="submit"
-							className="w-full"
+							className="w-full text-white"
 							disabled={isSubmitting || !isDirty}
 						>
 							{isSubmitting ? (
 								<>
-									<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
+									<Loader2 className="mr-2 h-4 w-4 animate-spin " /> Updating...
 								</>
 							) : (
 								"Save Changes"

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
-import { Edit } from "lucide-react";
+import { Edit, Info } from "lucide-react";
 import { PageLoader } from "@/components/common/PageLoader";
 import { PageHeader } from "@/components/common/PageHeader";
 import { TeamInfoCard } from "@/components/features/biodata/TeamInfoCard";
@@ -14,11 +14,11 @@ import { MemberList } from "@/components/features/biodata/MemberList";
 import { DocumentList } from "@/components/features/biodata/DocumentList";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/common/EmptyState";
-import { APP_ROUTES, REGISTRATION_STATUS } from "@/lib/constants";
+import { APP_ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { canEditRegistration } from "@/lib/permissions";
 
 export default function BiodataPage() {
 	const { isAuthenticated } = useAuth();
@@ -60,19 +60,8 @@ export default function BiodataPage() {
 	const currentRegistration = registrations[0];
 	const { team, competition, details, documents, status } = currentRegistration;
 
-	const EDITABLE_STATUSES: string[] = [
-		REGISTRATION_STATUS.PENDING,
-		REGISTRATION_STATUS.REJECTED,
-	];
-	const isLocked = !EDITABLE_STATUSES.includes(status);
-
-	// --- PERUBAHAN DI SINI ---
-	// Tentukan daftar dokumen yang akan ditampilkan.
-	// Jika statusnya REJECTED, kirim array kosong agar UI menampilkan EmptyState.
-	// Jika status lain, tampilkan dokumen yang ada.
-	const documentsToShow =
-		status === REGISTRATION_STATUS.REJECTED ? [] : documents;
-	// --- AKHIR PERUBAHAN ---
+	// Logika isLocked sekarang menggunakan satu panggilan fungsi terpusat yang jelas.
+	const isLocked = !canEditRegistration(currentRegistration);
 
 	return (
 		<div className="space-y-6">
@@ -83,13 +72,13 @@ export default function BiodataPage() {
 				<Button
 					asChild
 					className={cn("text-white", {
-						"bg-gray-400 hover:bg-gray-500 pointer-events-none": isLocked,
+						"bg-gray-400 hover:bg-gray-500 cursor-not-allowed": isLocked,
 					})}
 					disabled={isLocked}
+					aria-disabled={isLocked}
 				>
 					<Link
 						href={isLocked ? "#" : APP_ROUTES.BIODATA_EDIT}
-						aria-disabled={isLocked}
 						onClick={(e) => {
 							if (isLocked) e.preventDefault();
 						}}
@@ -105,15 +94,15 @@ export default function BiodataPage() {
 					<Alert className="border-secondary text-secondary">
 						<Info className="h-4 w-4 !text-secondary" />
 						<AlertDescription>
-							Pendaftaran Anda sedang dalam tahap peninjauan. Perubahan pada
-							biodata dan dokumen tidak dapat dilakukan.
+							Pendaftaran Anda sedang dalam tahap peninjauan atau sudah selesai.
+							Perubahan pada biodata dan dokumen tidak dapat dilakukan.
 						</AlertDescription>
 					</Alert>
 				)}
 				<TeamInfoCard team={team} competition={competition} details={details} />
 				<MemberList members={details.members} teamName={team.name} />
 				<DocumentList
-					documents={documentsToShow} // Gunakan variabel yang sudah dimodifikasi
+					documents={documents}
 					registrationId={currentRegistration.id}
 				/>
 			</div>
