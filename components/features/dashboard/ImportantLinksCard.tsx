@@ -27,21 +27,21 @@ const formPeserta =
 const competitionLinks = {
 	[COMPETITION_KEYS.CTF]: {
 		guidebook:
-			"https://drive.google.com/file/d/1cEvHRjHtN3EPkGMcflwWYFDu6pTl0Nzw/view?usp=drive_link",
+			"https://drive.google.com/file/d/1kAy5RIuUiRTJBpmxvhvooePZkWDePpWD/view?usp=drive_link",
 		documents:
 			"https://drive.google.com/drive/folders/1Tsiq0QsXpLV3lccZp59VU_JLoI42Kj3f?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/J8fMNtp8s386Q3okj9g4VX",
 	},
 	[COMPETITION_KEYS.UI_UX]: {
 		guidebook:
-			"https://drive.google.com/file/d/13KhvnJqqUetSC-gA_cWXEyp_fm_E9hNd/view?usp=drive_link",
+			"https://drive.google.com/file/d/1Lw0ZEv1GTMq_p9I5PNHn_7Pl-F_IDUxm/view?usp=drive_link",
 		documents:
 			"https://drive.google.com/drive/folders/1v2qCCfe3kOP1enwb42pKhw0Wpa63n8Eh?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/KDzJOBJE7aT52MrkiBy4Pt",
 	},
 	[COMPETITION_KEYS.FTL]: {
 		guidebook:
-			"https://drive.google.com/file/d/1nn55SbXfzw54sWcbhqUAK-K6Oo3w8GZP/view?usp=drive_link",
+			"https://drive.google.com/file/d/10Hld8d8AtEcSJlCqAX53QJiykfN1FrVn/view?usp=drive_link",
 		documents:
 			"https://drive.google.com/drive/folders/19UeJchIJl4tlYMsRCPWDn08fFHT-bNLC?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/G1j6ZEgEhm0IELR8iptZuX",
