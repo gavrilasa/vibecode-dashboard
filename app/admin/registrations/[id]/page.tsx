@@ -27,15 +27,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-	ArrowLeft,
-	CheckCircle,
-	Clock,
-	FileText,
-	Info,
-	Users,
-	XCircle,
-} from "lucide-react";
+import { ArrowLeft, FileText, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -79,11 +71,35 @@ export default function RegistrationDetailPage() {
 				status: selectedStatus,
 			});
 			toast.success("Registration status updated successfully!");
-			// Refetch data to show updated status
 			const data = await getRegistrationById(id);
 			setRegistration(data);
 		} catch (err: any) {
 			toast.error(err.message || "Failed to update status.");
+		}
+	};
+
+	const handleDownload = async (url: string, filename: string) => {
+		const toastId = toast.loading(`Downloading ${filename}...`);
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(
+					`Download failed: Server responded with ${response.status}`
+				);
+			}
+			const blob = await response.blob();
+			const blobUrl = window.URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = blobUrl;
+			link.setAttribute("download", filename);
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			window.URL.revokeObjectURL(blobUrl);
+			toast.success(`${filename} downloaded successfully.`, { id: toastId });
+		} catch (error: any) {
+			console.error("Download error:", error);
+			toast.error(error.message || "Could not download file.", { id: toastId });
 		}
 	};
 
@@ -95,7 +111,7 @@ export default function RegistrationDetailPage() {
 		return (
 			<div className="flex flex-col items-center justify-center h-full">
 				<Alert variant="destructive" className="max-w-lg">
-					<XCircle className="h-4 w-4" />
+					<XCircle className="w-4 h-4" />
 					<AlertTitle>Error</AlertTitle>
 					<AlertDescription>
 						{error || "Could not find the requested registration."}
@@ -103,7 +119,7 @@ export default function RegistrationDetailPage() {
 				</Alert>
 				<Button asChild variant="link" className="mt-4">
 					<Link href="/admin/registrations">
-						<ArrowLeft className="mr-2 h-4 w-4" />
+						<ArrowLeft className="w-4 h-4 mr-2" />
 						Back to Registrations
 					</Link>
 				</Button>
@@ -121,14 +137,14 @@ export default function RegistrationDetailPage() {
 			>
 				<Button asChild variant="outline">
 					<Link href="/admin/registrations">
-						<ArrowLeft className="mr-2 h-4 w-4" />
+						<ArrowLeft className="w-4 h-4 mr-2" />
 						Back to List
 					</Link>
 				</Button>
 			</PageHeader>
 
-			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-				<div className="lg:col-span-2 space-y-6">
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+				<div className="space-y-6 lg:col-span-2">
 					{/* Team and Competition Info */}
 					<Card>
 						<CardHeader>
@@ -157,7 +173,7 @@ export default function RegistrationDetailPage() {
 						</CardHeader>
 						<CardContent>
 							{details.members.map((member, index) => (
-								<div key={member.id} className="mb-4 p-2 border-b">
+								<div key={member.id} className="p-2 mb-4 border-b">
 									<p className="font-semibold">
 										Member {index + 1} {index === 0 && "(Leader)"}
 									</p>
@@ -170,7 +186,7 @@ export default function RegistrationDetailPage() {
 						</CardContent>
 					</Card>
 
-					{/* Uploaded Documents */}
+					{/* --- START: Modified "Uploaded Documents" section --- */}
 					<Card>
 						<CardHeader>
 							<CardTitle>Uploaded Documents</CardTitle>
@@ -179,12 +195,17 @@ export default function RegistrationDetailPage() {
 							{documents.length > 0 ? (
 								documents.map((doc) => (
 									<div key={doc.id} className="flex items-center space-x-2">
-										<FileText className="h-4 w-4" />
+										<FileText className="w-4 h-4" />
 										<a
-											href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${doc.filepath}`}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="text-blue-500 hover:underline"
+											href={`https://storage.theaceundip.id/${doc.filepath}`}
+											onClick={(e) => {
+												e.preventDefault();
+												handleDownload(
+													`https://storage.theaceundip.id/${doc.filepath}`,
+													doc.filename
+												);
+											}}
+											className="text-blue-500 cursor-pointer hover:underline"
 										>
 											{doc.filename} ({doc.type})
 										</a>
@@ -195,6 +216,7 @@ export default function RegistrationDetailPage() {
 							)}
 						</CardContent>
 					</Card>
+					{/* --- END: Modified "Uploaded Documents" section --- */}
 				</div>
 
 				{/* Admin Actions */}
