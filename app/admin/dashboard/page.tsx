@@ -13,17 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-	Users,
-	FileText,
-	Clock,
-	ArrowRight,
-	BarChart,
-	PieChart,
-	AlertCircle,
-	Activity,
-	CheckCircle,
-} from "lucide-react";
+import { Users, Clock, AlertCircle, Activity, CheckCircle } from "lucide-react";
 
 import { getAllRegistrations } from "@/lib/registration";
 import { Registration } from "@/types/registration";
@@ -51,20 +41,23 @@ import {
 	Cell,
 	Label,
 	LabelList,
+	CartesianGrid,
 } from "recharts";
 
-// PERBAIKAN: Warna disesuaikan secara eksplisit agar cocok dengan persepsi status
 const chartConfig = {
-	CTF: { label: "CTF", color: "hsl(200, 78%, 20%)" }, // Biru Tua
-	"UI/UX": { label: "UI/UX", color: "hsl(30, 87%, 54%)" }, // Oranye
-	FTL: { label: "FTL", color: "hsl(184, 41%, 36%)" }, // Hijau Tua
-	APPROVED: { label: "Approved", color: "hsl(142.1, 76.2%, 36.3%)" }, // Hijau
-	PENDING: { label: "Pending", color: "hsl(47.9, 95.8%, 53.1%)" }, // Kuning
-	REVIEW: { label: "Review", color: "hsl(47.9, 95.8%, 53.1%)" }, // Kuning
-	REJECTED: { label: "Rejected", color: "hsl(0, 84.2%, 60.2%)" }, // Merah
-	ELIMINATED: { label: "Eliminated", color: "hsl(0, 84.2%, 60.2%)" }, // Merah
-	PRELIMINARY: { label: "Preliminary", color: "hsl(217.2, 91.2%, 59.8%)" }, // Biru
-	FINAL: { label: "Final", color: "hsl(262.1, 83.3%, 57.8%)" }, // Ungu
+	CTF: { label: "CTF", color: "hsl(200, 78%, 20%)" },
+	"UI/UX": { label: "UI/UX", color: "hsl(30, 87%, 54%)" },
+	FTL: { label: "FTL", color: "hsl(184, 41%, 36%)" },
+	APPROVED: { label: "Approved", color: "hsl(142.1, 76.2%, 36.3%)" },
+	PENDING: { label: "Pending", color: "hsl(47.9, 95.8%, 53.1%)" },
+	REVIEW: { label: "Review", color: "hsl(215, 21%, 35%)" },
+	REJECTED: { label: "Rejected", color: "hsl(0, 84.2%, 60.2%)" },
+	ELIMINATED: { label: "Eliminated", color: "hsl(0, 84.2%, 60.2%)" },
+	PRELIMINARY: { label: "Preliminary", color: "hsl(217.2, 91.2%, 59.8%)" },
+	FINAL: { label: "Final", color: "hsl(262.1, 83.3%, 57.8%)" },
+	label: {
+		color: "hsl(var(--card-foreground))",
+	},
 } satisfies ChartConfig;
 
 export default function AdminDashboardPage() {
@@ -180,99 +173,46 @@ export default function AdminDashboardPage() {
 				description="Welcome! Here's the current state of The ACE Competition."
 			/>
 
-			{/* KPI Cards */}
-			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-				<Card>
+			<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+				<Card className="border-primary/50 ring-1 ring-primary/20">
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">
-							Total Registrations
+						<CardTitle className="text-md font-semibold">
+							Need to Review
 						</CardTitle>
-						<Users className="h-4 w-4 text-muted-foreground" />
+						<Clock className="h-4 w-4 text-primary" />
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold">{stats.total}</div>
-						<p className="text-xs text-muted-foreground">
-							teams across all competitions
-						</p>
+						<div className="text-3xl font-bold text-primary">
+							{stats.pending}
+						</div>
 					</CardContent>
 				</Card>
+
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">
+						<CardTitle className="text-md font-semibold">
 							Teams Approved
 						</CardTitle>
 						<Users className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl font-bold">{stats.approved}</div>
-						<p className="text-xs text-muted-foreground">
-							have completed verification
-						</p>
+						<div className="text-3xl font-bold">{stats.approved}</div>
 					</CardContent>
 				</Card>
-				<Card className="border-primary/50 ring-1 ring-primary/20">
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">
-							Pending Review
-						</CardTitle>
-						<Clock className="h-4 w-4 text-primary" />
-					</CardHeader>
-					<CardContent>
-						<div className="text-2xl font-bold text-primary">
-							{stats.pending}
-						</div>
-						<p className="text-xs text-muted-foreground">
-							teams need immediate attention
-						</p>
-					</CardContent>
-				</Card>
-			</div>
 
-			{/* Charts */}
-			<div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-				<Card className="lg:col-span-3">
-					<CardHeader>
-						<CardTitle>Registrations by Competition</CardTitle>
-						<CardDescription>
-							Total number of teams registered in each competition.
-						</CardDescription>
+				<Card>
+					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+						<CardTitle className="text-md font-semibold">
+							Total Registrations
+						</CardTitle>
+						<Users className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<ChartContainer config={chartConfig} className="h-[250px] w-full">
-							<RechartsBarChart
-								data={competitionData}
-								layout="vertical"
-								margin={{ left: 10, right: 30 }}
-							>
-								<YAxis
-									dataKey="name"
-									type="category"
-									tickLine={false}
-									axisLine={false}
-									tickMargin={10}
-								/>
-								<XAxis dataKey="teams" type="number" hide />
-								<Tooltip
-									cursor={false}
-									content={<ChartTooltipContent hideIndicator />}
-								/>
-								<Bar dataKey="teams" layout="vertical" radius={5}>
-									<LabelList
-										dataKey="teams"
-										position="right"
-										offset={8}
-										className="fill-foreground font-semibold"
-										fontSize={12}
-									/>
-									{competitionData.map((entry) => (
-										<Cell key={`cell-${entry.name}`} fill={entry.fill} />
-									))}
-								</Bar>
-							</RechartsBarChart>
-						</ChartContainer>
+						<div className="text-3xl font-bold">{stats.total}</div>
 					</CardContent>
 				</Card>
-				<Card className="lg:col-span-2">
+
+				<Card className="md:row-span-2">
 					<CardHeader>
 						<CardTitle>Registration Status</CardTitle>
 						<CardDescription>
@@ -315,7 +255,7 @@ export default function AdminDashboardPage() {
 														</tspan>
 														<tspan
 															x={viewBox.cx}
-															y={(viewBox.cy || 0) + 15}
+															y={(viewBox.cy || 0) + 20}
 															className="fill-muted-foreground"
 														>
 															Teams
@@ -328,9 +268,65 @@ export default function AdminDashboardPage() {
 								</Pie>
 								<ChartLegend
 									content={<ChartLegendContent nameKey="name" />}
-									className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+									className="flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
 								/>
 							</RechartsPieChart>
+						</ChartContainer>
+					</CardContent>
+				</Card>
+				<Card className="md:col-span-3">
+					<CardHeader>
+						<CardTitle>Registrations by Competition</CardTitle>
+						<CardDescription>
+							Total number of teams registered in each competition.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<ChartContainer config={chartConfig} className="h-[120px] w-full">
+							<RechartsBarChart
+								accessibilityLayer
+								data={competitionData}
+								layout="vertical"
+								margin={{
+									right: 16,
+									left: 10,
+								}}
+							>
+								<CartesianGrid horizontal={false} />
+								<YAxis
+									dataKey="name"
+									type="category"
+									tickLine={false}
+									tickMargin={10}
+									axisLine={false}
+									tickFormatter={(value) => value.slice(0, 3)}
+									hide
+								/>
+								<XAxis dataKey="teams" type="number" hide />
+								<ChartTooltip
+									cursor={false}
+									content={<ChartTooltipContent indicator="line" />}
+								/>
+								<Bar dataKey="teams" layout="vertical" radius={4}>
+									<LabelList
+										dataKey="name"
+										position="insideLeft"
+										offset={8}
+										className="fill-white text-sm font-semibold"
+										fontSize={12}
+									/>
+									<LabelList
+										dataKey="teams"
+										position="right"
+										offset={12}
+										className="fill-foreground text-base font-bold"
+										fontSize={12}
+									/>
+									{competitionData.map((entry) => (
+										<Cell key={`cell-${entry.name}`} fill={entry.fill} />
+									))}
+								</Bar>
+							</RechartsBarChart>
 						</ChartContainer>
 					</CardContent>
 				</Card>
@@ -368,6 +364,7 @@ export default function AdminDashboardPage() {
 										className="flex items-center justify-between"
 									>
 										<div className="flex items-center gap-3">
+											<StatusBadge status={reg.status} />
 											<div className="flex flex-col">
 												<span className="font-semibold text-sm">
 													{reg.team.name}

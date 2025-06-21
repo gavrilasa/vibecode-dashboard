@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 
 type Status =
 	| "PENDING"
+	| "REVIEW"
 	| "APPROVED"
 	| "REJECTED"
 	| "PRELIMINARY"
@@ -19,7 +20,7 @@ interface StatusBadgeProps {
 export function StatusBadge({ status, className }: StatusBadgeProps) {
 	const baseClasses = "text-white hover:text-white text-sm";
 	let statusClass = "";
-	let statusText = status; // Default ke status mentah jika tidak cocok
+	let statusText = status;
 
 	switch (status) {
 		case "APPROVED":
@@ -29,6 +30,10 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 		case "PENDING":
 			statusClass = "bg-yellow-500 hover:bg-yellow-600";
 			statusText = "Pending";
+			break;
+		case "REVIEW":
+			statusClass = "bg-slate-600 hover:bg-slate-700";
+			statusText = "Review";
 			break;
 		case "REJECTED":
 			statusClass = "bg-red-600 hover:bg-red-700";
