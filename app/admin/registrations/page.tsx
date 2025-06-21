@@ -48,12 +48,7 @@ import { REGISTRATION_STATUS } from "@/lib/constants";
 import { useCompetition } from "@/hooks/useCompetition";
 import { PageLoader } from "@/components/common/PageLoader";
 import { cn } from "@/lib/utils";
-
-// 1. HELPER FUNCTION UNTUK FORMAT TEKS
-const capitalize = (s: string) => {
-	if (typeof s !== "string" || s.length === 0) return s;
-	return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-};
+import { capitalize } from "@/lib/utils";
 
 function RegistrationsPageContent() {
 	const searchParams = useSearchParams();
@@ -181,7 +176,6 @@ function RegistrationsPageContent() {
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="ALL">All Statuses</SelectItem>
-									{/* 2. GUNAKAN FUNGSI capitalize DI SINI */}
 									{Object.values(REGISTRATION_STATUS).map((status) => (
 										<SelectItem key={status} value={status}>
 											{capitalize(status)}
@@ -206,7 +200,6 @@ function RegistrationsPageContent() {
 						<Table>
 							<TableHeader>
 								<TableRow>
-									{/* 3. SEMUA TableHead KEMBALI MENJADI TEKS BIASA */}
 									<TableHead>Team Name</TableHead>
 									<TableHead>Competition</TableHead>
 									<TableHead>Institution</TableHead>
@@ -222,8 +215,7 @@ function RegistrationsPageContent() {
 											<Loader2 className="h-6 w-6 animate-spin mx-auto" />
 										</TableCell>
 									</TableRow>
-								) : // 4. MAPPING LANGSUNG PADA `data.data`
-								data && data.data.length > 0 ? (
+								) : data && data.data.length > 0 ? (
 									data.data.map((reg: Registration) => (
 										<TableRow key={reg.id}>
 											<TableCell className="font-medium">

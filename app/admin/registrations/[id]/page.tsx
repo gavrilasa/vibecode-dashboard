@@ -26,12 +26,32 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, FileText, XCircle } from "lucide-react";
+import {
+	ArrowLeft,
+	FileText,
+	XCircle,
+	User,
+	Mail,
+	Phone,
+	Info,
+	Download,
+} from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { REGISTRATION_STATUS } from "@/lib/constants";
+import { capitalize } from "@/lib/utils";
 
 export default function RegistrationDetailPage() {
 	const params = useParams();
@@ -42,6 +62,7 @@ export default function RegistrationDetailPage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedStatus, setSelectedStatus] = useState<string>("");
+	const [isConfirming, setIsConfirming] = useState(false);
 
 	useEffect(() => {
 		if (id) {
@@ -128,9 +149,10 @@ export default function RegistrationDetailPage() {
 	}
 
 	const { team, competition, details, documents, status } = registration;
+	const isStatusChanged = selectedStatus !== status;
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4">
 			<PageHeader
 				title={`Registration: ${team.name}`}
 				description={`Details for registration ID #${registration.id}`}
@@ -143,9 +165,8 @@ export default function RegistrationDetailPage() {
 				</Button>
 			</PageHeader>
 
-			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-				<div className="space-y-6 lg:col-span-2">
-					{/* Team and Competition Info */}
+			<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+				<div className="space-y-4 lg:col-span-2">
 					<Card>
 						<CardHeader>
 							<CardTitle>Team & Competition Details</CardTitle>
@@ -170,97 +191,154 @@ export default function RegistrationDetailPage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Member Details</CardTitle>
+							<CardDescription>
+								Information for all members of team &quot;{team.name}&quot;.
+							</CardDescription>
 						</CardHeader>
-						<CardContent>
+						<CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 							{details.members.map((member, index) => (
-								<div key={member.id} className="p-2 mb-4 border-b">
-									<p className="font-semibold">
-										Member {index + 1} {index === 0 && "(Leader)"}
-									</p>
-									<p>Name: {member.memberName}</p>
-									<p>Email: {member.memberEmail}</p>
-									<p>Student ID: {member.memberStudentId}</p>
-									<p>Phone: {member.memberPhone}</p>
+								<div
+									key={member.id}
+									className="rounded-lg border p-4 space-y-4"
+								>
+									<h4 className="font-semibold text-foreground">
+										Member {index + 1} {index === 0 ? "(Team Leader)" : ""}
+									</h4>
+									<div className="grid grid-cols-1 gap-2 text-sm">
+										<div className="flex items-center space-x-2">
+											<User className="h-4 w-4 text-muted-foreground" />
+											<span>{member.memberName}</span>
+										</div>
+										<div className="flex items-center space-x-2">
+											<Mail className="h-4 w-4 text-muted-foreground" />
+											<span>{member.memberEmail}</span>
+										</div>
+										<div className="flex items-center space-x-2">
+											<Phone className="h-4 w-4 text-muted-foreground" />
+											<span>{member.memberPhone}</span>
+										</div>
+										<div className="flex items-center space-x-2">
+											<Info className="h-4 w-4 text-muted-foreground" />
+											<span>Student ID: {member.memberStudentId}</span>
+										</div>
+									</div>
 								</div>
 							))}
 						</CardContent>
 					</Card>
 
-					{/* --- START: Modified "Uploaded Documents" section --- */}
 					<Card>
-						<CardHeader>
+						<CardHeader className="pb-4">
 							<CardTitle>Uploaded Documents</CardTitle>
 						</CardHeader>
 						<CardContent>
 							{documents.length > 0 ? (
-								documents.map((doc) => (
-									<div key={doc.id} className="flex items-center space-x-2">
-										<FileText className="w-4 h-4" />
-										<a
-											href={`https://storage.theaceundip.id/${doc.filepath}`}
-											onClick={(e) => {
-												e.preventDefault();
-												handleDownload(
-													`https://storage.theaceundip.id/${doc.filepath}`,
-													doc.filename
-												);
-											}}
-											className="text-blue-500 cursor-pointer hover:underline"
-										>
-											{doc.filename} ({doc.type})
-										</a>
-									</div>
-								))
+								<div className="space-y-3">
+									{documents.map((doc) => {
+										const docUrl = `https://storage.theaceundip.id/${doc.filepath}`;
+										return (
+											<div className="space-y-1" key={doc.id}>
+												<span className="font-medium">
+													{capitalize(doc.type)} Document
+												</span>
+												<div
+													key={doc.id}
+													className="flex items-center justify-between p-2 border rounded-md"
+												>
+													<div className="flex items-center space-x-2 overflow-hidden">
+														<FileText className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+														<span
+															className="font-medium truncate"
+															title={doc.filename}
+														>
+															{doc.filename}
+														</span>
+													</div>
+													<div className="flex items-center space-x-2 flex-shrink-0">
+														<Button
+															variant="outline"
+															size="sm"
+															onClick={() =>
+																handleDownload(docUrl, doc.filename)
+															}
+														>
+															<Download className="h-4 w-4 md:mr-1" />
+															<span className="hidden md:inline">Download</span>
+														</Button>
+													</div>
+												</div>
+											</div>
+										);
+									})}
+								</div>
 							) : (
 								<p>No documents uploaded.</p>
 							)}
 						</CardContent>
 					</Card>
-					{/* --- END: Modified "Uploaded Documents" section --- */}
 				</div>
 
-				{/* Admin Actions */}
-				<div className="space-y-6">
+				<div className="lg:sticky lg:top-6 space-y-4">
 					<Card>
 						<CardHeader>
-							<CardTitle>Admin Actions</CardTitle>
+							<CardTitle>Change Registration Status</CardTitle>
 							<CardDescription>
 								Change the status of this registration.
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
+							{/* 3. Perubahan utama ada di sini */}
 							<Select value={selectedStatus} onValueChange={setSelectedStatus}>
 								<SelectTrigger>
 									<SelectValue placeholder="Select a status" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value={REGISTRATION_STATUS.PENDING}>
-										Pending
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.APPROVED}>
-										Approved
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.REJECTED}>
-										Rejected
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.PRELIMINARY}>
-										Preliminary
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.FINAL}>
-										Final
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.ELIMINATED}>
-										Eliminated
-									</SelectItem>
+									{Object.values(REGISTRATION_STATUS)
+										.filter(
+											(statusValue) =>
+												statusValue !== REGISTRATION_STATUS.PENDING &&
+												statusValue !== REGISTRATION_STATUS.REVIEW
+										)
+										.map((statusValue) => (
+											<SelectItem key={statusValue} value={statusValue}>
+												{statusValue.charAt(0) +
+													statusValue.slice(1).toLowerCase()}
+											</SelectItem>
+										))}
 								</SelectContent>
 							</Select>
-							<Button onClick={handleStatusChange} className="w-full">
+							<Button
+								onClick={() => setIsConfirming(true)}
+								className="w-full text-white disabled:bg-slate-400"
+								disabled={!isStatusChanged}
+							>
 								Update Status
 							</Button>
 						</CardContent>
 					</Card>
 				</div>
 			</div>
+			<AlertDialog open={isConfirming} onOpenChange={setIsConfirming}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This will change the registration status from{" "}
+							<strong>{status}</strong> to <strong>{selectedStatus}</strong>.
+							This action may notify the user.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleStatusChange}
+							className="text-white"
+						>
+							Yes, Update Status
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }
