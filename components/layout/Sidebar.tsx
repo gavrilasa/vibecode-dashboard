@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +9,6 @@ import {
 	Upload,
 	LogOut,
 	BarChart3,
-	Users,
 	FileText,
 	Menu,
 	X,
@@ -34,13 +33,14 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion"; // <-- Tambahkan import ini
+} from "@/components/ui/accordion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
 	canAccessUploadFinal,
 	canAccessUploadPenyisihan,
 } from "@/lib/permissions";
+import { useCompetition } from "@/hooks/useCompetition";
 
 interface SidebarProps {
 	className?: string;
@@ -51,9 +51,6 @@ const baseUserMenuItems = [
 	{ title: "Biodata", href: "/dashboard/biodata", icon: User },
 ];
 
-// Kita akan tetap definisikan 'Registrations' di sini untuk di-loop,
-// tapi akan kita berikan perlakuan khusus saat rendering.
-// 'Teams' sudah saya hapus sesuai rencana Anda sebelumnya.
 const adminMenuItems = [
 	{ title: "Dashboard", href: "/admin/dashboard", icon: BarChart3 },
 	{ title: "Registrations", href: "/admin/registrations", icon: FileText },
@@ -61,22 +58,26 @@ const adminMenuItems = [
 
 export function Sidebar({ className }: SidebarProps) {
 	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const { user, logout } = useAuth();
 	const { registrations, fetchMyRegistrations } = useRegistration();
+	const { competitions, fetchCompetitions } = useCompetition();
 	const [isMobileOpen, setIsMobileOpen] = useState(false);
 	const [showLogoutModal, setShowLogoutModal] = useState(false);
 	const router = useRouter();
 
 	const isAdmin = user?.role === ROLES.ADMIN;
 
-	// Logika untuk active state accordion
 	const isRegistrationActive = pathname.startsWith("/admin/registrations");
 
 	useEffect(() => {
 		if (user && !isAdmin) {
 			fetchMyRegistrations();
 		}
-	}, [user, isAdmin, fetchMyRegistrations]);
+		if (user && isAdmin) {
+			fetchCompetitions();
+		}
+	}, [user, isAdmin, fetchMyRegistrations, fetchCompetitions]);
 
 	const menuItems = useMemo(() => {
 		if (isAdmin) {
@@ -216,6 +217,9 @@ export function Sidebar({ className }: SidebarProps) {
 					<nav className="flex-1 space-y-2 px-2 py-4">
 						{menuItems.map((item) => {
 							if (isAdmin && item.title === "Registrations") {
+								const currentCompetitionFilter =
+									searchParams.get("competitionName");
+
 								return (
 									<Accordion
 										key="admin-registrations"
@@ -243,51 +247,41 @@ export function Sidebar({ className }: SidebarProps) {
 													<span>{item.title}</span>
 												</div>
 											</AccordionTrigger>
-											<AccordionContent className="pl-10 pt-1">
+											<AccordionContent className="p-3">
 												<Link
 													href="/admin/registrations"
 													onClick={() => setIsMobileOpen(false)}
 													className={cn(
 														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
 														pathname === "/admin/registrations" &&
-															"text-accent-foreground"
+															!currentCompetitionFilter &&
+															"text-accent-foreground bg-accent/50 font-medium"
 													)}
 												>
 													All Registrations
 												</Link>
-												<Link
-													href="/admin/registrations?competitionName=CTF Competition"
-													onClick={() => setIsMobileOpen(false)}
-													className={cn(
-														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
-														pathname.includes("CTF%20Competition") &&
-															"text-accent-foreground"
-													)}
-												>
-													CTF Competition
-												</Link>
-												<Link
-													href="/admin/registrations?competitionName=UI/UX Competition"
-													onClick={() => setIsMobileOpen(false)}
-													className={cn(
-														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
-														pathname.includes("UI%2FUX%20Competition") &&
-															"text-accent-foreground"
-													)}
-												>
-													UI/UX Competition
-												</Link>
-												<Link
-													href="/admin/registrations?competitionName=FTL Competition"
-													onClick={() => setIsMobileOpen(false)}
-													className={cn(
-														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
-														pathname.includes("FTL%20Competition") &&
-															"text-accent-foreground"
-													)}
-												>
-													FTL Competition
-												</Link>
+												{competitions.map((comp) => {
+													const href = `/admin/registrations?competitionName=${encodeURIComponent(
+														comp.name
+													)}`;
+													const isActive =
+														currentCompetitionFilter === comp.name;
+
+													return (
+														<Link
+															key={comp.id}
+															href={href}
+															onClick={() => setIsMobileOpen(false)}
+															className={cn(
+																"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground mt-1",
+																isActive &&
+																	"text-accent-foreground bg-accent/50 font-medium"
+															)}
+														>
+															{comp.name}
+														</Link>
+													);
+												})}
 											</AccordionContent>
 										</AccordionItem>
 									</Accordion>

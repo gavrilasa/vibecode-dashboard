@@ -2,8 +2,9 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useDebounce } from "@/hooks/useDebounce"; // Menggunakan custom hook
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
 	Card,
 	CardContent,
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -41,22 +41,50 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getAllRegistrations } from "@/lib/registration";
-import { PaginatedRegistrations } from "@/types/registration";
+import { PaginatedRegistrations, Registration } from "@/types/registration";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { PageHeader } from "@/components/common/PageHeader";
 import { REGISTRATION_STATUS } from "@/lib/constants";
+import { useCompetition } from "@/hooks/useCompetition";
+import { PageLoader } from "@/components/common/PageLoader";
+import { cn } from "@/lib/utils"; // Import cn utility
 
-export default function AdminRegistrationsPage() {
+// Komponen Pembungkus untuk logika utama
+function RegistrationsPageContent() {
+	const searchParams = useSearchParams();
+	const { competitions, fetchCompetitions } = useCompetition();
+
 	const [data, setData] = useState<PaginatedRegistrations | null>(null);
 	const [loading, setLoading] = useState(true);
 
-	// State untuk filter dan paginasi
 	const [page, setPage] = useState(1);
 	const [limit] = useState(10);
 	const [statusFilter, setStatusFilter] = useState("ALL");
 	const [teamNameFilter, setTeamNameFilter] = useState("");
+	const [competitionFilter, setCompetitionFilter] = useState("ALL");
+
 	const debouncedTeamName = useDebounce(teamNameFilter, 500);
 
+	// FIX 1: Tentukan apakah filter kompetisi dari sidebar sedang aktif.
+	const isCompetitionScoped = searchParams.has("competitionName");
+
+	useEffect(() => {
+		fetchCompetitions();
+	}, [fetchCompetitions]);
+
+	useEffect(() => {
+		const status = searchParams.get("status") || "ALL";
+		const teamName = searchParams.get("teamName") || "";
+		const competitionName = searchParams.get("competitionName") || "ALL";
+
+		setStatusFilter(status);
+		setTeamNameFilter(teamName);
+		setCompetitionFilter(competitionName);
+	}, [searchParams]);
+
+	// FIX 2: Logika fetchRegistrations sudah benar dan akan menggabungkan filter.
+	// useCallback ini memastikan bahwa setiap perubahan pada `statusFilter` atau `competitionFilter`
+	// akan memicu panggilan API baru dengan kedua nilai filter tersebut.
 	const fetchRegistrations = useCallback(async () => {
 		setLoading(true);
 		try {
@@ -65,24 +93,28 @@ export default function AdminRegistrationsPage() {
 				limit,
 				status: statusFilter === "ALL" ? undefined : statusFilter,
 				teamName: debouncedTeamName,
+				competitionName:
+					competitionFilter === "ALL" ? undefined : competitionFilter,
 			});
 			setData(result);
 		} catch (error) {
 			console.error("Failed to fetch registrations:", error);
-			setData(null); // Reset data on error
+			setData(null);
 		} finally {
 			setLoading(false);
 		}
-	}, [page, limit, statusFilter, debouncedTeamName]);
+	}, [page, limit, statusFilter, debouncedTeamName, competitionFilter]);
 
 	useEffect(() => {
 		fetchRegistrations();
 	}, [fetchRegistrations]);
 
+	useEffect(() => {
+		setPage(1);
+	}, [statusFilter, debouncedTeamName, competitionFilter]);
+
 	return (
-		<div className="space-y-6">
-			{/* Header */}
-			<div className="flex flex-wrap items-center justify-between gap-4"></div>
+		<div className="space-y-4">
 			<PageHeader
 				title="Registrations Management"
 				description="Manage and review all competition registrations."
@@ -93,7 +125,6 @@ export default function AdminRegistrationsPage() {
 				</Button>
 			</PageHeader>
 
-			{/* Filters */}
 			<Card>
 				<CardHeader>
 					<CardTitle className="flex items-center space-x-2">
@@ -102,7 +133,13 @@ export default function AdminRegistrationsPage() {
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<div className="grid gap-4 md:grid-cols-2">
+					{/* FIX 3: Layout grid dinamis dan render kondisional untuk filter kompetisi */}
+					<div
+						className={cn(
+							"grid gap-4",
+							isCompetitionScoped ? "md:grid-cols-2" : "md:grid-cols-3"
+						)}
+					>
 						<div className="space-y-2">
 							<Label htmlFor="team-search">Team Name</Label>
 							<div className="relative">
@@ -116,6 +153,30 @@ export default function AdminRegistrationsPage() {
 								/>
 							</div>
 						</div>
+
+						{/* Filter ini hanya muncul jika tidak ada filter kompetisi dari URL */}
+						{!isCompetitionScoped && (
+							<div className="space-y-2">
+								<Label>Competition</Label>
+								<Select
+									value={competitionFilter}
+									onValueChange={setCompetitionFilter}
+								>
+									<SelectTrigger>
+										<SelectValue placeholder="All competitions" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="ALL">All Competitions</SelectItem>
+										{competitions.map((comp) => (
+											<SelectItem key={comp.id} value={comp.name}>
+												{comp.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+						)}
+
 						<div className="space-y-2">
 							<Label>Status</Label>
 							<Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -124,27 +185,11 @@ export default function AdminRegistrationsPage() {
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="ALL">All Statuses</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.PENDING}>
-										Pending
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.REVIEW}>
-										Review
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.APPROVED}>
-										Approved
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.REJECTED}>
-										Rejected
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.PRELIMINARY}>
-										Preliminary
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.FINAL}>
-										Final
-									</SelectItem>
-									<SelectItem value={REGISTRATION_STATUS.ELIMINATED}>
-										Eliminated
-									</SelectItem>
+									{Object.values(REGISTRATION_STATUS).map((status) => (
+										<SelectItem key={status} value={status}>
+											{status}
+										</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
 						</div>
@@ -152,8 +197,9 @@ export default function AdminRegistrationsPage() {
 				</CardContent>
 			</Card>
 
-			{/* Registrations Table */}
+			{/* Sisa komponen (tabel, paginasi, dll) tetap sama */}
 			<Card>
+				{/* ... CardHeader dan CardContent untuk tabel ... */}
 				<CardHeader>
 					<CardTitle>Registrations ({data?.total || 0} found)</CardTitle>
 					<CardDescription>
@@ -181,8 +227,8 @@ export default function AdminRegistrationsPage() {
 										</TableCell>
 									</TableRow>
 								) : data && data.data.length > 0 ? (
-									data.data.map((reg) => (
-										<TableRow key={reg.userId + reg.competition.id}>
+									data.data.map((reg: Registration) => (
+										<TableRow key={reg.id}>
 											<TableCell className="font-medium">
 												{reg.team.name}
 											</TableCell>
@@ -218,7 +264,7 @@ export default function AdminRegistrationsPage() {
 								variant="outline"
 								size="sm"
 								onClick={() => setPage((p) => Math.max(p - 1, 1))}
-								disabled={page === 1}
+								disabled={page === 1 || loading}
 							>
 								<ChevronLeft className="h-4 w-4 mr-1" /> Previous
 							</Button>
@@ -229,7 +275,7 @@ export default function AdminRegistrationsPage() {
 								variant="outline"
 								size="sm"
 								onClick={() => setPage((p) => Math.min(p + 1, data.pageCount))}
-								disabled={page === data.pageCount}
+								disabled={page === data.pageCount || loading}
 							>
 								Next <ChevronRight className="h-4 w-4 ml-1" />
 							</Button>
@@ -238,5 +284,14 @@ export default function AdminRegistrationsPage() {
 				</CardContent>
 			</Card>
 		</div>
+	);
+}
+
+// Komponen utama yang diekspor
+export default function AdminRegistrationsPage() {
+	return (
+		<Suspense fallback={<PageLoader />}>
+			<RegistrationsPageContent />
+		</Suspense>
 	);
 }
