@@ -48,7 +48,11 @@ import { REGISTRATION_STATUS } from "@/lib/constants";
 import { useCompetition } from "@/hooks/useCompetition";
 import { PageLoader } from "@/components/common/PageLoader";
 import { cn } from "@/lib/utils";
-import { capitalize } from "@/lib/utils";
+
+const capitalize = (s: string) => {
+	if (typeof s !== "string" || s.length === 0) return s;
+	return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+};
 
 function RegistrationsPageContent() {
 	const searchParams = useSearchParams();
@@ -62,6 +66,9 @@ function RegistrationsPageContent() {
 	const [statusFilter, setStatusFilter] = useState("ALL");
 	const [teamNameFilter, setTeamNameFilter] = useState("");
 	const [competitionFilter, setCompetitionFilter] = useState("ALL");
+
+	// 1. TAMBAHKAN STATE PENJAGA (GATEKEEPER)
+	const [isInitialSyncComplete, setIsInitialSyncComplete] = useState(false);
 
 	const debouncedTeamName = useDebounce(teamNameFilter, 500);
 	const isCompetitionScoped = searchParams.has("competitionName");
@@ -78,6 +85,8 @@ function RegistrationsPageContent() {
 		setStatusFilter(status);
 		setTeamNameFilter(teamName);
 		setCompetitionFilter(competitionName);
+
+		setIsInitialSyncComplete(true);
 	}, [searchParams]);
 
 	const fetchRegistrations = useCallback(async () => {
@@ -101,12 +110,18 @@ function RegistrationsPageContent() {
 	}, [page, limit, statusFilter, debouncedTeamName, competitionFilter]);
 
 	useEffect(() => {
-		fetchRegistrations();
-	}, [fetchRegistrations]);
+		if (isInitialSyncComplete) {
+			fetchRegistrations();
+		}
+	}, [fetchRegistrations, isInitialSyncComplete]);
 
 	useEffect(() => {
 		setPage(1);
 	}, [statusFilter, debouncedTeamName, competitionFilter]);
+
+	if (!isInitialSyncComplete) {
+		return <PageLoader />;
+	}
 
 	return (
 		<div className="space-y-4">

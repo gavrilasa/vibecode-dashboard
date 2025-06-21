@@ -235,6 +235,7 @@ export default function AdminDashboardPage() {
 									nameKey="name"
 									innerRadius={50}
 									strokeWidth={2}
+									isAnimationActive={!loading}
 								>
 									<Label
 										content={({ viewBox }) => {
@@ -307,7 +308,12 @@ export default function AdminDashboardPage() {
 									cursor={false}
 									content={<ChartTooltipContent indicator="line" />}
 								/>
-								<Bar dataKey="teams" layout="vertical" radius={4}>
+								<Bar
+									dataKey="teams"
+									layout="vertical"
+									radius={4}
+									isAnimationActive={!loading}
+								>
 									<LabelList
 										dataKey="name"
 										position="insideLeft"

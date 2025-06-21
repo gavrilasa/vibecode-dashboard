@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
@@ -36,12 +36,10 @@ export default function DashboardLayout({
 		}
 	}, [isAuthenticated, fetchMyRegistrations]);
 
-	// State 1: Tampilkan loader selama proses fetch data berlangsung.
 	if (loading) {
 		return <PageLoader message="Verifying your registration status..." />;
 	}
 
-	// State 2: Tangani jika terjadi error saat fetch data.
 	if (error) {
 		return (
 			<div className="flex h-screen w-full items-center justify-center p-4">
@@ -63,17 +61,14 @@ export default function DashboardLayout({
 		);
 	}
 
-	// State 3: Data sudah ada (atau tidak ada), jalankan logika utama.
 	if (!loading && registrations) {
 		const registration = registrations[0] || null;
 
-		// Aturan 3a: Jika user tidak terdaftar, redirect ke pemilihan kompetisi.
 		if (!registration && pathname !== APP_ROUTES.SELECT_COMPETITION) {
 			router.push(APP_ROUTES.SELECT_COMPETITION);
-			return <PageLoader message="Redirecting..." />; // Tampilkan loader selama redirect
+			return <PageLoader message="Redirecting..." />;
 		}
 
-		// Aturan 3b: Jika user terdaftar, cek izin halaman spesifik.
 		if (registration) {
 			const pageChecks = [
 				{
@@ -107,12 +102,13 @@ export default function DashboardLayout({
 		}
 	}
 
-	// Jika lolos semua pengecekan, render layout dan halaman yang dituju.
-	// Jika tidak terdaftar, hanya render {children} (halaman pemilihan kompetisi)
 	if (registrations && registrations.length === 0) {
 		return <>{children}</>;
 	}
 
-	// Jika terdaftar, bungkus dengan AppLayout.
-	return <AppLayout>{children}</AppLayout>;
+	return (
+		<Suspense fallback={<PageLoader />}>
+			<AppLayout>{children}</AppLayout>
+		</Suspense>
+	);
 }
