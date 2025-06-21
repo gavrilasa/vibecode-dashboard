@@ -47,9 +47,14 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { REGISTRATION_STATUS } from "@/lib/constants";
 import { useCompetition } from "@/hooks/useCompetition";
 import { PageLoader } from "@/components/common/PageLoader";
-import { cn } from "@/lib/utils"; // Import cn utility
+import { cn } from "@/lib/utils";
 
-// Komponen Pembungkus untuk logika utama
+// 1. HELPER FUNCTION UNTUK FORMAT TEKS
+const capitalize = (s: string) => {
+	if (typeof s !== "string" || s.length === 0) return s;
+	return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+};
+
 function RegistrationsPageContent() {
 	const searchParams = useSearchParams();
 	const { competitions, fetchCompetitions } = useCompetition();
@@ -64,8 +69,6 @@ function RegistrationsPageContent() {
 	const [competitionFilter, setCompetitionFilter] = useState("ALL");
 
 	const debouncedTeamName = useDebounce(teamNameFilter, 500);
-
-	// FIX 1: Tentukan apakah filter kompetisi dari sidebar sedang aktif.
 	const isCompetitionScoped = searchParams.has("competitionName");
 
 	useEffect(() => {
@@ -82,9 +85,6 @@ function RegistrationsPageContent() {
 		setCompetitionFilter(competitionName);
 	}, [searchParams]);
 
-	// FIX 2: Logika fetchRegistrations sudah benar dan akan menggabungkan filter.
-	// useCallback ini memastikan bahwa setiap perubahan pada `statusFilter` atau `competitionFilter`
-	// akan memicu panggilan API baru dengan kedua nilai filter tersebut.
 	const fetchRegistrations = useCallback(async () => {
 		setLoading(true);
 		try {
@@ -133,7 +133,6 @@ function RegistrationsPageContent() {
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					{/* FIX 3: Layout grid dinamis dan render kondisional untuk filter kompetisi */}
 					<div
 						className={cn(
 							"grid gap-4",
@@ -153,8 +152,6 @@ function RegistrationsPageContent() {
 								/>
 							</div>
 						</div>
-
-						{/* Filter ini hanya muncul jika tidak ada filter kompetisi dari URL */}
 						{!isCompetitionScoped && (
 							<div className="space-y-2">
 								<Label>Competition</Label>
@@ -176,7 +173,6 @@ function RegistrationsPageContent() {
 								</Select>
 							</div>
 						)}
-
 						<div className="space-y-2">
 							<Label>Status</Label>
 							<Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -185,9 +181,10 @@ function RegistrationsPageContent() {
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="ALL">All Statuses</SelectItem>
+									{/* 2. GUNAKAN FUNGSI capitalize DI SINI */}
 									{Object.values(REGISTRATION_STATUS).map((status) => (
 										<SelectItem key={status} value={status}>
-											{status}
+											{capitalize(status)}
 										</SelectItem>
 									))}
 								</SelectContent>
@@ -197,9 +194,7 @@ function RegistrationsPageContent() {
 				</CardContent>
 			</Card>
 
-			{/* Sisa komponen (tabel, paginasi, dll) tetap sama */}
 			<Card>
-				{/* ... CardHeader dan CardContent untuk tabel ... */}
 				<CardHeader>
 					<CardTitle>Registrations ({data?.total || 0} found)</CardTitle>
 					<CardDescription>
@@ -211,6 +206,7 @@ function RegistrationsPageContent() {
 						<Table>
 							<TableHeader>
 								<TableRow>
+									{/* 3. SEMUA TableHead KEMBALI MENJADI TEKS BIASA */}
 									<TableHead>Team Name</TableHead>
 									<TableHead>Competition</TableHead>
 									<TableHead>Institution</TableHead>
@@ -226,7 +222,8 @@ function RegistrationsPageContent() {
 											<Loader2 className="h-6 w-6 animate-spin mx-auto" />
 										</TableCell>
 									</TableRow>
-								) : data && data.data.length > 0 ? (
+								) : // 4. MAPPING LANGSUNG PADA `data.data`
+								data && data.data.length > 0 ? (
 									data.data.map((reg: Registration) => (
 										<TableRow key={reg.id}>
 											<TableCell className="font-medium">
@@ -257,7 +254,6 @@ function RegistrationsPageContent() {
 							</TableBody>
 						</Table>
 					</div>
-
 					{data && data.pageCount > 1 && (
 						<div className="flex items-center justify-end space-x-2 pt-4">
 							<Button
@@ -287,7 +283,6 @@ function RegistrationsPageContent() {
 	);
 }
 
-// Komponen utama yang diekspor
 export default function AdminRegistrationsPage() {
 	return (
 		<Suspense fallback={<PageLoader />}>
