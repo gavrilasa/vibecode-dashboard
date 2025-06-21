@@ -44,6 +44,7 @@ import { getAllRegistrations } from "@/lib/registration";
 import { PaginatedRegistrations } from "@/types/registration";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { PageHeader } from "@/components/common/PageHeader";
+import { REGISTRATION_STATUS } from "@/lib/constants";
 
 export default function AdminRegistrationsPage() {
 	const [data, setData] = useState<PaginatedRegistrations | null>(null);
@@ -123,9 +124,27 @@ export default function AdminRegistrationsPage() {
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="ALL">All Statuses</SelectItem>
-									<SelectItem value="PENDING">Pending</SelectItem>
-									<SelectItem value="APPROVED">Approved</SelectItem>
-									<SelectItem value="REJECTED">Rejected</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.PENDING}>
+										Pending
+									</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.REVIEW}>
+										Review
+									</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.APPROVED}>
+										Approved
+									</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.REJECTED}>
+										Rejected
+									</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.PRELIMINARY}>
+										Preliminary
+									</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.FINAL}>
+										Final
+									</SelectItem>
+									<SelectItem value={REGISTRATION_STATUS.ELIMINATED}>
+										Eliminated
+									</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>

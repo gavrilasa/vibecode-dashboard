@@ -1,5 +1,3 @@
-// components/layout/Sidebar.tsx
-
 "use client";
 
 import Link from "next/link";
@@ -31,6 +29,12 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion"; // <-- Tambahkan import ini
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -47,10 +51,12 @@ const baseUserMenuItems = [
 	{ title: "Biodata", href: "/dashboard/biodata", icon: User },
 ];
 
+// Kita akan tetap definisikan 'Registrations' di sini untuk di-loop,
+// tapi akan kita berikan perlakuan khusus saat rendering.
+// 'Teams' sudah saya hapus sesuai rencana Anda sebelumnya.
 const adminMenuItems = [
 	{ title: "Dashboard", href: "/admin/dashboard", icon: BarChart3 },
 	{ title: "Registrations", href: "/admin/registrations", icon: FileText },
-	{ title: "Teams", href: "/admin/teams", icon: Users },
 ];
 
 export function Sidebar({ className }: SidebarProps) {
@@ -62,6 +68,9 @@ export function Sidebar({ className }: SidebarProps) {
 	const router = useRouter();
 
 	const isAdmin = user?.role === ROLES.ADMIN;
+
+	// Logika untuk active state accordion
+	const isRegistrationActive = pathname.startsWith("/admin/registrations");
 
 	useEffect(() => {
 		if (user && !isAdmin) {
@@ -84,7 +93,6 @@ export function Sidebar({ className }: SidebarProps) {
 				href: APP_ROUTES.UPLOAD_BERKAS,
 				icon: Upload,
 			});
-
 			if (canAccessUploadPenyisihan(userRegistration)) {
 				dynamicUserMenuItems.push({
 					title: "Pengumpulan Karya",
@@ -92,7 +100,6 @@ export function Sidebar({ className }: SidebarProps) {
 					icon: FileText,
 				});
 			}
-
 			if (canAccessUploadFinal(userRegistration)) {
 				dynamicUserMenuItems.push({
 					title: "Berkas Finalis",
@@ -101,7 +108,6 @@ export function Sidebar({ className }: SidebarProps) {
 				});
 			}
 		}
-
 		return dynamicUserMenuItems;
 	}, [isAdmin, registrations]);
 
@@ -109,7 +115,6 @@ export function Sidebar({ className }: SidebarProps) {
 		if (isAdmin || !registrations || registrations.length === 0) {
 			return null;
 		}
-
 		const userRegistration = registrations[0];
 		const competitionName = userRegistration.competition.name.toLowerCase();
 
@@ -122,7 +127,6 @@ export function Sidebar({ className }: SidebarProps) {
 		if (competitionName.includes(COMPETITION_KEYS.FTL)) {
 			return "https://storage.theaceundip.id/assets/profile-ftl.png";
 		}
-
 		return null;
 	}, [isAdmin, registrations]);
 
@@ -211,6 +215,85 @@ export function Sidebar({ className }: SidebarProps) {
 
 					<nav className="flex-1 space-y-2 px-2 py-4">
 						{menuItems.map((item) => {
+							if (isAdmin && item.title === "Registrations") {
+								return (
+									<Accordion
+										key="admin-registrations"
+										type="single"
+										collapsible
+										className="w-full"
+										defaultValue={
+											isRegistrationActive ? "registrations-item" : ""
+										}
+									>
+										<AccordionItem
+											value="registrations-item"
+											className="border-none"
+										>
+											<AccordionTrigger
+												className={cn(
+													"flex items-center space-x-3 rounded-lg p-3 text-sm font-medium transition-colors hover:no-underline",
+													isRegistrationActive
+														? "bg-accent text-accent-foreground"
+														: "py-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+												)}
+											>
+												<div className="flex space-x-3">
+													<item.icon className="h-5 w-5" />
+													<span>{item.title}</span>
+												</div>
+											</AccordionTrigger>
+											<AccordionContent className="pl-10 pt-1">
+												<Link
+													href="/admin/registrations"
+													onClick={() => setIsMobileOpen(false)}
+													className={cn(
+														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
+														pathname === "/admin/registrations" &&
+															"text-accent-foreground"
+													)}
+												>
+													All Registrations
+												</Link>
+												<Link
+													href="/admin/registrations?competitionName=CTF Competition"
+													onClick={() => setIsMobileOpen(false)}
+													className={cn(
+														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
+														pathname.includes("CTF%20Competition") &&
+															"text-accent-foreground"
+													)}
+												>
+													CTF Competition
+												</Link>
+												<Link
+													href="/admin/registrations?competitionName=UI/UX Competition"
+													onClick={() => setIsMobileOpen(false)}
+													className={cn(
+														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
+														pathname.includes("UI%2FUX%20Competition") &&
+															"text-accent-foreground"
+													)}
+												>
+													UI/UX Competition
+												</Link>
+												<Link
+													href="/admin/registrations?competitionName=FTL Competition"
+													onClick={() => setIsMobileOpen(false)}
+													className={cn(
+														"flex items-center rounded-md p-2 text-sm text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground",
+														pathname.includes("FTL%20Competition") &&
+															"text-accent-foreground"
+													)}
+												>
+													FTL Competition
+												</Link>
+											</AccordionContent>
+										</AccordionItem>
+									</Accordion>
+								);
+							}
+
 							const isActive = pathname === item.href;
 							return (
 								<Link

@@ -288,7 +288,7 @@ export default function AdminDashboardPage() {
 								data={competitionData}
 								layout="vertical"
 								margin={{
-									right: 16,
+									right: 10,
 									left: 10,
 								}}
 							>
@@ -338,8 +338,8 @@ export default function AdminDashboardPage() {
 					<CardHeader className="flex flex-row items-center justify-between">
 						<div>
 							<CardTitle>Teams Awaiting Review</CardTitle>
-							<CardDescription>
-								Oldest pending teams listed first.
+							<CardDescription className="pt-1">
+								Teams that need to be review ASAP.
 							</CardDescription>
 						</div>
 						{pendingTeams.length > 0 && (
@@ -393,7 +393,9 @@ export default function AdminDashboardPage() {
 				<Card>
 					<CardHeader>
 						<CardTitle>Recent Activity</CardTitle>
-						<CardDescription>The latest teams to register.</CardDescription>
+						<CardDescription>
+							A log of the latest teams that registered for competitions.
+						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-4">
