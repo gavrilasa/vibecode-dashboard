@@ -20,7 +20,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { login } from "@/lib/auth";
 import { useAuthStore } from "@/store/auth-store"; // Impor store langsung
-import { Loader2 } from "lucide-react";
+import { Loader2, Folder } from "lucide-react";
 
 const loginSchema = z.object({
 	email: z.string().email("Please enter a valid email address"),
@@ -122,6 +122,17 @@ export function LoginForm() {
 						) : (
 							"Sign in"
 						)}
+					</Button>
+					<Button variant="outline" size="lg" className="w-full px-1">
+						<a
+							href="https://linktr.ee/theace25.tekkom"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="flex"
+						>
+							<Folder className="mr-2 size-4 text-secondary" />
+							Check Participant Needs Here
+						</a>
 					</Button>
 				</form>
 			</CardContent>
