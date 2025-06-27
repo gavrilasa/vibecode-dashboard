@@ -10,7 +10,6 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Sub-komponen Card
 interface CardProps {
 	frontSrc: string;
 	frontAlt: string;
@@ -27,8 +26,6 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 				className="relative w-4/5 max-w-[240px] aspect-[2/3] [perspective:1000px] md:absolute md:w-[240px] 2xl:w-[320px] group"
 			>
 				<Link href={href} className="block w-full h-full" aria-label={frontAlt}>
-					{/* --- PERUBAHAN OPTIMASI 1 --- */}
-					{/* Menambahkan will-change untuk memberi petunjuk ke browser agar mengoptimalkan animasi. */}
 					<div className="relative w-full h-full [transform-style:preserve-3d] [will-change:transform] group-hover:cursor-pointer transition-transform duration-300 group-hover:scale-105">
 						<div className="absolute w-full h-full overflow-hidden rounded-xl [backface-visibility:hidden]">
 							<Image
@@ -58,8 +55,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 
 Card.displayName = "Card";
 
-// Komponen Utama Animasi
-export default function FlippingCardsAnimation() {
+export default function CompetitionCategorySection() {
 	const cardData = [
 		{
 			id: 1,
@@ -100,8 +96,6 @@ export default function FlippingCardsAnimation() {
 
 	useGSAP(
 		() => {
-			// --- PERUBAHAN OPTIMASI 2 ---
-			// Menerapkan will-change pada kartu sebelum animasi dimulai.
 			gsap.set(cardRefs.current, {
 				willChange: "transform, left, top, rotation",
 			});
@@ -241,14 +235,13 @@ export default function FlippingCardsAnimation() {
 	return (
 		<div ref={container} className="w-full bg-inherit">
 			<ReactLenis root ref={lenisRef} options={{ autoRaf: false }} />
-			<section className="relative flex flex-col items-center w-full gap-20 py-24 cards-container md:block md:h-screen md:py-0 md:gap-0">
-				<div className="pt-4 text-center text-white md:pt-32 2xl:pt-40">
-					<h2 className="mb-4 text-4xl font-bold md:text-6xl">
+			<section className="relative flex flex-col items-center w-full gap-8 cards-container md:block md:h-screen md:gap-0">
+				<div className="px-4 pt-4 text-center text-white md:pt-32 2xl:pt-40">
+					<h2 className="mb-4 text-5xl font-bold md:text-6xl font-lora">
 						Competition Category
 					</h2>
-					<p className="max-w-2xl px-4 mx-auto text-lg md:text-xl opacity-80 2xl:max-w-4xl">
-						Discover the exciting competitions available in The ACE. Scroll to
-						reveal each category and find your perfect challenge.
+					<p className="text-lg max-w-2xlmx-auto md:text-xl opacity-80 2xl:max-w-4xl font-lora">
+						Discover the exciting competitions available in The ACE 2025.
 					</p>
 				</div>
 				{cardData.map((card, index) => (
