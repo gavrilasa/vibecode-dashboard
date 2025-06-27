@@ -1,6 +1,10 @@
 import Navbar from "@/components/landing/Navbar";
 import Image from "next/image";
-import FlippingCardsAnimation from "@/components/landing/FlippingCardsAnimation";
+import CompetitionCategorySection from "@/components/landing/CompetitionCategorySection";
+import CompetitionFlowSection from "@/components/landing/CompetitionFlowSection";
+import Footer from "@/components/landing/Footer";
+import SponsorSection from "@/components/landing/SponsorSection";
+import MediaPartnerSection from "@/components/landing/MediaPartnerSection";
 
 export default function Home() {
 	return (
@@ -38,15 +42,16 @@ export default function Home() {
 			</section>
 
 			<section>
-				<FlippingCardsAnimation />
+				<CompetitionCategorySection />
 			</section>
 
-			<section className="min-h-screen bg-[#012A43] flex items-center justify-center">
-				<div className="text-center text-white">
-					<h2 className="mb-4 text-4xl font-bold">Next Section</h2>
-					<p className="text-lg opacity-80">Your content continues here...</p>
-				</div>
-			</section>
+			<CompetitionFlowSection />
+
+			<SponsorSection />
+
+			<MediaPartnerSection />
+
+			<Footer />
 		</main>
 	);
 }
