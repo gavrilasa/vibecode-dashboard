@@ -5,7 +5,6 @@
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { DashboardCard } from "@/components/features/dashboard/DashboardCard";
-import { CountdownCard } from "@/components/features/dashboard/CountdownCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useRegistration } from "@/hooks/useRegistration";
 import {

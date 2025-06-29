@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -7,27 +9,29 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
+import { Wrench } from "lucide-react";
 
 export default function NotFound() {
+	const router = useRouter();
+
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-background p-4 bg-[url(https://storage.theaceundip.id/assets/compressed-bg-theace.webp)] bg-cover bg-center">
 			<Card className="w-full max-w-md text-center">
 				<CardHeader className="space-y-4">
 					<div className="mx-auto">
-						<AlertTriangle className="h-12 w-12 text-destructive" />
+						<Wrench className="w-12 h-12 text-primary" />
 					</div>
 					<CardTitle className="mt-4 text-3xl font-bold">
-						404 - Page Not Found
+						Halaman dalam Perbaikan
 					</CardTitle>
-					<CardDescription className="text-base px-2">
-						Sorry, the page you are looking for does not exist or has been
-						moved.
+					<CardDescription className="px-2 text-base">
+						Maaf, halaman ini sedang dalam pengerjaan. Silakan kembali lagi
+						nanti.
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<Button asChild className="w-full text-white">
-						<Link href="/dashboard">Back to Home</Link>
+					<Button onClick={() => router.back()} className="w-full text-white">
+						Kembali
 					</Button>
 				</CardContent>
 			</Card>

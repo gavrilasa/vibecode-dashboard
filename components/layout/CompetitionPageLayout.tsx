@@ -25,7 +25,7 @@ import {
 	Download,
 	FlagIcon,
 	Bot,
-	FileText, // Using FileText as the "paper" icon
+	FileText,
 } from "lucide-react";
 import { PageLoader } from "../common/PageLoader";
 import Navbar from "../landing/Navbar";
@@ -254,7 +254,7 @@ export function CompetitionPageLayout({ data }: CompetitionPageLayoutProps) {
 									</CardTitle>
 								</CardHeader>
 								<CardContent>
-									<ul className="space-y-4 text-gray-300">
+									<ul className="space-y-4 text-white/90">
 										{data.terms.map((term, index) => (
 											<li key={index} className="flex items-start gap-3">
 												<TermIcon className="flex-shrink-0 w-5 h-5 mt-0.5 text-primary" />
