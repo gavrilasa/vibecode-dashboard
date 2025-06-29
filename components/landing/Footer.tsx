@@ -4,7 +4,7 @@ import { Instagram, Mail, Music2 } from "lucide-react";
 
 export default function Footer() {
 	return (
-		<div className="bg-white min-h-48">
+		<div className="bg-white md:min-h-48">
 			<div className="relative z-20 h-4 bg-white md:h-12"> </div>
 
 			<div className="relative z-0 -mt-2 -mb-2 text-center md:-mt-6 md::-mb-6">
