@@ -31,6 +31,10 @@ export function middleware(request: NextRequest) {
 		APP_ROUTES.REGISTER,
 		APP_ROUTES.SENDING_EMAIL,
 		APP_ROUTES.VERIFY_EMAIL,
+		APP_ROUTES.HOME,
+		APP_ROUTES.CTF_PAGE,
+		APP_ROUTES.UIUX_PAGE,
+		APP_ROUTES.LINEFOLLOWER_PAGE,
 	];
 
 	// Izinkan akses ke rute publik.

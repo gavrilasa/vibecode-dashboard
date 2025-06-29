@@ -180,7 +180,7 @@ export default function Navbar() {
 
 				<div className="items-center hidden gap-1 md:flex">
 					<Link
-						href="/home"
+						href="/"
 						className="inline-flex items-center justify-center h-10 px-4 py-2 text-base font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground"
 					>
 						Home
