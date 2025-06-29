@@ -59,12 +59,12 @@ const ScrollCard: FC<ScrollCardProps> = memo(
 					/>
 
 					{/* Overlay Teks di Tengah */}
-					<div className="absolute inset-0 flex items-center justify-center p-4 bg-black bg-opacity-40">
+					<div className="absolute inset-0 flex items-center justify-center p-4 bg-black bg-opacity-50">
 						<div className="flex flex-col items-center text-center text-white gap-y-2 md:gap-y-3">
 							{/* Teks Step */}
-							<p className="font-mono text-sm tracking-widest uppercase">
+							{/* <p className="font-mono text-sm tracking-widest uppercase">
 								{card.step}
-							</p>
+							</p> */}
 							{/* Teks Judul Utama */}
 							<h2 className="text-3xl font-bold md:text-5xl drop-shadow-lg">
 								{card.title}
@@ -94,7 +94,7 @@ ScrollCard.displayName = "ScrollCard";
 const CARDS_DATA: CardData[] = [
 	{
 		id: 1,
-		image: "/image-1.png",
+		image: "https://storage.theaceundip.id/assets/Step1-Pendaftaran.webp",
 		tag: "Tahap 1",
 		step: "Step 1",
 		title: "Pendaftaran Lomba",
@@ -103,7 +103,7 @@ const CARDS_DATA: CardData[] = [
 	},
 	{
 		id: 2,
-		image: "/image-2.png",
+		image: "https://storage.theaceundip.id/assets/Step2-Pelaksanaan.webp",
 		tag: "Tahap 2",
 		step: "Step 2",
 		title: "Pelaksanaan Lomba",
@@ -112,7 +112,7 @@ const CARDS_DATA: CardData[] = [
 	},
 	{
 		id: 3,
-		image: "/image-3.png",
+		image: "https://storage.theaceundip.id/assets/Step3-Pelaksanaan-Final.webp",
 		tag: "Tahap 3",
 		step: "Step 3",
 		title: "Final Lomba",
@@ -121,7 +121,8 @@ const CARDS_DATA: CardData[] = [
 	},
 	{
 		id: 4,
-		image: "/image-4.png",
+		image:
+			"https://storage.theaceundip.id/assets/Step4-Pengumuman-Pemenang.webp",
 		tag: "Tahap 4",
 		step: "Step 4",
 		title: "Pengumuman Pemenang",
@@ -130,7 +131,8 @@ const CARDS_DATA: CardData[] = [
 	},
 	{
 		id: 5,
-		image: "/image-5.png",
+		image:
+			"https://storage.theaceundip.id/assets/Step5-Awarding-dan-Seminar-Nasional.webp",
 		tag: "Puncak Acara",
 		step: "Step 5",
 		title: "Awarding & Seminar",
@@ -139,7 +141,6 @@ const CARDS_DATA: CardData[] = [
 	},
 ];
 
-// Tipe untuk props komponen utama ScrollCards
 interface ScrollCardsProps {
 	className?: string;
 	containerClassName?: string;
