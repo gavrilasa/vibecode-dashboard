@@ -4,44 +4,68 @@ import React from "react";
 
 const mediaPartners = [
 	{
-		name: "Media Partner 1",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+1&font=raleway",
+		name: "Logo-HMDTIF",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HMDTIF.webp",
 	},
 	{
-		name: "Media Partner 2",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+2&font=raleway",
+		name: "Logo-HMS",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HMS.webp",
 	},
 	{
-		name: "Media Partner 3",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+3&font=raleway",
+		name: "Logo-HME",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HME.webp",
 	},
 	{
-		name: "Media Partner 4",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+4&font=raleway",
+		name: "Logo-HMTL",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HMTL.webp",
 	},
 	{
-		name: "Media Partner 5",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+5&font=raleway",
+		name: "Logo-HM-Geodesi",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HM-Geodesi.webp",
 	},
 	{
-		name: "Media Partner 6",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+6&font=raleway",
+		name: "Logo-HMTI",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HMTI.webp",
 	},
 	{
-		name: "Media Partner 7",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+7&font=raleway",
+		name: "Logo-HMA",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HMA.webp",
 	},
 	{
-		name: "Media Partner 8",
-		logoUrl:
-			"https://placehold.co/200x100/FFFFFF/000000?text=Partner+8&font=raleway",
+		name: "Logo-Himaspal",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-Himaspal.webp",
+	},
+	{
+		name: "Logo-HMTG",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-HMTG.webp",
+	},
+	{
+		name: "Logo-FST",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-FST.webp",
+	},
+	{
+		name: "Logo-InfoLombaIT",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-InfoLombaIT.webp",
+	},
+	{
+		name: "Logo-AtapLangit",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-AtapLangit.webp",
+	},
+	{
+		name: "Logo-Parjo",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-Parjo.webp",
+	},
+	{
+		name: "Logo-TeknoEventKampus",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-TeknoEventKampus.webp",
+	},
+	{
+		name: "Logo-TeknoEvent",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-TeknoEvent.webp",
+	},
+	{
+		name: "Logo-LombaUIUX",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-LombaUIUX.webp",
 	},
 ];
 
@@ -72,16 +96,11 @@ const MediaPartnerSection = () => {
 						</h2>
 					</div>
 
-					{/* Infinite Scroller Container */}
 					<div className="relative w-full">
-						{/* Scroller Wrapper - menyembunyikan overflow dan menambahkan efek fade di tepi */}
 						<div className="relative w-full overflow-hidden">
-							{/* Inner Scroller - berisi logo dan animasi */}
 							<div className="flex w-max animate-scroll hover:[animation-play-state:paused]">
 								{extendedPartners.map((partner, index) => (
-									// Ukuran dan gap diperkecil di sini
 									<div key={index} className="flex-shrink-0 w-32 mx-4">
-										{/* Kartu logo dengan efek glassmorphism dan aspek rasio 1:1 */}
 										<div className="flex items-center justify-center p-2 border rounded-lg shadow-lg aspect-square bg-white/10 backdrop-blur-sm border-white/20">
 											<img
 												src={partner.logoUrl}
@@ -93,7 +112,6 @@ const MediaPartnerSection = () => {
 								))}
 							</div>
 
-							{/* Efek Fade di sisi kiri dan kanan disesuaikan dengan background baru */}
 							<div className="absolute top-0 left-0 h-full w-24 bg-gradient-to-r from-[#012A43] to-transparent pointer-events-none"></div>
 							<div className="absolute top-0 right-0 h-full w-24 bg-gradient-to-l from-[#012A43] to-transparent pointer-events-none"></div>
 						</div>

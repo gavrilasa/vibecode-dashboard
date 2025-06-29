@@ -23,35 +23,31 @@ const sponsorsData: Sponsor[] = [
 	{
 		name: "Cloud Kilat",
 		tier: "gold",
-		logoUrl:
-			"https://placehold.co/400x400/FFFFFF/000000?text=Cloud+Kilat&font=raleway",
-		websiteUrl: "#",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-CloudKilat.webp",
+		websiteUrl: "https://www.cloudkilat.com/",
 	},
 	{
 		name: "IDN",
 		tier: "gold",
-		logoUrl: "https://placehold.co/400x400/FFFFFF/000000?text=IDN&font=raleway",
-		websiteUrl: "#",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-IDN.webp",
+		websiteUrl: "https://www.idn.id/",
 	},
 	{
 		name: "Oronamin C",
 		tier: "silver",
-		logoUrl:
-			"https://placehold.co/400x400/FFFFFF/000000?text=Oronamin+C&font=raleway",
-		websiteUrl: "#",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-OronaminC.webp",
+		websiteUrl: "https://oronaminc.id/",
 	},
 	{
-		name: "Indoprinting",
+		name: "IndoPrinting",
 		tier: "bronze",
-		logoUrl:
-			"https://placehold.co/400x400/FFFFFF/000000?text=Indoprinting&font=raleway",
-		websiteUrl: "#",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-IndoPrinting.webp",
+		websiteUrl: "https://indoprinting.co.id/",
 	},
 	{
-		name: "Fadia Store",
+		name: "Fad Shop",
 		tier: "bronze",
-		logoUrl:
-			"https://placehold.co/400x400/FFFFFF/000000?text=Fadia+Store&font=raleway",
+		logoUrl: "https://storage.theaceundip.id/assets/Logo-FadShop.webp",
 		websiteUrl: "#",
 	},
 ];
