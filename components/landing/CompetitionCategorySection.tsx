@@ -59,24 +59,26 @@ export default function CompetitionCategorySection() {
 	const cardData = [
 		{
 			id: 1,
-			frontSrc: "https://storage.theaceundip.id/assets/card-front-blue.webp",
-			backSrc: "https://storage.theaceundip.id/assets/card-back-1.webp",
+			frontSrc: "https://storage.theaceundip.id/assets/Border-Front-Card.webp",
+			backSrc: "https://storage.theaceundip.id/assets/Border-CTF-Card.webp",
 			alt: "Competition Card CTF",
-			href: "/competitions/ctf",
+			href: "/ctf",
 		},
 		{
 			id: 2,
-			frontSrc: "https://storage.theaceundip.id/assets/card-front-blue.webp",
-			backSrc: "https://storage.theaceundip.id/assets/card-back-2.webp",
+			frontSrc: "https://storage.theaceundip.id/assets/Border-Front-Card.webp",
+			backSrc:
+				"https://storage.theaceundip.id/assets/Border-UIUXDesign-Card.webp",
 			alt: "Competition Card UI/UX",
-			href: "/competitions/ui-ux",
+			href: "/uiux",
 		},
 		{
 			id: 3,
-			frontSrc: "https://storage.theaceundip.id/assets/card-front-blue.webp",
-			backSrc: "https://storage.theaceundip.id/assets/card-back-3.webp",
+			frontSrc: "https://storage.theaceundip.id/assets/Border-Front-Card.webp",
+			backSrc:
+				"https://storage.theaceundip.id/assets/Border-LineFollower-Card.webp",
 			alt: "Competition Card Line Follower",
-			href: "/competitions/line-follower",
+			href: "/line-follower",
 		},
 	];
 
@@ -240,7 +242,7 @@ export default function CompetitionCategorySection() {
 					<h2 className="mb-4 text-5xl font-bold md:text-6xl font-lora">
 						Competition Category
 					</h2>
-					<p className="text-lg max-w-2xlmx-auto md:text-xl opacity-80 2xl:max-w-4xl font-lora">
+					<p className="text-lg max-w-2xl mx-auto md:text-xl opacity-80 2xl:max-w-4xl font-lora">
 						Discover the exciting competitions available in The ACE 2025.
 					</p>
 				</div>
