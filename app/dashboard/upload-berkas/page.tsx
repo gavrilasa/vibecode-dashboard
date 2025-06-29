@@ -172,7 +172,7 @@ export default function UploadBerkasPage() {
 									</li>
 									<li>Format nama file sebagai berikut: </li>
 									<p>
-										<span className="font-mono">
+										<span className="font-mono break-words">
 											{" "}
 											⁠TheAce_[Lomba]_[NamaTim].pdf
 										</span>
@@ -274,8 +274,7 @@ export default function UploadBerkasPage() {
 									</li>
 									<li>Format nama file sebagai berikut: </li>
 									<p>
-										<span className="font-mono">
-											{" "}
+										<span className="font-mono break-words">
 											⁠TheAce_[NamaTim]_Mitra_CloudKilat.pdf
 										</span>
 									</p>
