@@ -5,6 +5,7 @@ import CompetitionFlowSection from "@/components/landing/CompetitionFlowSection"
 import Footer from "@/components/landing/Footer";
 import SponsorSection from "@/components/landing/SponsorSection";
 import MediaPartnerSection from "@/components/landing/MediaPartnerSection";
+import PrizePoolSection from "@/components/landing/PrizePoolSection";
 
 export default function Home() {
 	return (
@@ -40,6 +41,8 @@ export default function Home() {
           "
 				></div>
 			</section>
+
+			<PrizePoolSection />
 
 			<section>
 				<CompetitionCategorySection />
