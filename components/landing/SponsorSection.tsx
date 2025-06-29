@@ -1,4 +1,4 @@
-import React from "react";
+import Image from "next/image";
 
 type Tier = "gold" | "silver" | "bronze";
 
@@ -64,16 +64,18 @@ const SponsorCard = ({
 			target="_blank"
 			rel="noopener noreferrer"
 			className={`
-        flex items-center justify-center aspect-square
-        bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg
-        transition-all duration-300 hover:bg-white/20 hover:scale-105 
-        border-2 ${borderColor}
-      `}
+    relative flex items-center justify-center aspect-square overflow-hidden
+    bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg
+    transition-all duration-300 hover:bg-white/20 hover:scale-105 
+    border-2 ${borderColor}
+  `}
 		>
-			<img
+			<Image
 				src={logoUrl}
 				alt={`Logo ${name}`}
-				className="object-contain w-full h-auto max-h-full rounded-xl"
+				width={500}
+				height={500}
+				className="object-contain rounded-xl"
 			/>
 		</a>
 	);
@@ -98,14 +100,13 @@ const TierSection = ({
 };
 
 const SponsorSection = () => {
-	// Memisahkan sponsor berdasarkan tier
 	const goldSponsors = sponsorsData.filter((s) => s.tier === "gold");
 	const silverSponsors = sponsorsData.filter((s) => s.tier === "silver");
 	const bronzeSponsors = sponsorsData.filter((s) => s.tier === "bronze");
 
 	return (
 		<section className="bg-[#012A43]">
-			<div className="container mx-auto space-y-8">
+			<div className="container py-24 mx-auto space-y-8">
 				<div className="px-4 text-center text-white">
 					<h2 className="mb-4 text-5xl font-bold md:text-6xl font-lora">
 						Event Sponsor
@@ -115,21 +116,21 @@ const SponsorSection = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col gap-y-8">
+				<div className="flex flex-col gap-y-12">
 					<TierSection
 						sponsors={goldSponsors}
 						cardSizeClass="w-8/12 sm:w-5/12 md:w-4/12 lg:w-3/12"
-						borderColor="border-yellow-400/60 p-6"
+						borderColor="border-yellow-400/60 p-5 md:p-6"
 					/>
 					<TierSection
 						sponsors={silverSponsors}
 						cardSizeClass="w-6/12 sm:w-4/12 md:w-3/12 lg:w-1/5"
-						borderColor="border-slate-300/60 p-5"
+						borderColor="border-slate-300/60 p-4 md:p-5"
 					/>
 					<TierSection
 						sponsors={bronzeSponsors}
 						cardSizeClass="w-1/3 sm:w-1/4 md:w-2/12 lg:w-[15%]"
-						borderColor="border-amber-600/60 p-4"
+						borderColor="border-amber-600/60 p-3 md:p-4"
 					/>
 				</div>
 			</div>

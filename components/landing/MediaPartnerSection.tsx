@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import Image from "next/image";
 
 const mediaPartners = [
 	{
@@ -101,11 +101,13 @@ const MediaPartnerSection = () => {
 							<div className="flex w-max animate-scroll hover:[animation-play-state:paused]">
 								{extendedPartners.map((partner, index) => (
 									<div key={index} className="flex-shrink-0 w-32 mx-4">
-										<div className="flex items-center justify-center p-2 border rounded-lg shadow-lg aspect-square bg-white/10 backdrop-blur-sm border-white/20">
-											<img
+										<div className="relative flex items-center justify-center p-2 border rounded-lg shadow-lg aspect-square bg-white/10 backdrop-blur-sm border-white/20">
+											<Image
 												src={partner.logoUrl}
 												alt={partner.name}
-												className="object-contain max-w-full max-h-full"
+												fill
+												sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+												className="object-contain"
 											/>
 										</div>
 									</div>

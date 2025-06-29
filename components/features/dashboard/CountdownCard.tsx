@@ -70,23 +70,69 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<div className="flex justify-center text-center gap-x-3">
+					<div className="flex justify-center text-center gap-x-1">
 						<div>
-							<div className="text-2xl font-bold">--</div>
+							<div className="text-5xl font-bold text-[#012A43] font-lora">
+								--
+							</div>
 							<div className="text-xs text-muted-foreground">Days</div>
 						</div>
+						<div className="text-4xl text-[#012A43] font-bold">:</div>
 						<div>
-							<div className="text-2xl font-bold">--</div>
-							<div className="text-xs text-muted-foreground">Hours</div>
+							<div className="text-5xl font-bold text-[#012A43] font-lora">
+								--
+							</div>
+							<div className="text-xs text-muted-foreground">Hour</div>
 						</div>
+						<div className="text-4xl text-[#012A43] font-bold">:</div>
 						<div>
-							<div className="text-2xl font-bold">--</div>
+							<div className="text-5xl font-bold text-[#012A43] font-lora">
+								--
+							</div>
 							<div className="text-xs text-muted-foreground">Minutes</div>
 						</div>
+						<div className="text-4xl text-[#012A43] font-bold">:</div>
 						<div>
-							<div className="text-2xl font-bold">--</div>
+							<div className="text-5xl font-bold text-[#012A43] font-lora">
+								--
+							</div>
 							<div className="text-xs text-muted-foreground">Seconds</div>
 						</div>
+					</div>
+					<div className="flex flex-col justify-center gap-2 opacity-50 pointer-events-none">
+						<div className="flex flex-row justify-center gap-2 pt-4 text-base">
+							<Button
+								variant="ghost"
+								className="relative overflow-hidden text-base rounded-lg"
+								size="lg"
+								tabIndex={-1}
+							>
+								<span className="flex items-center justify-center px-4 bg-orange-100 text-primary">
+									<Download className="w-5 h-5 mr-2" /> Guidebook
+								</span>
+							</Button>
+							<Button
+								size="lg"
+								className="relative p-1 overflow-hidden transition-colors duration-300 rounded-lg bg-primary"
+								tabIndex={-1}
+							>
+								<div className="flex items-center w-full h-full mr-4">
+									<div className="flex items-center justify-center p-2 bg-white rounded-md">
+										<ArrowRight className="text-primary" size={16} />
+									</div>
+									<div className="flex items-center justify-center flex-1 h-full pl-2 text-base text-white">
+										Register
+									</div>
+								</div>
+							</Button>
+						</div>
+						<Button
+							className="px-12 mx-auto text-base text-white bg-secondary"
+							tabIndex={-1}
+						>
+							<Phone className="mr-2 size-5" />
+							Contact Person
+						</Button>
 					</div>
 				</CardContent>
 			</Card>
@@ -108,21 +154,21 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 						</div>
 						<div className="text-xs text-muted-foreground">Days</div>
 					</div>
-					<div className="text-4xl text-[#012A43] font-bold">:</div>
+					<div className="text-4xl text-[#012A43] font-bold pt-2">:</div>
 					<div>
 						<div className="text-5xl font-bold text-[#012A43] font-lora">
 							{timeLeft.hours}
 						</div>
 						<div className="text-xs text-muted-foreground">Hour</div>
 					</div>
-					<div className="text-4xl text-[#012A43] font-bold">:</div>
+					<div className="text-4xl text-[#012A43] font-bold pt-2">:</div>
 					<div>
 						<div className="text-5xl font-bold text-[#012A43] font-lora">
 							{timeLeft.minutes}
 						</div>
 						<div className="text-xs text-muted-foreground">Minutes</div>
 					</div>
-					<div className="text-4xl text-[#012A43] font-bold">:</div>
+					<div className="text-4xl text-[#012A43] font-bold pt-2">:</div>
 					<div>
 						<div className="text-5xl font-bold text-[#012A43] font-lora">
 							{timeLeft.seconds}
@@ -132,12 +178,16 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 				</div>
 				<div className="flex flex-col justify-center gap-2">
 					<div className="flex flex-row justify-center gap-2 pt-4 text-base">
-						<Button
-							variant="ghost"
-							className="relative overflow-hidden text-base rounded-lg group"
-							size="lg"
+						<a
+							href="https://storage.theaceundip.id/guidebook/Guidebook The ACE 2025.pdf"
+							target="_blank"
+							rel="noopener noreferrer"
 						>
-							<a href="" target="_blank" rel="noopener noreferrer">
+							<Button
+								variant="ghost"
+								className="relative overflow-hidden text-base rounded-lg group"
+								size="lg"
+							>
 								<span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 ease-out bg-orange-100 text-primary group-hover:translate-x-full">
 									<Download className="w-5 h-5 mr-2" /> Guidebook
 								</span>
@@ -150,8 +200,8 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 								<span className="invisible px-4">
 									<Download className="w-5 h-5 mr-2" /> Guidebook
 								</span>
-							</a>
-						</Button>
+							</Button>
+						</a>
 						<Link href="/auth/register" className="">
 							<Button
 								size="lg"
@@ -173,10 +223,17 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 							</Button>
 						</Link>
 					</div>
-					<Button className="px-12 mx-auto text-base text-white bg-secondary hover:bg-secondary/90">
-						<Phone className="mr-2 size-5" />
-						Contact Person
-					</Button>
+					<a
+						href=""
+						target="_blank"
+						rel="noopener noreferrer"
+						className="mx-auto "
+					>
+						<Button className="px-12 text-base text-white bg-secondary hover:bg-secondary/90">
+							<Phone className="mr-2 size-5" />
+							Contact Person
+						</Button>
+					</a>
 				</div>
 			</CardContent>
 		</Card>
