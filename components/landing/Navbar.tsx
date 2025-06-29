@@ -362,7 +362,7 @@ export default function Navbar() {
 									<AccordionItem value="competition" className="border-none">
 										<AccordionTrigger
 											className={cn(
-												"px-3 py-3 text-base font-medium rounded-lg hover:bg-accent hover:no-underline text-muted-foreground hover:text-foreground",
+												"px-3 py-3 text-base font-medium rounded-lg hover:bg-accent hover:no-underline text-muted-foreground",
 												isCompetitionSectionActive &&
 													"text-primary font-semibold"
 											)}
@@ -393,7 +393,7 @@ export default function Navbar() {
 									<AccordionItem value="event" className="border-none">
 										<AccordionTrigger
 											className={cn(
-												"px-3 py-3 text-base font-medium rounded-lg hover:bg-accent hover:no-underline text-muted-foreground hover:text-foreground",
+												"px-3 py-3 text-base font-medium rounded-lg hover:bg-accent hover:no-underline text-muted-foreground",
 												isEventSectionActive && "text-primary font-semibold"
 											)}
 										>
