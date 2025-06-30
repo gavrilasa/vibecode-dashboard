@@ -16,7 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 import { EmptyState } from "@/components/common/EmptyState";
-import { APP_ROUTES } from "@/lib/constants";
+import { APP_ROUTES, COMPETITION_KEYS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { canEditRegistration } from "@/lib/permissions";
 
@@ -44,7 +44,7 @@ export default function BiodataPage() {
 							title="You Are Not Registered"
 							description="You have not registered for any competition yet."
 						/>
-						<div className="text-center mt-4">
+						<div className="mt-4 text-center">
 							<Button asChild>
 								<Link href={APP_ROUTES.SELECT_COMPETITION}>
 									Select a Competition
@@ -60,8 +60,15 @@ export default function BiodataPage() {
 	const currentRegistration = registrations[0];
 	const { team, competition, details, documents, status } = currentRegistration;
 
-	// Logika isLocked sekarang menggunakan satu panggilan fungsi terpusat yang jelas.
 	const isLocked = !canEditRegistration(currentRegistration);
+
+	const competitionDisplayName = competition.name
+		.toLowerCase()
+		.includes(COMPETITION_KEYS.FTL)
+		? "Line Follower"
+		: competition.name;
+
+	const updatedCompetition = { ...competition, name: competitionDisplayName };
 
 	return (
 		<div className="space-y-6">
@@ -83,7 +90,7 @@ export default function BiodataPage() {
 							if (isLocked) e.preventDefault();
 						}}
 					>
-						<Edit className="mr-2 h-4 w-4" />
+						<Edit className="w-4 h-4 mr-2" />
 						Edit Biodata
 					</Link>
 				</Button>
@@ -99,7 +106,11 @@ export default function BiodataPage() {
 						</AlertDescription>
 					</Alert>
 				)}
-				<TeamInfoCard team={team} competition={competition} details={details} />
+				<TeamInfoCard
+					team={team}
+					competition={updatedCompetition}
+					details={details}
+				/>
 				<MemberList members={details.members} teamName={team.name} />
 				<DocumentList
 					documents={documents}

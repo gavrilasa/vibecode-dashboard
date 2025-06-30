@@ -18,6 +18,7 @@ import {
 	Cloud,
 	Phone,
 	Link,
+	Gamepad,
 } from "lucide-react";
 
 const communityTheAce = "https://chat.whatsapp.com/LdMPa4TRzo3BnW2nnfbua6";
@@ -41,7 +42,7 @@ const competitionLinks = {
 	},
 	[COMPETITION_KEYS.FTL]: {
 		guidebook:
-			"https://drive.google.com/file/d/10Hld8d8AtEcSJlCqAX53QJiykfN1FrVn/view?usp=drive_link",
+			"https://drive.google.com/file/d/144qqh5yPeZnfC4oiijbhKyDVNmnDo2xi/view?usp=sharing",
 		documents:
 			"https://drive.google.com/drive/folders/19UeJchIJl4tlYMsRCPWDn08fFHT-bNLC?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/G1j6ZEgEhm0IELR8iptZuX",
@@ -80,12 +81,20 @@ interface ImportantLinksCardProps {
 export function ImportantLinksCard({ competition }: ImportantLinksCardProps) {
 	const competitionName = competition.name.toLowerCase();
 	let competitionKey: keyof typeof competitionLinks = "default";
-	if (competitionName.includes(COMPETITION_KEYS.CTF))
+	let displayCompetitionName: string;
+
+	if (competitionName.includes(COMPETITION_KEYS.CTF)) {
 		competitionKey = COMPETITION_KEYS.CTF;
-	else if (competitionName.includes(COMPETITION_KEYS.UI_UX))
+		displayCompetitionName = "CTF";
+	} else if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
 		competitionKey = COMPETITION_KEYS.UI_UX;
-	else if (competitionName.includes(COMPETITION_KEYS.FTL))
+		displayCompetitionName = "UI/UX";
+	} else if (competitionName.includes(COMPETITION_KEYS.FTL)) {
 		competitionKey = COMPETITION_KEYS.FTL;
+		displayCompetitionName = "Line Follower";
+	} else {
+		displayCompetitionName = competition.name;
+	}
 
 	const links = competitionLinks[competitionKey];
 	const contacts = contactPersons[competitionKey];
@@ -94,7 +103,7 @@ export function ImportantLinksCard({ competition }: ImportantLinksCardProps) {
 		<Card>
 			<CardHeader className="pb-3 space-y-2">
 				<CardTitle className="flex items-center space-x-2">
-					<Link className="w-5 h-5 text-primary" />
+					<Link className="w-5 h-5 text-primary" href={"#"} />
 					<span>Tautan Penting & Kontak</span>
 				</CardTitle>
 				<CardDescription>
@@ -105,19 +114,19 @@ export function ImportantLinksCard({ competition }: ImportantLinksCardProps) {
 				<Button asChild variant="outline" className="justify-start">
 					<a href={links.guidebook} target="_blank" rel="noopener noreferrer">
 						<FileText className="w-4 h-4 mr-3 text-secondary" /> Guidebook Lomba{" "}
-						{competitionKey.toUpperCase()}
+						{displayCompetitionName}
 					</a>
 				</Button>
 				<Button asChild variant="outline" className="justify-start">
 					<a href={links.documents} target="_blank" rel="noopener noreferrer">
 						<Folder className="w-4 h-4 mr-3 text-secondary" /> Dokumen Peserta{" "}
-						{competitionKey.toUpperCase()}
+						{displayCompetitionName}
 					</a>
 				</Button>
 				<Button asChild variant="outline" className="justify-start">
 					<a href={links.whatsapp} target="_blank" rel="noopener noreferrer">
 						<MessageSquare className="w-4 h-4 mr-3 text-secondary" /> Grup
-						WhatsApp {competitionKey.toUpperCase()}
+						WhatsApp {displayCompetitionName}
 					</a>
 				</Button>
 				<Button asChild variant="outline" className="justify-start">
@@ -130,7 +139,17 @@ export function ImportantLinksCard({ competition }: ImportantLinksCardProps) {
 						<Cloud className="w-4 h-4 mr-3 text-secondary" /> Klaim CloudKilat
 					</a>
 				</Button>
-
+				{displayCompetitionName === "CTF" && (
+					<Button asChild variant="outline" className="justify-start">
+						<a
+							href="https://discord.gg/wgmt9qes"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Gamepad className="w-4 h-4 mr-3 text-secondary" /> Discord CTF
+						</a>
+					</Button>
+				)}
 				{contacts.map((cp, index) => (
 					<Button
 						asChild

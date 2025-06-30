@@ -12,7 +12,7 @@ const uiuxData: CompetitionPageData = {
 		"The UI/UX Competition hosted by the Computer Engineering Department of Diponegoro University with theme “Impactful Digital Innovation: Designing Valuable and Sustainable Solutions.”",
 	cardImage: "https://storage.theaceundip.id/assets/uiux-stacked.webp",
 	guidebookLink:
-		"https://drive.google.com/file/d/1Lw0ZEv1GTMq_p9I5PNHn_7Pl-F_IDUxm/view?usp=drive_link",
+		"https://drive.google.com/file/d/1Lw0ZEv1GTMq_p9I5PNHn_7Pl-F_IDUxm/view?usp=sharing",
 	countdownTarget: new Date("2025-07-10T23:59:59"),
 	terms: [
 		"Peserta merupakan mahasiswa/i aktif (D1-S1) atau siswa/i (SMA/SMK).",
@@ -21,6 +21,7 @@ const uiuxData: CompetitionPageData = {
 		"Karya yang diusulkan harus orisinil dan belum pernah diikutsertakan dalam kompetisi lain.",
 		"Desain harus sesuai dengan tema utama dan memilih minimal satu dari subtema SDGs yang ditentukan.",
 		"Segala bentuk kecurangan atau plagiarisme akan mengakibatkan diskualifikasi.",
+		"Untuk detail lebih lengkap mengenai syarat dan ketentuan dapat dilihat pada Guidebook",
 	],
 	prizes: [
 		"Juara 1: Trophy, Sertifikat, Uang Pembinaan",
@@ -40,24 +41,34 @@ const uiuxData: CompetitionPageData = {
 	],
 	faqs: [
 		{
-			question: "Berapa jumlah anggota tim yang diperbolehkan?",
+			question: "Siapa saja yang dapat mengikuti lomba UI/UX Design?",
 			answer:
-				"Tim harus terdiri dari 2 hingga 3 anggota. Setiap anggota tim harus berasal dari institusi yang sama.",
+				"Kompetisi ini terbuka untuk siswa/i SMA/SMK/sederajat (SLTA) dan mahasiswa aktif dari seluruh perguruan tinggi di Indonesia.",
 		},
 		{
-			question: "Apa saja platform yang bisa dijadikan studi kasus?",
+			question: "Berapa jumlah anggota yang diperbolehkan dalam satu tim?",
 			answer:
-				"Peserta diwajibkan untuk memilih platform mobile (iOS atau Android) sebagai basis dari desain aplikasi yang dibuat.",
+				"Satu tim wajib terdiri dari 3 anggota yang berasal dari institusi yang sama.",
 		},
 		{
-			question: "Bagaimana format pengumpulan karya?",
+			question: "Apakah ada batasan halaman untuk proposal desain?",
 			answer:
-				"Karya dikumpulkan dalam format PDF yang di dalamnya berisi link menuju prototipe Figma, video demo, dan dokumen pendukung lainnya sesuai yang tertera di guidebook.",
+				"Tidak ada batasan jumlah halaman pada proposal. Namun, pastikan semua bab, sub-bab, dan lampiran yang disyaratkan dalam template telah dilengkapi.",
 		},
 		{
-			question: "Apakah ada subtema yang harus dipilih?",
+			question: "Bolehkah tim menambahkan sub-bab sendiri pada proposal?",
 			answer:
-				"Ya, karya harus sesuai dengan tema utama dan memilih minimal satu dari lima subtema yang telah disediakan: No More Poverty, Good Health and Well-Being, Quality Education, Reduced Inequality, atau Peace, Justice, and Strong Institutions.",
+				"Tentu, peserta diperbolehkan menambahkan sub-bab sesuai kebutuhan, selama tidak mengurangi atau mengubah struktur utama yang telah ditentukan pada template.",
+		},
+		{
+			question: "Apakah boleh menggunakan ikon dari plugin Figma?",
+			answer:
+				"Ya, peserta diperbolehkan untuk menggunakan ikon yang berasal dari plugin Figma.",
+		},
+		{
+			question: "Bagaimana aturan penggunaan ilustrasi dari platform online?",
+			answer:
+				"Peserta boleh menggunakan ilustrasi dari platform lain, namun wajib memodifikasinya (misalnya dari segi warna atau bentuk) agar hasilnya tetap orisinal dan mencerminkan identitas tim.",
 		},
 	],
 };

@@ -61,6 +61,9 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 	const cardClassName =
 		"w-full aspect-[3/2] flex flex-col justify-center bg-[url('https://storage.theaceundip.id/assets/Border-Sticky32-Card.webp')] bg-center bg-contain bg-no-repeat";
 
+	// Helper function for formatting
+	const formatTime = (time: number) => String(time).padStart(2, "0");
+
 	if (!mounted) {
 		return (
 			<Card className={cardClassName}>
@@ -150,28 +153,28 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 				<div className="flex justify-center text-center gap-x-1">
 					<div>
 						<div className="text-5xl font-bold text-[#012A43] font-lora">
-							{timeLeft.days}
+							{formatTime(timeLeft.days)}
 						</div>
 						<div className="text-xs text-muted-foreground">Days</div>
 					</div>
 					<div className="text-4xl text-[#012A43] font-bold pt-2">:</div>
 					<div>
 						<div className="text-5xl font-bold text-[#012A43] font-lora">
-							{timeLeft.hours}
+							{formatTime(timeLeft.hours)}
 						</div>
 						<div className="text-xs text-muted-foreground">Hour</div>
 					</div>
 					<div className="text-4xl text-[#012A43] font-bold pt-2">:</div>
 					<div>
 						<div className="text-5xl font-bold text-[#012A43] font-lora">
-							{timeLeft.minutes}
+							{formatTime(timeLeft.minutes)}
 						</div>
 						<div className="text-xs text-muted-foreground">Minutes</div>
 					</div>
 					<div className="text-4xl text-[#012A43] font-bold pt-2">:</div>
 					<div>
 						<div className="text-5xl font-bold text-[#012A43] font-lora">
-							{timeLeft.seconds}
+							{formatTime(timeLeft.seconds)}
 						</div>
 						<div className="text-xs text-muted-foreground">Seconds</div>
 					</div>

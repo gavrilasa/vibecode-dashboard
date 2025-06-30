@@ -32,7 +32,6 @@ import {
 	REGISTRATION_STATUS,
 } from "@/lib/constants";
 
-// Skema Zod tidak berubah
 const memberSchema = z.object({
 	memberName: z.string().min(2, "Name is required."),
 	memberEmail: z.string().email("Invalid email address."),
@@ -57,8 +56,6 @@ export default function EditBiodataPage() {
 	const { registrations, loading, fetchMyRegistrations } = useRegistration();
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	// PERUBAHAN & PERBAIKAN: Mendefinisikan status mana saja yang BOLEH mengedit.
 
 	const {
 		register,
@@ -85,7 +82,6 @@ export default function EditBiodataPage() {
 		if (registrations && registrations.length > 0) {
 			const reg = registrations[0];
 
-			// PERUBAHAN & PERBAIKAN: Logika dibalik, redirect jika status TIDAK TERMASUK dalam EDITABLE_STATUSES
 			if (!EDITABLE_STATUSES.includes(reg.status)) {
 				toast.info("Cannot Edit Biodata", {
 					description: `Your registration status is "${reg.status}", which cannot be edited.`,
@@ -145,15 +141,21 @@ export default function EditBiodataPage() {
 	};
 	const memberRules = getMemberRules();
 
+	const competitionDisplayName = competition.name
+		.toLowerCase()
+		.includes(COMPETITION_KEYS.FTL)
+		? "Line Follower"
+		: competition.name;
+
 	return (
 		<div className="space-y-6">
 			<PageHeader
 				title="Edit Biodata"
-				description={`Update your team and member information for ${competition.name}.`}
+				description={`Update your team and member information for ${competitionDisplayName}.`}
 			>
 				<Button variant="outline" asChild>
 					<Link href="/dashboard/biodata">
-						<ArrowLeft className="mr-2 h-4 w-4" />
+						<ArrowLeft className="w-4 h-4 mr-2" />
 						Cancel
 					</Link>
 				</Button>
@@ -168,7 +170,6 @@ export default function EditBiodataPage() {
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-						{/* ... Sisa dari form tidak ada perubahan ... */}
 						<div>
 							<Label htmlFor="institutionName">Institution / University</Label>
 							<Input
@@ -177,21 +178,21 @@ export default function EditBiodataPage() {
 								className={errors.institutionName ? "border-destructive" : ""}
 							/>
 							{errors.institutionName && (
-								<p className="text-sm text-destructive mt-1">
+								<p className="mt-1 text-sm text-destructive">
 									{errors.institutionName.message}
 								</p>
 							)}
 						</div>
 						<Separator />
 						<div className="flex items-center gap-2">
-							<Users className="h-5 w-5 text-muted-foreground" />
+							<Users className="w-5 h-5 text-muted-foreground" />
 							<h3 className="text-lg font-semibold">Member Details</h3>
 						</div>
 						<div className="space-y-6">
 							{fields.map((field, index) => (
 								<div
 									key={field.id}
-									className="relative space-y-4 rounded-lg border p-4 pt-8"
+									className="relative p-4 pt-8 space-y-4 border rounded-lg"
 								>
 									<div className="absolute top-2 flex w-[calc(100%-2rem)] justify-between">
 										<p className="font-semibold">
@@ -205,11 +206,11 @@ export default function EditBiodataPage() {
 												className="h-7 w-7"
 												onClick={() => remove(index)}
 											>
-												<Trash2 className="h-4 w-4 text-destructive" />
+												<Trash2 className="w-4 h-4 text-destructive" />
 											</Button>
 										)}
 									</div>
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 										<div className="space-y-1">
 											<Label htmlFor={`members.${index}.memberName`}>
 												Full Name
@@ -280,7 +281,7 @@ export default function EditBiodataPage() {
 									})
 								}
 							>
-								<PlusCircle className="mr-2 h-4 w-4" />
+								<PlusCircle className="w-4 h-4 mr-2" />
 								Add Member
 							</Button>
 						)}
@@ -291,7 +292,7 @@ export default function EditBiodataPage() {
 						>
 							{isSubmitting ? (
 								<>
-									<Loader2 className="mr-2 h-4 w-4 animate-spin " /> Updating...
+									<Loader2 className="w-4 h-4 mr-2 animate-spin " /> Updating...
 								</>
 							) : (
 								"Save Changes"

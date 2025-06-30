@@ -21,7 +21,6 @@ import { PageLoader } from "@/components/common/PageLoader";
 import { PageHeader } from "@/components/common/PageHeader";
 import { REGISTRATION_STATUS } from "@/lib/constants";
 
-// Komponen baru
 import { WhatToDoCard } from "@/components/features/dashboard/WhatToDoCard";
 import { CompetitionTimelineCard } from "@/components/features/dashboard/CompetitionTimelineCard";
 import { ImportantLinksCard } from "@/components/features/dashboard/ImportantLinksCard";
@@ -113,6 +112,13 @@ export default function DashboardPage() {
 
 	const { team, competition, status } = currentRegistration;
 
+	const getCompetitionName = (competitionName: string) => {
+		if (competitionName && competitionName.toLowerCase().includes("ftl")) {
+			return "Line Follower";
+		}
+		return competitionName;
+	};
+
 	return (
 		<div className="space-y-4">
 			<PageHeader
@@ -129,7 +135,7 @@ export default function DashboardPage() {
 				/>
 				<DashboardCard
 					title="Competition"
-					value={competition?.name || "N/A"}
+					value={getCompetitionName(competition?.name) || "N/A"}
 					icon={Trophy}
 				/>
 				<DashboardCard

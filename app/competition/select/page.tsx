@@ -65,10 +65,10 @@ export default function CompetitionSelectPage() {
 	);
 
 	return (
-		<div className="flex h-screen w-screen flex-col md:flex-row overflow-hidden bg-black text-white">
+		<div className="flex flex-col w-screen h-screen overflow-hidden text-white bg-black md:flex-row">
 			{competitionsLoading && <PageLoader />}
 			{competitionsError && (
-				<div className="absolute top-1/2 left-1/2 z-10 w-full max-w-md -translate-x-1/2 -translate-y-1/2 p-4">
+				<div className="absolute z-10 w-full max-w-md p-4 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
 					<Alert variant="destructive">
 						<AlertDescription>{competitionsError}</AlertDescription>
 					</Alert>
@@ -84,19 +84,19 @@ export default function CompetitionSelectPage() {
 							onClick={() => handleSelectAndNavigate(ctfCompetition)}
 						>
 							<div
-								className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out group-hover:scale-110"
+								className="absolute inset-0 transition-transform duration-700 ease-in-out bg-center bg-cover group-hover:scale-110"
 								style={{ backgroundImage: `url(${ctfImageUrl})` }}
 							/>
-							<div className="absolute inset-0 bg-secondary/40 transition-colors duration-500 group-hover:bg-secondary/50" />
-							<div className="relative flex h-full w-full flex-col items-center justify-between p-6">
+							<div className="absolute inset-0 transition-colors duration-500 bg-secondary/40 group-hover:bg-secondary/50" />
+							<div className="relative flex flex-col items-center justify-between w-full h-full p-6">
 								<h2 className="absolute left-0 top-0 h-full w-16 flex items-center justify-center text-center text-2xl font-bold uppercase tracking-widest [writing-mode:vertical-rl] transition-colors duration-500 group-hover:text-primary">
 									Capture The Flag
 								</h2>
-								<div className="flex h-full w-full flex-col items-center justify-end text-center opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
-									<h1 className="text-4xl font-bold tracking-tighter md:text-6xl transition-colors duration-1000 group-hover:text-primary">
+								<div className="flex flex-col items-center justify-end w-full h-full text-center transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100">
+									<h1 className="text-4xl font-bold tracking-tighter transition-colors duration-1000 md:text-6xl group-hover:text-primary">
 										Capture The Flag
 									</h1>
-									<p className="mt-4 max-w-sm text-lg text-white/80">
+									<p className="max-w-sm mt-4 text-lg text-white/80">
 										Cyber Sentinel 2025: Break the Code, Secure the Future.
 									</p>
 									<Button
@@ -105,7 +105,7 @@ export default function CompetitionSelectPage() {
 											handleSelectAndNavigate(ctfCompetition);
 										}}
 										variant="outline"
-										className="mt-8 border-2 font-medium tracking-wide border-white/50 bg-transparent text-lg text-white transition-all hover:border-white hover:bg-white hover:text-secondary cursor-pointer"
+										className="mt-8 text-lg font-medium tracking-wide text-white transition-all bg-transparent border-2 cursor-pointer border-white/50 hover:border-white hover:bg-white hover:text-secondary"
 										size="lg"
 									>
 										Select Competition
@@ -122,19 +122,19 @@ export default function CompetitionSelectPage() {
 							onClick={() => handleSelectAndNavigate(uiuxCompetition)}
 						>
 							<div
-								className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out group-hover:scale-110"
+								className="absolute inset-0 transition-transform duration-700 ease-in-out bg-center bg-cover group-hover:scale-110"
 								style={{ backgroundImage: `url(${uiuxImageUrl})` }}
 							/>
-							<div className="absolute inset-0 bg-secondary/40 transition-colors duration-500 group-hover:bg-secondary/50" />
-							<div className="relative flex h-full w-full flex-col items-center justify-between p-6">
+							<div className="absolute inset-0 transition-colors duration-500 bg-secondary/40 group-hover:bg-secondary/50" />
+							<div className="relative flex flex-col items-center justify-between w-full h-full p-6">
 								<h2 className="absolute left-0 top-0 h-full w-16 flex items-center justify-center text-center text-2xl font-bold uppercase tracking-widest [writing-mode:vertical-rl] transition-colors duration-500 group-hover:text-primary">
 									UI/UX Design
 								</h2>
-								<div className="flex h-full w-full flex-col items-center justify-end text-center opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
-									<h1 className="text-4xl font-bold tracking-tighter md:text-6xl transition-colors duration-1000 group-hover:text-primary">
+								<div className="flex flex-col items-center justify-end w-full h-full text-center transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100">
+									<h1 className="text-4xl font-bold tracking-tighter transition-colors duration-1000 md:text-6xl group-hover:text-primary">
 										UI/UX Design
 									</h1>
-									<p className="mt-4 max-w-sm text-lg text-white/80">
+									<p className="max-w-sm mt-4 text-lg text-white/80">
 										Impactful Digital Innovation: Designing Valuable and
 										Sustainable Solutions.
 									</p>
@@ -144,7 +144,7 @@ export default function CompetitionSelectPage() {
 											handleSelectAndNavigate(uiuxCompetition);
 										}}
 										variant="outline"
-										className="mt-8 border-2 font-medium tracking-wide border-white/50 bg-transparent text-lg text-white transition-all hover:border-white hover:bg-white hover:text-secondary cursor-pointer"
+										className="mt-8 text-lg font-medium tracking-wide text-white transition-all bg-transparent border-2 cursor-pointer border-white/50 hover:border-white hover:bg-white hover:text-secondary"
 										size="lg"
 									>
 										Select Competition
@@ -154,26 +154,26 @@ export default function CompetitionSelectPage() {
 						</div>
 					)}
 
-					{/* ================== Panel untuk FTL ================== */}
+					{/* ================== Panel untuk Line Follower ================== */}
 					{ftlCompetition && (
 						<div
 							className="group relative flex-1 overflow-hidden transition-all duration-700 ease-in-out hover:flex-[8]"
 							onClick={() => handleSelectAndNavigate(ftlCompetition)}
 						>
 							<div
-								className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out group-hover:scale-110"
+								className="absolute inset-0 transition-transform duration-700 ease-in-out bg-center bg-cover group-hover:scale-110"
 								style={{ backgroundImage: `url(${ftlImageUrl})` }}
 							/>
-							<div className="absolute inset-0 bg-secondary/40 transition-colors duration-500 group-hover:bg-secondary/50" />
-							<div className="relative flex h-full w-full flex-col items-center justify-between p-6">
+							<div className="absolute inset-0 transition-colors duration-500 bg-secondary/40 group-hover:bg-secondary/50" />
+							<div className="relative flex flex-col items-center justify-between w-full h-full p-6">
 								<h2 className="absolute left-0 top-0 h-full w-16 flex items-center justify-center text-center text-2xl font-bold uppercase tracking-widest [writing-mode:vertical-rl] transition-colors duration-500 group-hover:text-primary">
-									Follow The Line
+									Line Follower
 								</h2>
-								<div className="flex h-full w-full flex-col items-center justify-end text-center opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
-									<h1 className="text-4xl font-bold tracking-tighter md:text-6xl transition-colors duration-1000 group-hover:text-primary">
-										Follow The Line
+								<div className="flex flex-col items-center justify-end w-full h-full text-center transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100">
+									<h1 className="text-4xl font-bold tracking-tighter transition-colors duration-1000 md:text-6xl group-hover:text-primary">
+										Line Follower
 									</h1>
-									<p className="mt-4 max-w-sm text-lg text-white/80">
+									<p className="max-w-sm mt-4 text-lg text-white/80">
 										Algorithmic Edge: Precision in Motion, Unrivaled Victory.
 									</p>
 									<Button
@@ -182,7 +182,7 @@ export default function CompetitionSelectPage() {
 											handleSelectAndNavigate(ftlCompetition);
 										}}
 										variant="outline"
-										className="mt-8 border-2 font-medium tracking-wide border-white/50 bg-transparent text-lg text-white transition-all hover:border-white hover:bg-white hover:text-secondary cursor-pointer"
+										className="mt-8 text-lg font-medium tracking-wide text-white transition-all bg-transparent border-2 cursor-pointer border-white/50 hover:border-white hover:bg-white hover:text-secondary"
 										size="lg"
 									>
 										Select Competition
