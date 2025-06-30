@@ -9,6 +9,8 @@ import { Download, ArrowRight, Phone } from "lucide-react";
 interface CountdownCardProps {
 	targetDate: Date;
 	title: string;
+	guidebookLink: string;
+	contactPerson: string;
 }
 
 interface TimeLeft {
@@ -18,7 +20,12 @@ interface TimeLeft {
 	seconds: number;
 }
 
-export function CountdownCard({ targetDate, title }: CountdownCardProps) {
+export function CountdownCard({
+	targetDate,
+	title,
+	guidebookLink,
+	contactPerson,
+}: CountdownCardProps) {
 	const [timeLeft, setTimeLeft] = useState<TimeLeft>({
 		days: 0,
 		hours: 0,
@@ -181,11 +188,7 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 				</div>
 				<div className="flex flex-col justify-center gap-2">
 					<div className="flex flex-row justify-center gap-2 pt-4 text-base">
-						<a
-							href="https://storage.theaceundip.id/guidebook/Guidebook The ACE 2025.pdf"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+						<a href={guidebookLink} target="_blank" rel="noopener noreferrer">
 							<Button
 								variant="ghost"
 								className="relative overflow-hidden text-base rounded-lg group"
@@ -226,17 +229,19 @@ export function CountdownCard({ targetDate, title }: CountdownCardProps) {
 							</Button>
 						</Link>
 					</div>
-					<a
-						href=""
-						target="_blank"
-						rel="noopener noreferrer"
-						className="mx-auto "
-					>
-						<Button className="px-12 text-base text-white bg-secondary hover:bg-secondary/90">
-							<Phone className="mr-2 size-5" />
-							Contact Person
-						</Button>
-					</a>
+					<div className="flex flex-row justify-center gap-2">
+						<a
+							href={contactPerson}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="mx-auto "
+						>
+							<Button className="px-12 text-base text-white bg-secondary hover:bg-secondary/90">
+								<Phone className="mr-2 size-5" />
+								Contact Person
+							</Button>
+						</a>
+					</div>
 				</div>
 			</CardContent>
 		</Card>

@@ -13,6 +13,8 @@ const ftlData: CompetitionPageData = {
 	cardImage: "https://storage.theaceundip.id/assets/linefollower-stacked.webp",
 	guidebookLink:
 		"https://drive.google.com/file/d/144qqh5yPeZnfC4oiijbhKyDVNmnDo2xi/view?usp=sharing",
+	contactPerson:
+		"https://wa.me/6281331437810?text=Hai%20Mas%20Cielo%2C%20Saya%20Calon%20Peserta%20Line%20Follower%20The%20Ace%202025%20ingin%20bertanya%20mengenai%20beberapa%20hal",
 	countdownTarget: new Date("2025-08-25T23:59:59"),
 	terms: [
 		"Kompetisi terbuka untuk Umum.",

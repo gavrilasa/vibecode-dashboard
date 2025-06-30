@@ -38,6 +38,7 @@ export interface CompetitionPageData {
 	theme: string;
 	cardImage: string;
 	guidebookLink: string;
+	contactPerson: string;
 	countdownTarget: Date;
 	terms: string[];
 	prizes: string[];
@@ -306,6 +307,8 @@ export function CompetitionPageLayout({ data }: CompetitionPageLayoutProps) {
 									<CountdownCard
 										targetDate={data.countdownTarget}
 										title="closed in"
+										guidebookLink={data.guidebookLink}
+										contactPerson={data.contactPerson}
 									/>
 								)}
 							</div>

@@ -13,6 +13,8 @@ const ctfData: CompetitionPageData = {
 	cardImage: "https://storage.theaceundip.id/assets/ctf-stacked.webp",
 	guidebookLink:
 		"https://drive.google.com/file/d/1kAy5RIuUiRTJBpmxvhvooePZkWDePpWD/view?usp=sharing",
+	contactPerson:
+		"https://wa.me/6281331437810?text=Hai%20Mas%20Azzam%2C%20Saya%20Calon%20Peserta%20CTF%20The%20Ace%202025%20ingin%20bertanya%20mengenai%20beberapa%20hal",
 	countdownTarget: new Date("2025-07-10T23:59:59"),
 	terms: [
 		"Peserta merupakan siswa (SMA/SMK) atau mahasiswa (D3/D4/S1) aktif.",
