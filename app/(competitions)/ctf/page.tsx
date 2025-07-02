@@ -12,7 +12,7 @@ const ctfData: CompetitionPageData = {
 		"The Capture The Flag Competition hosted by the Computer Engineering Department of Diponegoro University with theme “Cyber Sentinel 2025: Break the Code, Secure the Future.”",
 	cardImage: "https://storage.theaceundip.id/assets/ctf-stacked.webp",
 	guidebookLink:
-		"https://drive.google.com/file/d/1kAy5RIuUiRTJBpmxvhvooePZkWDePpWD/view?usp=sharing",
+		"https://drive.google.com/file/d/12bHX-j6ThqhkHdQcX5LyJWN4X0hlzzWr/view?usp=drive_link",
 	contactPerson:
 		"https://wa.me/6281331437810?text=Hai%20Mas%20Azzam%2C%20Saya%20Calon%20Peserta%20CTF%20The%20Ace%202025%20ingin%20bertanya%20mengenai%20beberapa%20hal",
 	countdownTarget: new Date("2025-07-10T23:59:59"),

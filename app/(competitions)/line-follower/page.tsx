@@ -12,7 +12,7 @@ const ftlData: CompetitionPageData = {
 		"Line Follower Competition hosted by the Computer Engineering Department of Diponegoro University with theme “Algorithmic Edge: Precision in Motion, Unrivaled Victory.”",
 	cardImage: "https://storage.theaceundip.id/assets/linefollower-stacked.webp",
 	guidebookLink:
-		"https://drive.google.com/file/d/144qqh5yPeZnfC4oiijbhKyDVNmnDo2xi/view?usp=sharing",
+		"https://drive.google.com/file/d/1Buqhh-YwtDABUKwik1VaPjY6BaAiLjaO/view?usp=drive_link",
 	contactPerson:
 		"https://wa.me/6281331437810?text=Hai%20Mas%20Cielo%2C%20Saya%20Calon%20Peserta%20Line%20Follower%20The%20Ace%202025%20ingin%20bertanya%20mengenai%20beberapa%20hal",
 	countdownTarget: new Date("2025-08-25T23:59:59"),
@@ -21,7 +21,7 @@ const ftlData: CompetitionPageData = {
 		"Setiap tim terdiri dari maksimal 2 orang.",
 		"Anggota tim tidak harus berasal dari instansi yang sama.",
 		"Setiap tim hanya dapat mendaftarkan satu robot.",
-		// "Robot harus bersifat autonomus dan merupakan buatan sendiri (bukan kit pabrikan), lebih detail pada Guidebook.",
+		"Setiap tim diperbolehkan menggunakan kit development seperti: ichibot, kakarobot, dan sebagainya.",
 		"Spesifikasi dimensi robot maksimal 20x20x12 cm dengan voltase baterai tidak lebih dari 13 volt.",
 		"Untuk detail lebih lengkap mengenai syarat dan ketentuan dapat dilihat pada Guidebook",
 	],
@@ -49,6 +49,11 @@ const ftlData: CompetitionPageData = {
 				"Tidak. Peserta bertanggung jawab untuk merancang, membangun, dan membawa robot mereka sendiri sesuai dengan spesifikasi yang telah ditentukan dalam guidebook.",
 		},
 		{
+			question: "Apakah peserta boleh menggunakan kit pabrikan?",
+			answer:
+				"Peserta dilarang menggunakan kit pabrikan seperti: Lego, pololu, dan sebagainya. Tetapi diperbolehkan menggunakan development kit seperti: ichibot, kakarobot, dan sebagainya. Parts pihak ke-3 juga diperbolehkan",
+		},
+		{
 			question: "Bagaimana format pertandingan?",
 			answer:
 				"Pertandingan akan menggunakan sistem waktu tercepat. Robot akan melewati serangkaian babak (32 besar, 16 besar, 8 besar, dan final) berdasarkan catatan waktu terbaik.",
@@ -60,7 +65,7 @@ const ftlData: CompetitionPageData = {
 		{
 			question: "⁠Apakah akan ada obstacle pada Sirkuit?",
 			answer:
-				"Sirkuit terdapat obstacle 3d yang telah dipersiapkan oleh panitia",
+				"Panitia telah menyiapkan beberapa obstacle, untuk lebih detail bisa diakses di guidebook",
 		},
 		{
 			question: "Di mana lokasi perlombaan akan diadakan?",

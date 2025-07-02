@@ -28,7 +28,7 @@ const formPeserta =
 const competitionLinks = {
 	[COMPETITION_KEYS.CTF]: {
 		guidebook:
-			"https://drive.google.com/file/d/1kAy5RIuUiRTJBpmxvhvooePZkWDePpWD/view?usp=drive_link",
+			"https://drive.google.com/file/d/12bHX-j6ThqhkHdQcX5LyJWN4X0hlzzWr/view?usp=drive_link",
 		documents:
 			"https://drive.google.com/drive/folders/1Tsiq0QsXpLV3lccZp59VU_JLoI42Kj3f?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/J8fMNtp8s386Q3okj9g4VX",
@@ -42,7 +42,7 @@ const competitionLinks = {
 	},
 	[COMPETITION_KEYS.FTL]: {
 		guidebook:
-			"https://drive.google.com/file/d/144qqh5yPeZnfC4oiijbhKyDVNmnDo2xi/view?usp=sharing",
+			"https://drive.google.com/file/d/1Buqhh-YwtDABUKwik1VaPjY6BaAiLjaO/view?usp=drive_link",
 		documents:
 			"https://drive.google.com/drive/folders/19UeJchIJl4tlYMsRCPWDn08fFHT-bNLC?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/G1j6ZEgEhm0IELR8iptZuX",
@@ -142,7 +142,7 @@ export function ImportantLinksCard({ competition }: ImportantLinksCardProps) {
 				{displayCompetitionName === "CTF" && (
 					<Button asChild variant="outline" className="justify-start">
 						<a
-							href="https://discord.gg/wgmt9qes"
+							href="https://discord.gg/n7277zQTC3"
 							target="_blank"
 							rel="noopener noreferrer"
 						>

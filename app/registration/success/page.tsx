@@ -22,6 +22,7 @@ import {
 	FileUserIcon,
 	Folder,
 	Cloud,
+	Gamepad,
 } from "lucide-react";
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { useRegistrationFlowStore } from "@/store/registration-flow-store";
@@ -35,7 +36,7 @@ const formPeserta =
 const competitionLinks = {
 	[COMPETITION_KEYS.CTF]: {
 		guidebook:
-			"https://drive.google.com/file/d/1kAy5RIuUiRTJBpmxvhvooePZkWDePpWD/view?usp=drive_link",
+			"https://drive.google.com/file/d/12bHX-j6ThqhkHdQcX5LyJWN4X0hlzzWr/view?usp=drive_link",
 		documents:
 			"https://drive.google.com/drive/folders/1Tsiq0QsXpLV3lccZp59VU_JLoI42Kj3f?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/J8fMNtp8s386Q3okj9g4VX",
@@ -49,7 +50,7 @@ const competitionLinks = {
 	},
 	[COMPETITION_KEYS.FTL]: {
 		guidebook:
-			"https://drive.google.com/file/d/10Hld8d8AtEcSJlCqAX53QJiykfN1FrVn/view?usp=drive_link",
+			"https://drive.google.com/file/d/1Buqhh-YwtDABUKwik1VaPjY6BaAiLjaO/view?usp=drive_link",
 		documents:
 			"https://drive.google.com/drive/folders/19UeJchIJl4tlYMsRCPWDn08fFHT-bNLC?usp=drive_link",
 		whatsapp: "https://chat.whatsapp.com/G1j6ZEgEhm0IELR8iptZuX",
@@ -70,25 +71,33 @@ export default function RegistrationSuccessPage() {
 		};
 	}, [clearFlow]);
 
-	const competitionName = selectedCompetition?.name.toLowerCase() || "";
-	let competitionKey: keyof typeof competitionLinks = "default";
-
-	if (competitionName.includes(COMPETITION_KEYS.CTF)) {
-		competitionKey = COMPETITION_KEYS.CTF;
-	} else if (competitionName.includes(COMPETITION_KEYS.UI_UX)) {
-		competitionKey = COMPETITION_KEYS.UI_UX;
-	} else if (competitionName.includes(COMPETITION_KEYS.FTL)) {
-		competitionKey = COMPETITION_KEYS.FTL;
+	if (!selectedCompetition) {
+		return null;
 	}
 
-	const links = competitionLinks[competitionKey];
+	const competitionNameLower = selectedCompetition.name.toLowerCase();
+	let competitionKey: keyof typeof competitionLinks = "default";
+	let displayCompetitionName: string;
+
+	if (competitionNameLower.includes(COMPETITION_KEYS.CTF)) {
+		competitionKey = COMPETITION_KEYS.CTF;
+		displayCompetitionName = "CTF";
+	} else if (competitionNameLower.includes(COMPETITION_KEYS.UI_UX)) {
+		competitionKey = COMPETITION_KEYS.UI_UX;
+		displayCompetitionName = "UI/UX";
+	} else if (competitionNameLower.includes(COMPETITION_KEYS.FTL)) {
+		competitionKey = COMPETITION_KEYS.FTL;
+		displayCompetitionName = "Line Follower";
+	} else {
+		displayCompetitionName = selectedCompetition.name;
+	}
 
 	return (
 		<AuthLayout>
 			<Card className="w-full max-w-md text-center">
 				<CardHeader className="items-center space-y-4">
 					<div className="flex items-center justify-center w-12 h-12 mx-auto bg-green-100 rounded-full">
-						<CheckCircle className="w-6 h-6 text-green-600" />
+						<CheckCircle className="w-8 h-8 text-green-600" />
 					</div>
 					<CardTitle className="text-3xl font-bold">
 						Pendaftaran Berhasil!
@@ -98,73 +107,89 @@ export default function RegistrationSuccessPage() {
 						ACE!
 					</CardDescription>
 				</CardHeader>
+
 				<CardContent className="space-y-6">
 					<div className="py-4 border-t border-b">
-						<h3 className="mb-3 font-semibold text-md text-muted-foreground">
-							LANGKAH SELANJUTNYA
+						<h3 className="mb-4 font-semibold tracking-wider uppercase text-md text-muted-foreground">
+							Langkah Selanjutnya
 						</h3>
-						<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-							<Button asChild variant="outline" size="lg" className="px-1">
+						<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+							<Button asChild variant="outline">
 								<a
 									href={communityTheAce}
 									target="_blank"
 									rel="noopener noreferrer"
+									className="justify-start"
 								>
-									<Users className="mr-2 size-4 text-secondary" />
+									<Users className="mr-3 size-4 text-secondary" />
 									Community The Ace
 								</a>
 							</Button>
-
-							<Button asChild variant="outline" size="lg" className="px-1">
+							<Button asChild variant="outline">
 								<a
-									href={links.whatsapp}
 									target="_blank"
 									rel="noopener noreferrer"
+									className="justify-start"
 								>
-									<Users className="mr-2 size-4 text-secondary" />
-									Group Whatsapp{competitionName}
+									<Users className="mr-3 size-4 text-secondary" />
+									Grup {displayCompetitionName}
 								</a>
 							</Button>
-
-							<Button asChild variant="outline" size="lg" className="px-1">
+							<Button asChild variant="outline">
 								<a
-									href={links.guidebook}
 									target="_blank"
 									rel="noopener noreferrer"
+									className="justify-start"
 								>
-									<FileText className="mr-2 size-4 text-secondary" />
-									Guidebook {competitionName}
+									<FileText className="mr-3 size-4 text-secondary" />
+									Guidebook {displayCompetitionName}
 								</a>
 							</Button>
-
-							<Button asChild variant="outline" size="lg" className="px-1">
-								<a href={formPeserta} target="_blank" rel="noopener noreferrer">
-									<FileUserIcon className="mr-2 size-4 text-secondary" />
+							<Button asChild variant="outline">
+								<a
+									href={formPeserta}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="justify-start"
+								>
+									<FileUserIcon className="mr-3 size-4 text-secondary" />
 									Formulir Peserta
 								</a>
 							</Button>
-
-							<Button asChild variant="outline" size="lg" className="px-1">
+							<Button asChild variant="outline">
 								<a
-									href={links.documents}
 									target="_blank"
 									rel="noopener noreferrer"
+									className="justify-start"
 								>
-									<Folder className="mr-2 size-4 text-secondary" />
-									Dokumen {competitionName}
+									<Folder className="mr-3 size-4 text-secondary" />
+									Dokumen {displayCompetitionName}
 								</a>
 							</Button>
-
-							<Button asChild variant="outline" size="lg" className="px-1">
+							<Button asChild variant="outline">
 								<a
 									href={sponsorDocument}
 									target="_blank"
 									rel="noopener noreferrer"
+									className="justify-start"
 								>
-									<Cloud className="mr-2 size-4 text-secondary" />
+									<Cloud className="mr-3 size-4 text-secondary" />
 									Klaim CloudKilat
 								</a>
 							</Button>
+							{competitionKey === COMPETITION_KEYS.CTF && (
+								<Button asChild variant="outline" className="col-span-2">
+									<a
+										href="https://discord.gg/n7277zQTC3"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="justify-start"
+									>
+										<Gamepad className="mr-3 size-4 text-secondary" />
+										Discord CTF
+									</a>
+								</Button>
+							)}
 						</div>
 					</div>
 					<p className="px-4 text-sm text-muted-foreground">
@@ -172,6 +197,7 @@ export default function RegistrationSuccessPage() {
 						penting dan terbaru seputar kompetisi.
 					</p>
 				</CardContent>
+
 				<CardFooter>
 					<Button asChild size="lg" className="w-full text-white">
 						<Link href={APP_ROUTES.DASHBOARD}>
