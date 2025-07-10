@@ -15,7 +15,7 @@ const uiuxData: CompetitionPageData = {
 		"https://drive.google.com/file/d/1Lw0ZEv1GTMq_p9I5PNHn_7Pl-F_IDUxm/view?usp=sharing",
 	contactPerson:
 		"https://wa.me/6281331437810?text=Hai%20Mas%20Rakha%2C%20Saya%20Calon%20Peserta%20UI/UX%20Design%20The%20Ace%202025%20ingin%20bertanya%20mengenai%20beberapa%20hal",
-	countdownTarget: new Date("2025-07-10T23:59:59"),
+	countdownTarget: new Date("2025-07-17T23:59:59"),
 	terms: [
 		"Peserta merupakan mahasiswa/i aktif (D1-S1) atau siswa/i (SMA/SMK).",
 		"Satu tim terdiri dari 2-3 anggota dari institusi yang sama.",
@@ -35,6 +35,7 @@ const uiuxData: CompetitionPageData = {
 		{ name: "Pendaftaran Gelombang 1", date: "10 – 19 Juni 2025" },
 		{ name: "Pendaftaran Gelombang 2", date: "20 – 29 Juni 2025" },
 		{ name: "Pendaftaran Gelombang 3", date: "30 Juni – 10 Juli 2025" },
+		{ name: "Pendaftaran Extend", date: "11 Juli – 17 Juli 2025" },
 		{ name: "Pengumpulan Karya", date: "11 Juli – 2 Agustus 2025" },
 		{ name: "Pengumuman Finalis", date: "19 Agustus 2025" },
 		{ name: "Technical Meeting Finalis", date: "24 Agustus 2025" },

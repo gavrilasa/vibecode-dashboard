@@ -15,7 +15,7 @@ const ctfData: CompetitionPageData = {
 		"https://drive.google.com/file/d/12bHX-j6ThqhkHdQcX5LyJWN4X0hlzzWr/view?usp=drive_link",
 	contactPerson:
 		"https://wa.me/6281331437810?text=Hai%20Mas%20Azzam%2C%20Saya%20Calon%20Peserta%20CTF%20The%20Ace%202025%20ingin%20bertanya%20mengenai%20beberapa%20hal",
-	countdownTarget: new Date("2025-07-10T23:59:59"),
+	countdownTarget: new Date("2025-07-15T23:59:59"),
 	terms: [
 		"Peserta merupakan siswa (SMA/SMK) atau mahasiswa (D3/D4/S1) aktif.",
 		"Satu tim terdiri dari 3 anggota dari institusi yang sama.",
@@ -35,6 +35,7 @@ const ctfData: CompetitionPageData = {
 		{ name: "Pendaftaran Gelombang 1", date: "10 – 19 Juni 2025" },
 		{ name: "Pendaftaran Gelombang 2", date: "20 – 29 Juni 2025" },
 		{ name: "Pendaftaran Gelombang 3", date: "30 Juni – 10 Juli 2025" },
+		{ name: "Pendaftaran Extend", date: "11 Juli – 15 Juli 2025" },
 		{ name: "Technical Meeting Penyisihan (Online)", date: "16 Juli 2025" },
 		{ name: "Warm Up", date: "18 Juli 2025" },
 		{ name: "Babak Penyisihan", date: "19 Juli 2025" },
